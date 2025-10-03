@@ -1,5 +1,3 @@
-
-
 import { SiteHeader } from "@/components/Header/SiteHeader"
 import {
   SidebarInset,
@@ -15,6 +13,7 @@ import { DataTable } from "../Table/DataTable"
 import { SettingsDialog } from "../Settings/SettingsModal"
 import { TagType } from "@/types/types"
 import Loading from "@/components/Loading"
+import { OnboardingBanner } from "@/components/OnboardingBanner/OnboardingBanner"
 
 
 export const Page = observer(() => {
@@ -62,6 +61,7 @@ export const Page = observer(() => {
         {store.isShowEditModal && <EditItemForm isCloseWindowOnSubmit={false} />}
         {store.isOpenSettingsModal && <SettingsDialog />}
       </Dialog>
+      <OnboardingBanner />
     </SidebarProvider >
   )
 })
