@@ -9,6 +9,7 @@ use Framework\ServiceContainer;
 use Models\Repository;
 use PDO;
 use function Framework\data;
+use function Utils\createDemoContent;
 use function Utils\createWelcomeContent;
 
 class SetupDatabaseController
@@ -47,6 +48,8 @@ class SetupDatabaseController
 		}
 
 		createWelcomeContent($repository);
+
+		createDemoContent($repository);
 
 		return data([
 			'success' => true,

@@ -394,4 +394,14 @@ class Repository
 			return false;
 		}
 	}
+
+	public function runRawSQL($raw_sql)
+	{
+		try {
+			$this->pdo->exec($raw_sql);
+			return true;
+		} catch (Exception $e) {
+			return false;
+		}
+	}
 }

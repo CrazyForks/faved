@@ -234,3 +234,13 @@ function createWelcomeContent($repository)
 	);
 	$repository->attachItemTags([$welcome_tag_id], $item_id);
 }
+
+function createDemoContent($repository)
+{
+	$raw_sql = file_get_contents(ROOT_DIR . '/sql-dumps/tags.sql');
+	$repository->runRawSQL($raw_sql);
+	$raw_sql = file_get_contents(ROOT_DIR . '/sql-dumps/items.sql');
+	$repository->runRawSQL($raw_sql);
+	$raw_sql = file_get_contents(ROOT_DIR . '/sql-dumps/items_tags.sql');
+	$repository->runRawSQL($raw_sql);
+}
