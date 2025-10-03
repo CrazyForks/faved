@@ -204,14 +204,16 @@ export const createColumns = (): ColumnDef<z.infer<typeof schema>>[] => [
 ]
 
 export const getTableViewPreference = (): boolean => {
-  if (typeof window === 'undefined') return true; // По умолчанию таблица
+  if (typeof window === 'undefined') {
+    return false;
+  }
 
   try {
     const stored = sessionStorage.getItem('isTableView');
-    return stored !== null ? JSON.parse(stored) : true;
+    return stored !== null ? JSON.parse(stored) : false;
   } catch (error) {
     console.error('Error reading from session storage:', error);
-    return true;
+    return false;
   }
 };
 
