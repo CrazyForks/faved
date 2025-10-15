@@ -25,6 +25,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog"
 import { TagBadge } from "./TagBadge"
+import {PreviewImage} from "@/components/Table/PreviewImage.tsx";
 
 
 export const schema = z.object({
@@ -72,11 +73,11 @@ const DescriptionCellContent = ({ item }: { item: z.infer<typeof schema> }) => {
 
   return (
     <div className="flex flex-col items-start text-left w-full max-w-full">
-      {image && (
-        <a href={image} target="_blank" rel="noopener noreferrer">
-          <img className="w-auto h-auto max-h-[200px] rounded-sm" src={image} alt="Preview" />
-        </a>
-      )}
+      {image && (<PreviewImage
+          imageUrl={image}
+          className="w-auto h-auto max-h-[200px] rounded-sm"
+        />)
+      }
       {description && (
         <p className="leading-7 [&:not(:first-child)]:mt-6 whitespace-pre-line break-words max-w-full">
           {description}
