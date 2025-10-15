@@ -157,7 +157,7 @@ export const DataTable: React.FC = observer(() => {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between gap-2 py-4 m-[14px]">
+      <div className="flex items-center justify-between gap-2 py-4 m-4">
         <DataTableToolbar table={table} globalFilter={globalFilter} />
         <Popover open={showSort} onOpenChange={setShowSort}>
           <PopoverSort
@@ -185,10 +185,11 @@ export const DataTable: React.FC = observer(() => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover-action-container"
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <TableCell key={cell.id} className={`${cell.id.split("_")[1] !== "id" ? 'w-full pb-5 pt-5 pl-6 break-words ' : 'pb-5 pt-5 pr-14 w-12'}`}>
+                      <TableCell key={cell.id} className={`${cell.id.split("_")[1] !== "id" ? 'w-full pb-5 pt-5 pl-6 break-words' : 'w-16'}`}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
