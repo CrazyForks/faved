@@ -9,7 +9,6 @@ export const PreviewImage = ({imageUrl, className}: { imageUrl: string, classNam
         <img
           className={className + " cursor-zoom-in"}
           src={imageUrl}
-          alt={imageUrl}
         />
       </DialogTrigger>
       <DialogContent aria-describedby={undefined} showCloseButton={false}
@@ -27,6 +26,8 @@ export const PreviewImage = ({imageUrl, className}: { imageUrl: string, classNam
         <img
           className="w-auto h-auto max-h-[90vh] object-contain"
           src={imageUrl}
+          title={imageUrl}
+          alt={"Preview of image " + imageUrl}
         />
       </DialogContent>
     </Dialog>
