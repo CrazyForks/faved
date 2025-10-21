@@ -1,5 +1,5 @@
 import React from "react"
-import { StoreContext } from "@/store/storeContext"
+import {StoreContext} from "@/store/storeContext"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,12 +7,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { z } from "zod"
-import { type ColumnDef } from "@tanstack/react-table"
-import { IconDotsVertical } from "@tabler/icons-react"
-import { observer } from "mobx-react-lite"
-import { ActionType } from "../dashboard/types"
-import { Button } from "@/components/ui/button"
+import {z} from "zod"
+import {type ColumnDef} from "@tanstack/react-table"
+import {IconDotsVertical} from "@tabler/icons-react"
+import {observer} from "mobx-react-lite"
+import {ActionType} from "../dashboard/types"
+import {Button} from "@/components/ui/button"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog"
-import { TagBadge } from "./TagBadge"
+import {TagBadge} from "./TagBadge"
 import {PreviewImage} from "@/components/Table/PreviewImage.tsx";
 
 
@@ -40,25 +40,25 @@ export const schema = z.object({
   comments: z.string(),
 })
 
-const UrlCellContent = observer(({ item }: { item: z.infer<typeof schema> }) => {
-  const { url, title, tags, updated_at, created_at } = item
+const UrlCellContent = observer(({item}: { item: z.infer<typeof schema> }) => {
+  const {url, title, tags, updated_at, created_at} = item
 
   return (
     <div className="flex flex-col items-start w-full text-left wrap-anywhere gap-2">
       {title &&
-        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight line-clamp-3" title={title}>
-          {title}
-        </h4>
+          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight line-clamp-3" title={title}>
+            {title}
+          </h4>
       }
       {url &&
-        <a className="text-custom-blue underline line-clamp-3 break-all" href={url} target="_blank"
-          rel="noopener noreferrer">
-          {url}
-        </a>
+          <a className="text-custom-blue underline line-clamp-3 break-all" href={url} target="_blank"
+             rel="noopener noreferrer">
+            {url}
+          </a>
       }
       {tags && <div className="text-left w-full py-2 leading-6.5">
         {tags.map((tagID) => (
-          <TagBadge key={tagID} tagID={tagID} />
+          <TagBadge key={tagID} tagID={tagID}/>
         ))}
       </div>}
       <div className="text-muted-foreground text-sm mt-auto">
@@ -68,15 +68,15 @@ const UrlCellContent = observer(({ item }: { item: z.infer<typeof schema> }) => 
   )
 })
 
-const DescriptionCellContent = ({ item }: { item: z.infer<typeof schema> }) => {
-  const { comments, image, description } = item
+const DescriptionCellContent = ({item}: { item: z.infer<typeof schema> }) => {
+  const {comments, image, description} = item
 
   return (
     <div className="flex flex-col items-start text-left w-full max-w-full">
       {image && (<PreviewImage
-          imageUrl={image}
-          className="w-auto h-auto max-h-[200px] rounded-sm"
-        />)
+        imageUrl={image}
+        className="w-auto h-auto max-h-[200px] rounded-sm"
+      />)
       }
       {description && (
         <p className="leading-7 [&:not(:first-child)]:mt-6 whitespace-pre-line break-words max-w-full">
@@ -92,7 +92,7 @@ const DescriptionCellContent = ({ item }: { item: z.infer<typeof schema> }) => {
   )
 }
 
-const ActionsCell = observer(({ row }: { row: any }) => {
+const ActionsCell = observer(({row}: { row: any }) => {
   const store = React.useContext(StoreContext)
   const handleEdit = () => {
     store.setType(ActionType.EDIT)
@@ -116,14 +116,14 @@ const ActionsCell = observer(({ row }: { row: any }) => {
           className="hover-action"
           size="icon"
         >
-          <IconDotsVertical />
+          <IconDotsVertical/>
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-32">
         <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
         <DropdownMenuItem onClick={handleMakeCopy}>Make a copy</DropdownMenuItem>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator/>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <div
@@ -157,44 +157,49 @@ const ActionsCell = observer(({ row }: { row: any }) => {
 
 export const createColumns = (): ColumnDef<z.infer<typeof schema>>[] => [
   {
+    accessorKey: "title",
+    header: 'Title',
+    enableSorting: true,
+    enableHiding: true,
+  },
+  {
     accessorKey: "url",
-    header: 'url',
+    header: 'Url',
     enableSorting: true,
     enableHiding: false,
-    cell: ({ row }) => <UrlCellContent item={row.original} />,
+    cell: ({row}) => <UrlCellContent item={row.original}/>,
   },
   {
     accessorKey: "description",
-    header: 'description',
+    header: 'Description',
     enableSorting: true,
     enableHiding: false,
-    cell: ({ row }) => <DescriptionCellContent item={row.original} />,
+    cell: ({row}) => <DescriptionCellContent item={row.original}/>,
   },
   {
-    accessorKey: "title",
+    accessorKey: "comments",
+    header: 'Comments',
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "created_at",
+    header: 'Created at',
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "updated_at",
+    header: 'Updated at',
     enableSorting: true,
     enableHiding: true,
   },
-  {
-    accessorKey: "comments",
-    enableSorting: true,
-    enableHiding: true,
-  },
+
   {
     header: "",
     accessorKey: "id",
     enableHiding: false,
-    cell: ({ row }) => (
+    cell: ({row}) => (
       <ActionsCell
         row={row}
       />

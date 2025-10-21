@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  type ColumnDef,
   type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -11,38 +12,33 @@ import {
   type SortingState,
   useReactTable,
   type VisibilityState,
-  type ColumnDef,
 } from "@tanstack/react-table"
 
-import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@/components/ui/table"
-import { StoreContext } from "@/store/storeContext"
-import { DataTableToolbar } from "./DataTableToolbar"
-import { observer } from "mobx-react-lite"
-import { PopoverSort } from "./PopoverSort"
-import { Popover } from "../ui/popover"
-import { DataTablePagination } from "./data-table-pagination"
-import { CardView } from "./CardView"
-import { Card } from "../ui/card"
-import { ItemType } from "@/types/types"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx";
-import { Blocks as BlocksIcon, Table as TableIcon } from "lucide-react"
-import { createColumns, getTableViewPreference, setTableViewPreference } from "./utils"
+import {Button} from "@/components/ui/button"
+import {Table, TableBody, TableCell, TableRow,} from "@/components/ui/table"
+import {StoreContext} from "@/store/storeContext"
+import {DataTableToolbar} from "./DataTableToolbar"
+import {observer} from "mobx-react-lite"
+import {Sorter} from "./Sorter.tsx"
+import {DataTablePagination} from "./data-table-pagination"
+import {CardView} from "./CardView"
+import {Card} from "../ui/card"
+import {ItemType} from "@/types/types"
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
+import {Blocks as BlocksIcon, Table as TableIcon} from "lucide-react"
+import {createColumns, getTableViewPreference, setTableViewPreference} from "./utils"
 
 
 export const DataTable: React.FC = observer(() => {
   const [globalFilter, setGlobalFilter] = React.useState<any>([]);
   const store = React.useContext(StoreContext);
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([{
+    id: 'created_at',
+    desc: true,
+  }])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
-  const [selectedSortColumn, setSelectedSortColumn] = React.useState<string | null>(null);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -114,26 +110,13 @@ export const DataTable: React.FC = observer(() => {
   const currentRows = table.getRowModel().rows.slice(startIndex, endIndex);
   const sortableColumns = columns.filter((column) => column.enableSorting);
 
-  const [showSort, setShowSort] = React.useState(false);
-  const handleSortChange = (columnAccessorKey: string, sortDirection: 'asc' | 'desc') => {
-    store.setCurrentPage(1);
-    if (columnAccessorKey === "") {
-      setSorting([]);
-      setSelectedSortColumn(null);
-      return;
-    }
-
-    setSelectedSortColumn(columnAccessorKey);
-
-    const currentSort = sorting[0];
-    const isCurrentColumn = currentSort?.id === columnAccessorKey;
-
-    const newSortDesc = sortDirection === 'desc' || (!isCurrentColumn ? false : !currentSort?.desc)
-
+  const handleSortChange = (columnAccessorKey: string, isDesc: boolean) => {
     setSorting([{
       id: columnAccessorKey,
-      desc: newSortDesc,
+      desc: isDesc,
     }]);
+
+    store.setCurrentPage(1);
   };
 
   const toggleTableView = () => {
@@ -158,18 +141,17 @@ export const DataTable: React.FC = observer(() => {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between gap-2 py-4 m-4">
-        <DataTableToolbar table={table} globalFilter={globalFilter} />
-        <Popover open={showSort} onOpenChange={setShowSort}>
-          <PopoverSort
-            selectedSortColumn={selectedSortColumn}
-            handleSortChange={handleSortChange}
-            sortableColumns={sortableColumns}
-          />
-        </Popover>
+        <DataTableToolbar table={table} globalFilter={globalFilter}/>
+        <Sorter
+          selectedSortColumn={sorting[0]?.id}
+          isDesc={sorting[0]?.desc}
+          handleSortChange={handleSortChange}
+          sortableColumns={sortableColumns}
+        />
         <Tooltip>
           <TooltipTrigger asChild>
             <Button onClick={toggleTableView} variant="outline">
-              {!isTableView ? <TableIcon /> : <BlocksIcon />}
+              {!isTableView ? <TableIcon/> : <BlocksIcon/>}
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -179,45 +161,47 @@ export const DataTable: React.FC = observer(() => {
       </div>
       <div className="m-4 overflow-hidden ">
         {isTableView ? <Table className=" table-fixed w-full">
-          <TableBody>
-            {currentRows.length ? (
-              currentRows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="hover-action-container"
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <TableCell key={cell.id} className={`${cell.id.split("_")[1] !== "id" ? 'w-full pb-5 pt-5 pl-6 break-words' : 'w-16'}`}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    )
-                  })}
+            <TableBody>
+              {currentRows.length ? (
+                currentRows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="hover-action-container"
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell key={cell.id}
+                                   className={`${cell.id.split("_")[1] !== "id" ? 'w-full pb-5 pt-5 pl-6 break-words' : 'w-16'}`}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table> :
-          <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @2xl/main:grid-cols-2 @5xl/main:grid-cols-3 @7xl/main:grid-cols-4 @min-[108rem]/main:grid-cols-5  @min-[126rem]/main:grid-cols-6 @min-[142rem]/main:grid-cols-7">
+              )}
+            </TableBody>
+          </Table> :
+          <div
+            className="grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @2xl/main:grid-cols-2 @5xl/main:grid-cols-3 @7xl/main:grid-cols-4 @min-[108rem]/main:grid-cols-5  @min-[126rem]/main:grid-cols-6 @min-[142rem]/main:grid-cols-7">
             {currentRows.length > 0 ? (
               currentRows.map((row) => {
                 const el = row.original;
                 return (
                   <Card key={el.id} className="@container/card relative">
-                    <CardView el={el} />
+                    <CardView el={el}/>
                   </Card>)
 
               })
@@ -226,10 +210,10 @@ export const DataTable: React.FC = observer(() => {
                 No results found.
               </div>
             )}
-          </div >
+          </div>
         }
       </div>
-      <DataTablePagination table={table} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
+      <DataTablePagination table={table} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage}/>
     </div>
   )
 })
