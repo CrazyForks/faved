@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {JSX} from "react";
 
-export const Sorter: ({selectedColumn, isDesc, handleSortChange, sortableColumns}: {
+export const Sorter: ({selectedSortColumn, isDesc, handleSortChange, sortableColumns}: {
   selectedSortColumn: string | null;
   isDesc: boolean;
   handleSortChange: any;
