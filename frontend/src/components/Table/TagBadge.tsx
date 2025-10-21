@@ -35,7 +35,7 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({tagID}) => {
     : colorMap.gray;
 
   return (
-    <Tooltip>
+    <Tooltip delayDuration={500}>
       <TooltipTrigger asChild>
         <Badge
           variant={isTagSelected ? 'outline' : 'secondary'}
