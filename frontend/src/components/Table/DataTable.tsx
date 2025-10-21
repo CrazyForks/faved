@@ -16,7 +16,7 @@ import {
 
 import {Table, TableBody, TableCell, TableRow,} from "@/components/ui/table"
 import {StoreContext} from "@/store/storeContext"
-import {DataTableToolbar} from "./DataTableToolbar"
+import {Search} from "./Search.tsx"
 import {observer} from "mobx-react-lite"
 import {Sorter} from "./Sorter.tsx"
 import {DataTablePagination} from "./data-table-pagination"
@@ -137,7 +137,7 @@ export const DataTable: React.FC = observer(() => {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between gap-2 py-4 m-4">
-        <DataTableToolbar table={table} globalFilter={globalFilter}/>
+        <Search table={table} globalFilter={globalFilter}/>
         <Sorter
           selectedSortColumn={sorting[0]?.id}
           isDesc={sorting[0]?.desc}
