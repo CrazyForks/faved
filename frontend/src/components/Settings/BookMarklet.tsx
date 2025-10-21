@@ -64,19 +64,17 @@ const BookmarkletPage = ({onSuccess}: { onSuccess?: () => void }) => {
     const windowProps = {
       width: 700,
       height: 700,
-      left: leftPos.toString(),
-      top: topPos.toString(),
-      resizable: 'yes',
-      scrollbars: 'yes',
-      status: 'false',
-      location: 'false',
-      toolbar: 'false',
+      left: leftPos,
+      top: topPos,
+      noopener: 0,
+      noreferrer: 0,
+      popup: 1,
     };
 
     window.open(
       `<<BASE_PATH>>?${urlParams.toString()}`,
-      "add-to-faved",
-      Object.entries(windowProps).map(([key, value]) => key + "=" + value).join(",")
+      "_blank",
+      Object.entries(windowProps).map(([key, value]) => key + "=" + value.toString()).join(",")
     );
   }
 
