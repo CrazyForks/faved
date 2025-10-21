@@ -14,7 +14,6 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 
-import {Button} from "@/components/ui/button"
 import {Table, TableBody, TableCell, TableRow,} from "@/components/ui/table"
 import {StoreContext} from "@/store/storeContext"
 import {DataTableToolbar} from "./DataTableToolbar"
@@ -24,10 +23,9 @@ import {DataTablePagination} from "./data-table-pagination"
 import {CardView} from "./CardView"
 import {Card} from "../ui/card"
 import {ItemType} from "@/types/types"
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
-import {Blocks as BlocksIcon, Table as TableIcon} from "lucide-react"
+import {LayoutGrid as CardsIcon, Table as TableIcon} from "lucide-react"
 import {createColumns, getTableViewPreference, setTableViewPreference} from "./utils"
-
+import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group"
 
 export const DataTable: React.FC = observer(() => {
   const [globalFilter, setGlobalFilter] = React.useState<any>([]);
@@ -119,11 +117,9 @@ export const DataTable: React.FC = observer(() => {
     store.setCurrentPage(1);
   };
 
-  const toggleTableView = () => {
-    const newValue = !isTableView;
+  const changeTableView = (newValue) => {
     setIsTableView(newValue);
     setTableViewPreference(newValue);
-    store.setItems(store.itemsOriginal);
   };
 
   React.useEffect(() => {
@@ -148,16 +144,22 @@ export const DataTable: React.FC = observer(() => {
           handleSortChange={handleSortChange}
           sortableColumns={sortableColumns}
         />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button onClick={toggleTableView} variant="outline">
-              {!isTableView ? <TableIcon/> : <BlocksIcon/>}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p> {!isTableView ? "Table view" : "Card view"}</p>
-          </TooltipContent>
-        </Tooltip>
+
+        <ToggleGroup variant="outline"
+                     type="single"
+                     value={isTableView ? 'table' : 'cards'}
+                     onValueChange={(v => {
+                       v && changeTableView(v === 'table')
+                     })}
+        >
+          <ToggleGroupItem value="cards">
+            <CardsIcon/>
+          </ToggleGroupItem>
+          <ToggleGroupItem value="table">
+            <TableIcon/>
+          </ToggleGroupItem>
+        </ToggleGroup>
+
       </div>
       <div className="m-4 overflow-hidden ">
         {isTableView ? <Table className=" table-fixed w-full">
