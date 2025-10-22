@@ -60,8 +60,8 @@ export const Page = observer(() => {
         }
       }} open={store.isShowEditModal} >
         {store.isShowEditModal && <EditItemForm isCloseWindowOnSubmit={false} />}
-        {store.isOpenSettingsModal && <SettingsDialog />}
       </Dialog>
+      {store.isOpenSettingsModal && <SettingsDialog />}
     </SidebarProvider >
   )
 })

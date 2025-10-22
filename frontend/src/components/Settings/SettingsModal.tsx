@@ -1,133 +1,96 @@
 import * as React from "react"
-import {
-  Keyboard,
-  Import,
-  Bookmark,
-} from "lucide-react"
+import {Bookmark, ChevronLeft, ChevronRight, Import, Keyboard,} from "lucide-react"
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import {Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/ui/dialog"
 
-import { CardsEditAccountUserName } from "@/components/dashboard/CardsEditAccountUserName"
-import { CardsEditAccountPassword } from "@/components/dashboard/CardsEditAccountPassword"
-import { CardsEditAccountDisableAuth } from "@/components/dashboard/CardsEditAccountDisableAuth"
-import { CardsCreateAccount } from "@/components/dashboard/CreateAccount"
-import { StoreContext } from "@/store/storeContext"
-import { ImportModal } from "./ImportModal"
-import { observer } from "mobx-react-lite"
+import {CardsEditAccountUserName} from "@/components/dashboard/CardsEditAccountUserName"
+import {CardsEditAccountPassword} from "@/components/dashboard/CardsEditAccountPassword"
+import {CardsEditAccountDisableAuth} from "@/components/dashboard/CardsEditAccountDisableAuth"
+import {CardsCreateAccount} from "@/components/dashboard/CreateAccount"
+import {StoreContext} from "@/store/storeContext"
+import {ImportModal} from "./ImportModal"
+import {observer} from "mobx-react-lite"
 import BookmarkletPage from "./BookMarklet"
+import {Button} from "@/components/ui/button.tsx";
+import {Tabs, TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs"
 
-const data = {
-  nav: [
-    { name: "Authentication settings", icon: Keyboard },
-    { name: "Import", icon: Import },
-    { name: "Bookmarklet", icon: Bookmark },
-  ],
-}
-
-const components = [
-  { name: "CardsEditAccount", component: <CardsEditAccountUserName /> },
-  { name: "Component2", component: <CardsEditAccountPassword /> },
-  { name: "Component3", component: <CardsEditAccountDisableAuth /> },
-];
-export const SettingsDialog = observer(() => {
+const AuthComponent = observer(() => {
   const store = React.useContext(StoreContext);
   React.useEffect(() => {
     store.getUser()
   }, [])
-  if (!store.isOpenSettingsModal) {
-    return <div>{'Loading...'}</div>
+
+  if (!store.user) {
+    return <CardsCreateAccount/>
   }
-  return (
-    <Dialog open={store.isOpenSettingsModal} onOpenChange={store.setIsOpenSettingsModal}>
-      <DialogContent className="overflow-hidden p-0 h-[100dvh] md:max-h-[800px] sm:max-w-[750px] md:max-w-[900px] lg:max-w-[900px]">
-        <DialogTitle className="sr-only">Settings</DialogTitle>
-        <SidebarProvider className="items-start h-full">
-          <Sidebar collapsible="icon">
-            <SidebarContent>
-              <SidebarGroup>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {data.nav.map((item) => (
-                      <SidebarMenuItem key={item.name} onClick={() => {
-                        store.setSelectedItemSettingsModal(item.name as string)
-                      }}>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={item.name === store.selectedItemSettingsModal}
-                        >
-                          <a href="#">
-                            <item.icon />
-                            <span>{item.name}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            </SidebarContent>
-          </Sidebar>
-          <main className="flex h-full flex-1 flex-col overflow-hidden">
-            <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-              <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger className="-ml-1" />
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem className="hidden md:block">
-                      <BreadcrumbLink href="#">Settings</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator className="hidden md:block" />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{store.selectedItemSettingsModal}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              </div>
-            </header>
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0 h-full min-h-0">
-              {store.selectedItemSettingsModal === "Authentication settings" && !store.user
-                ?
-                <CardsCreateAccount />
-                :
-                store.selectedItemSettingsModal === "Authentication settings"
-                && components.map((component, i) => (
-                  <div key={i}>{component.component}</div>
-                ))}
-              {store.selectedItemSettingsModal === "Import" &&
-                <ImportModal />
-              }   {store.selectedItemSettingsModal === "Bookmarklet" &&
-                <div className="overflow-auto max-h-[730px]">
-                  <BookmarkletPage />
-                </div>
-              }
-            </div>
-          </main>
-        </SidebarProvider>
-      </DialogContent>
-    </Dialog>
-  )
+
+  return (<>
+    <CardsEditAccountUserName/>
+    <CardsEditAccountPassword/>
+    <CardsEditAccountDisableAuth/>
+  </>)
+})
+
+const data = {
+  nav: [
+    {id: 'auth', title: "Authentication", icon: Keyboard, component: <AuthComponent/>},
+    {id: "bookmarklet", title: "Bookmarklet", icon: Bookmark, component: <BookmarkletPage/>},
+    {id: "import", title: "Import", icon: Import, component: <ImportModal/>},
+  ],
 }
+
+export const SettingsDialog = observer(() => {
+    const store = React.useContext(StoreContext);
+
+    const defaultNav = store.preSelectedItemSettingsModal ?? data.nav[0].id;
+
+    const [showTopNav, setShowTopNav]  = React.useState(!store.preSelectedItemSettingsModal)
+
+    // For title display
+    const [selectedNav, setSelectedNav] = React.useState(defaultNav)
+    const selectedNavTitle = data.nav.find(item => item.id === selectedNav)?.title
+
+    return (
+      <Dialog open={true} onOpenChange={store.setIsOpenSettingsModal}>
+        <DialogContent className="overflow-hidden w-[95dvw] max-w-6xl md:p-3">
+          <DialogHeader className="md:sr-only mb-2">
+            <DialogTitle className="md:sr-only text-center">{showTopNav ? 'Settings' : selectedNavTitle}</DialogTitle>
+          </DialogHeader>
+
+          <Tabs defaultValue={defaultNav} onValueChange={(v) => setSelectedNav(v)} className="flex flex-row items-stretch justify-normal gap-0 w-full h-[calc(80dvh)] max-h-[1000px]">
+
+            <TabsList
+              className={'md:p-2 h-full w-full min-w-56 md:w-auto bg-transparent md:bg-muted flex-col items-stretch justify-start gap-1' + (showTopNav ? ' inline-flex' : ' hidden md:inline-flex')}>
+
+              {data.nav.map((item) => (
+                <TabsTrigger key={item.id}
+                             className="py-2 px-3 text-base md:text-sm md:py-1 flex items-center gap-3 justify-start items-center rounded-sm flex-0 data-[state=active]:shadow-none md:data-[state=active]:bg-primary/90 md:data-[state=active]:text-primary-foreground hover:bg-primary/5"
+                             value={item.id}
+                             onClick={ () => {setShowTopNav(false)}}
+                >
+                  <item.icon/>
+                  <span>{item.title}</span>
+                  <ChevronRight className="ml-auto block md:hidden"/>
+                </TabsTrigger>
+              ))}
+
+            </TabsList>
+            <div
+              className={'px-1 md:px-8 py-3 w-full h-full h-full overflow-y-scroll overflow-x-hidden relative' + (showTopNav ? ' hidden md:inline-flex' : '')}>
+              <Button onClick={() => setShowTopNav(true)} variant="outline"
+                      className="md:hidden rounded-full aspect-square w-10 h-10 fixed top-4 left-4 z-10">
+                <ChevronLeft/>
+              </Button>
+              {data.nav.map((item) => {
+                return <TabsContent key={item.id} value={item.id}>
+                  {item.component}
+                </TabsContent>
+              })}
+            </div>
+          </Tabs>
+
+        </DialogContent>
+      </Dialog>
+    )
+  }
 )

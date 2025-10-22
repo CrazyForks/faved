@@ -61,7 +61,7 @@ class mainStore {
     showInitializeDatabasePage = false;
     error: string | null = null;
     isOpenSettingsModal: boolean = false;
-    selectedItemSettingsModal: string = "Authentication settings";
+    preSelectedItemSettingsModal: string | null = null;
     currentPage: number = 1;
     selectedTagId: string | null = '0'; // Default to '0' for no tag selected
     itemsOriginal: ItemType[] = [];
@@ -267,8 +267,8 @@ class mainStore {
     setIsOpenSettingsModal = (val: boolean) => {
         this.isOpenSettingsModal = val;
     };
-    setSelectedItemSettingsModal = (val: string) => {
-        this.selectedItemSettingsModal = val;
+    setPreSelectedItemSettingsModal = (val: string) => {
+        this.preSelectedItemSettingsModal = val;
     };
     fetchItems = async () => {
         const options = {
@@ -743,7 +743,7 @@ class mainStore {
                 return response.json();
             })
             .then((response) => {
-                this.isOpenSettingsModal = false;
+                this.setIsOpenSettingsModal(false);
                 this.fetchItems();
                 this.fetchTags();
                 toast.success(response.message, { position: 'top-center', style: stylesTost() });

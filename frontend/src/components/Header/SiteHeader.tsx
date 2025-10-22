@@ -25,8 +25,8 @@ export const SiteHeader: React.FC<{ setType: (val: ActionType) => void }> = ({ s
         <Tooltip>
           <TooltipTrigger asChild>
             <Button onClick={() => {
+              store.setPreSelectedItemSettingsModal('import')
               store.setIsOpenSettingsModal(true);
-              store.setSelectedItemSettingsModal("Import")
             }} variant="outline" size="sm" className="sm:flex">
               <Import />
             </Button>
