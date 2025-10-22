@@ -23,7 +23,7 @@ const formSchema = z.object({
   path: ["passwordConfirm"],
 });
 
-export function CardsEditAccountPassword() {
+export function UserPasswordEdit() {
   const store = useContext(StoreContext);
 
   const form = useForm<z.infer<typeof formSchema>>({

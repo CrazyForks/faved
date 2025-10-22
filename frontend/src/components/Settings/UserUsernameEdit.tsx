@@ -17,7 +17,7 @@ const formSchema = z.object({
     .max(30, { message: "Username must be at most 30 characters." }),
 })
 
-export const CardsEditAccountUserName = () => {
+export const UserUsernameEdit = () => {
   const store = useContext(StoreContext);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

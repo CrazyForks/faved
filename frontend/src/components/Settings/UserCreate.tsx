@@ -1,26 +1,28 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { useContext } from "react"
-import { StoreContext } from "@/store/storeContext"
+import {Input} from "@/components/ui/input"
+import {useContext} from "react"
+import {StoreContext} from "@/store/storeContext"
 import z from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {useForm} from "react-hook-form"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 
 const formSchema = z.object({
   username: z
     .string()
-    .min(2, { message: "Username must be at least 2 characters." })
-    .max(30, { message: "Username must be at most 30 characters." }),
+    .min(2, {message: "Username must be at least 2 characters."})
+    .max(30, {message: "Username must be at most 30 characters."}),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters." }),
-  passwordConfirm: z.string().min(8, { message: "Password confirmation must be at least 8 characters." }),
+    .min(8, {message: "Password must be at least 8 characters."}),
+  passwordConfirm: z.string().min(8, {message: "Password confirmation must be at least 8 characters."}),
 }).refine(
-  (data: { password: string; passwordConfirm: string }) => { return data.password === data.passwordConfirm },
+  (data: { password: string; passwordConfirm: string }) => {
+    return data.password === data.passwordConfirm
+  },
   {
     message: "Passwords do not match.",
     path: ["passwordConfirm"],
@@ -28,7 +30,7 @@ const formSchema = z.object({
 );
 
 
-export const CardsCreateAccount = ({onSuccess}: {onSuccess?: () => void} ) => {
+export const UserCreate = ({onSuccess}: { onSuccess?: () => void }) => {
   const store = useContext(StoreContext);
 
 
@@ -41,7 +43,7 @@ export const CardsCreateAccount = ({onSuccess}: {onSuccess?: () => void} ) => {
     },
   })
 
-  const onSubmit = async(values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const success = await store.onCreateUser(values)
     if (success && onSuccess) {
       onSuccess()
@@ -63,13 +65,13 @@ export const CardsCreateAccount = ({onSuccess}: {onSuccess?: () => void} ) => {
               <FormField
                 control={form.control}
                 name="username"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input placeholder="Username" autoComplete="username" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
@@ -78,13 +80,13 @@ export const CardsCreateAccount = ({onSuccess}: {onSuccess?: () => void} ) => {
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input type="password" autoComplete="new-password" placeholder="Password" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
@@ -93,13 +95,13 @@ export const CardsCreateAccount = ({onSuccess}: {onSuccess?: () => void} ) => {
               <FormField
                 control={form.control}
                 name="passwordConfirm"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
                       <Input type="password" autoComplete="new-password" placeholder="Confirm Password" {...field} />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
@@ -110,6 +112,6 @@ export const CardsCreateAccount = ({onSuccess}: {onSuccess?: () => void} ) => {
           </CardFooter>
         </form>
       </Form>
-    </Card >
+    </Card>
   )
 }

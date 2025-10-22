@@ -8,7 +8,7 @@ import {StoreContext} from "@/store/storeContext"
 import {Loader2Icon} from "lucide-react"
 import {IconBrandChrome, IconBrandEdge, IconBrandFirefox, IconBrandPocket, IconBrandSafari} from "@tabler/icons-react";
 
-export const ImportModal = ({onSuccess}: { onSuccess?: () => void }) => {
+export const SettingsImport = ({onSuccess}: { onSuccess?: () => void }) => {
   const store = useContext(StoreContext);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);

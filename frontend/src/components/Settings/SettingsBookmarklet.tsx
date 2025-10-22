@@ -6,7 +6,7 @@ import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {useIsMobile} from "@/hooks/use-mobile.ts";
 
-const BookmarkletPage = ({onSuccess}: { onSuccess?: () => void }) => {
+export const SettingsBookmarklet = ({onSuccess}: { onSuccess?: () => void }) => {
   const [copied, setCopied] = useState(false);
   const bookmarkletRef = React.useRef(null);
   const isMobile = useIsMobile();
@@ -262,5 +262,3 @@ const BookmarkletPage = ({onSuccess}: { onSuccess?: () => void }) => {
     </div>
   );
 };
-
-export default BookmarkletPage;

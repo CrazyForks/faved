@@ -3,39 +3,20 @@ import {Bookmark, ChevronLeft, ChevronRight, Import, Keyboard,} from "lucide-rea
 
 import {Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/ui/dialog"
 
-import {CardsEditAccountUserName} from "@/components/dashboard/CardsEditAccountUserName"
-import {CardsEditAccountPassword} from "@/components/dashboard/CardsEditAccountPassword"
-import {CardsEditAccountDisableAuth} from "@/components/dashboard/CardsEditAccountDisableAuth"
-import {CardsCreateAccount} from "@/components/dashboard/CreateAccount"
 import {StoreContext} from "@/store/storeContext"
-import {ImportModal} from "./ImportModal"
 import {observer} from "mobx-react-lite"
-import BookmarkletPage from "./BookMarklet"
-import {Button} from "@/components/ui/button.tsx";
+import {SettingsAuth} from "./SettingsAuth"
+import {SettingsBookmarklet} from "./SettingsBookmarklet"
+import {SettingsImport} from "./SettingsImport"
+
+import {Button} from "@/components/ui/button";
 import {Tabs, TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs"
-
-const AuthComponent = observer(() => {
-  const store = React.useContext(StoreContext);
-  React.useEffect(() => {
-    store.getUser()
-  }, [])
-
-  if (!store.user) {
-    return <CardsCreateAccount/>
-  }
-
-  return (<>
-    <CardsEditAccountUserName/>
-    <CardsEditAccountPassword/>
-    <CardsEditAccountDisableAuth/>
-  </>)
-})
 
 const data = {
   nav: [
-    {id: 'auth', title: "Authentication", icon: Keyboard, component: <AuthComponent/>},
-    {id: "bookmarklet", title: "Bookmarklet", icon: Bookmark, component: <BookmarkletPage/>},
-    {id: "import", title: "Import", icon: Import, component: <ImportModal/>},
+    {id: 'auth', title: "Authentication", icon: Keyboard, component: <SettingsAuth/>},
+    {id: "bookmarklet", title: "Bookmarklet", icon: Bookmark, component: <SettingsBookmarklet/>},
+    {id: "import", title: "Import", icon: Import, component: <SettingsImport/>},
   ],
 }
 

@@ -8,7 +8,7 @@ import { StoreContext } from "@/store/storeContext"
 
 
 
-export function CardsEditAccountDisableAuth() {
+export function UserDelete() {
   const store = useContext(StoreContext);
   return (
     <Card>

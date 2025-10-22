@@ -4,8 +4,8 @@ import {useContext} from "react"
 import {StoreContext} from "@/store/storeContext"
 import {Navigate, useNavigate} from "react-router-dom"
 
-import {CardsCreateAccount} from "@/components/dashboard/CreateAccount"
-import {SetupWrapper} from "@/components/Setup/SetupWrapper.tsx";
+import {UserCreate} from "@/components/Settings/UserCreate"
+import {SetupWrapper} from "@/components/Setup/SetupWrapper";
 
 export const SetupAuth = observer(() => {
   const store = useContext(StoreContext);
@@ -18,7 +18,7 @@ export const SetupAuth = observer(() => {
 
   return (
     <SetupWrapper currentStep={1}>
-      <CardsCreateAccount onSuccess={() => navigate(nextStep)}/>
+      <UserCreate onSuccess={() => navigate(nextStep)}/>
 
       <Button variant="link" onClick={() => navigate(nextStep)}>Skip for now</Button>
     </SetupWrapper>

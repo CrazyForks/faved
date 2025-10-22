@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import {Button} from "@/components/ui/button"
+import {useNavigate} from "react-router-dom"
 
-import { ImportModal } from "../Settings/ImportModal"
-import { SetupWrapper } from "@/components/Setup/SetupWrapper.tsx";
+import {SettingsImport} from "../Settings/SettingsImport"
+import {SetupWrapper} from "@/components/Setup/SetupWrapper";
 
 
 export const SetupImport = (() => {
@@ -10,7 +10,7 @@ export const SetupImport = (() => {
 
   return (
     <SetupWrapper currentStep={3}>
-      <ImportModal onSuccess={() => navigate('/')} />
+      <SettingsImport onSuccess={() => navigate('/')}/>
 
       <Button variant="link" className="" onClick={() => navigate('/')}>Skip for now</Button>
     </SetupWrapper>

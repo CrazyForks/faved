@@ -1,8 +1,8 @@
 import {Button} from "@/components/ui/button"
 import {useState} from "react"
 import {useNavigate} from "react-router-dom"
-import BookmarkletPage from "@/components/Settings/BookMarklet.tsx";
-import {SetupWrapper} from "@/components/Setup/SetupWrapper.tsx";
+import {SettingsBookmarklet} from "@/components/Settings/SettingsBookmarklet";
+import {SetupWrapper} from "@/components/Setup/SetupWrapper";
 
 
 export const SetupBookmarklet = () => {
@@ -11,7 +11,7 @@ export const SetupBookmarklet = () => {
 
   return (
     <SetupWrapper currentStep={2}>
-      <BookmarkletPage onSuccess={() => {
+      <SettingsBookmarklet onSuccess={() => {
         setIsInstalled(true)
       }}/>
 
