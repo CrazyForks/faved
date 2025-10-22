@@ -65,7 +65,7 @@ const App = observer(() => {
           <Route path="/setup/import" element={<SetupImport />} />
           <Route path="/setup/bookmarklet" element={<SetupBookmarklet />} />
           <Route path="/create-item"
-            element={<Dialog open={true}><EditItemForm isCloseWindowOnSubmit={true} /></Dialog>}
+            element={<EditItemForm isCloseWindowOnSubmit={true} />}
           />
         </Route>
         <Route path="*" element={<NotFound />} />

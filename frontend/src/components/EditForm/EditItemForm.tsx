@@ -1,32 +1,34 @@
-import React, { useContext, useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from "@/components/ui/button"
+import React, {useContext, useEffect, useMemo} from 'react';
+import {useForm} from 'react-hook-form';
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {TagEdit} from "@/components/ui/tags"
+import {Textarea} from '../ui/textarea';
+import {StoreContext} from '@/store/storeContext';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form"
+import {ActionType} from '../dashboard/types';
+import type {ItemType} from '@/types/types';
+import {useLocation} from 'react-router-dom';
 import {
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogOverlay,
-  DialogPortal
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { TagEdit } from "@/components/ui/tags"
-import { Textarea } from '../ui/textarea';
-import { StoreContext } from '@/store/storeContext';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
-import { formSchema } from './utils';
-import { ActionType } from '../dashboard/types';
-import type { ItemType } from '@/types/types';
-import { useLocation } from 'react-router-dom';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
-import { Image } from 'lucide-react';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '../ui/alert-dialog';
+import {Image} from 'lucide-react';
 import {IconCloudDownload, IconProgress} from "@tabler/icons-react";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
+import z from "zod";
 
 
 interface EditItemFormProps {
-  isCloseWindowOnSubmit: boolean;
+  isCloseWindowOnSubmit: boolean
 }
 
 const INITIAL_ITEM_DATA: ItemType = {
@@ -50,7 +52,7 @@ const safeDecodeURIComponent = (encodedURI: string): string => {
   }
 };
 
-const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) => {
+const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
   const store = useContext(StoreContext);
   const location = useLocation();
   const [isMetadataLoading, setIsMetadataLoading] = React.useState(false);
@@ -63,7 +65,17 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) =>
   }, [store.type, store.items, store.idItem]);
 
   const form = useForm<ItemType>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(z.object({
+      title: z.string().min(1, {message: "Title is required"}),
+      url: z.string().min(1, {message: "URL is required"}),
+      description: z.any().optional(),
+      comments: z.any().optional(),
+      image: z.any().optional(),
+      tags: z.array(z.any()).optional(),
+      updated_at: z.any().optional(),
+      id: z.any().optional(),
+      created_at: z.any().optional(),
+    })),
     defaultValues: currentItem,
   });
 
@@ -124,14 +136,14 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) =>
     }
   };
 
-  const updateMetadataFromUrl = async(url) => {
+  const updateMetadataFromUrl = async (url) => {
     setIsMetadataLoading(true);
 
-    const data: {data: {title:string, description: string, image_url: string}} = await store.fetchUrlMetadata(url);
+    const data: { data: { title: string, description: string, image_url: string } } = await store.fetchUrlMetadata(url);
 
     setIsMetadataLoading(false);
 
-    if(!data || !data?.data) {
+    if (!data || !data?.data) {
       return;
     }
 
@@ -145,7 +157,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) =>
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
+      render={({field}) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
@@ -157,7 +169,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) =>
               value={field.value ?? ''}
             />
           </FormControl>
-          <FormMessage />
+          <FormMessage/>
         </FormItem>
       )}
     />
@@ -167,7 +179,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) =>
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
+      render={({field}) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
@@ -177,7 +189,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) =>
               value={field.value ?? ''}
             />
           </FormControl>
-          <FormMessage />
+          <FormMessage/>
         </FormItem>
       )}
     />
@@ -187,7 +199,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) =>
     <FormField
       control={form.control}
       name="tags"
-      render={({ field }) => (
+      render={({field}) => (
         <FormItem>
           <FormLabel>Tags</FormLabel>
           <FormControl>
@@ -206,196 +218,190 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ isCloseWindowOnSubmit }) =>
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <DialogPortal>
-          <DialogOverlay>
-            <DialogContent
-              className="sm:max-w-[1200px] max-h-[90dvh] overflow-y-auto"
-              showCloseButton={!isCloseWindowOnSubmit}
-              style={{
-                WebkitOverflowScrolling: 'touch',
-                maxHeight: 'calc(100dvh)',
-              }}
-            >
-              <DialogHeader>
-                <div className="flex flex-row justify-between items-center">
-                  <DialogTitle className="pb-3">
-                    {store.type === ActionType.EDIT ? "Edit item" : "Create item"}
-                  </DialogTitle>
-                </div>
-              </DialogHeader>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 py-4">
-                <div className="lg:col-span-2 space-y-4">
-                  <div className="grid gap-3">
-                    {renderTextField('title', 'Title')}
-                  </div>
-
-                  <div className="grid gap-3">
-                    <FormField
-                      control={form.control}
-                      name="url"
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>URL</FormLabel>
-                            <FormControl >
-                              <div className='flex flex-row gap-2'>
-                                <Input
-                                  type="text"
-                                  id="name-1"
-                                  value={field.value ?? undefined}
-                                  onChange={(value) => {
-                                    field.onChange(value ?? null);
-                                  }}
-                                />
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button onClick={() => updateMetadataFromUrl(field.value) } variant="outline" disabled={isMetadataLoading}>
-                                      {isMetadataLoading ?
-                                        <IconProgress className="animate-spin" />
-                                        : <IconCloudDownload  />}
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    Pull title, description and image from the URL.
-                                  </TooltipContent>
-                                </Tooltip>
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  </div>
-
-                  <div className="grid gap-3">
-                    {renderTextareaField('description', 'Description')}
-                  </div>
-
-                  <div className="grid gap-3">
-                    {renderTextareaField('comments', 'Comments')}
-                  </div>
-
-                  <div className="grid gap-3">
-                    {renderTextField('image', 'Image URL')}
-                  </div>
-
-                  <div className="grid gap-3">
-                    {renderTagsField()}
-                  </div>
-
-                  {store.type === ActionType.EDIT && (
-                    <>
-                      <div className="grid gap-3">
-                        {renderTextField('created_at', 'Created at', true)}
-                      </div>
-                      <div className="grid gap-3">
-                        {renderTextField('updated_at', 'Updated at', true)}
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div className="lg:col-span-1">
-                  <FormItem>
-                    <div className="border rounded-md p-4 bg-gray-50 dark:bg-[#202020] min-h-[200px] flex items-center justify-center">
-                      {imageUrl ? (
-                        <div className="text-center">
-                          <a href={imageUrl} target="_blank" rel="noopener noreferrer">
-                            <img
-                              src={imageUrl}
-                              className="max-w-full max-h-[300px] mx-auto rounded-md shadow-sm"
-                            />
-                          </a>
-                        </div>
-                      ) : (
-                        <div className="text-center text-muted-foreground">
-                          <div className="w-16 h-16 mx-auto mb-2 bg-gray-200 rounded-full flex items-center justify-center">
-                            <span className="text-2xl"><Image /></span>
-                          </div>
-                          <p className="text-sm">No image available</p>
-                          <p className="text-xs">Enter an image URL</p>
-                        </div>
-                      )}
-                    </div>
-                  </FormItem>
-                </div>
+        <div
+          className="sm:max-w-[1200px] max-h-[90dvh] overflow-y-auto p-6"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            maxHeight: 'calc(100dvh)',
+          }}
+        >
+          <h2 className="text-left text-xl font-semibold tracking-tight mb-3">
+            {store.type === ActionType.EDIT ? "Edit item" : "Create item"}
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 py-4">
+            <div className="lg:col-span-2 space-y-4">
+              <div className="grid gap-3">
+                {renderTextField('title', 'Title')}
               </div>
-              <DialogFooter className="bg-background border-t pt-4 mt-4 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 gap-2">
-                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto order-2 sm:order-1">
-                  <Button
-                    type="submit"
-                    variant="default"
-                    onClick={form.handleSubmit(handleSubmit)}
-                    className="w-full sm:w-auto order-1"
-                  >
-                    Save & Close
-                  </Button>
 
-                  {store.type === ActionType.EDIT && (
-                    <>
-                      <Button
-                        onClick={form.handleSubmit(handleSaveCopy)}
-                        type="button"
-                        variant="secondary"
-                        className="w-full sm:w-auto order-2"
-                      >
-                        Save as Copy
-                      </Button>
-                      <Button
-                        onClick={form.handleSubmit(handleSave)}
-                        type="button"
-                        variant="secondary"
-                        className="w-full sm:w-auto order-3"
-                      >
-                        Save
-                      </Button>
-                    </>
+              <div className="grid gap-3">
+                <FormField
+                  control={form.control}
+                  name="url"
+                  render={({field}) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>URL</FormLabel>
+                        <FormControl>
+                          <div className='flex flex-row gap-2'>
+                            <Input
+                              type="text"
+                              id="name-1"
+                              value={field.value ?? undefined}
+                              onChange={(value) => {
+                                field.onChange(value ?? null);
+                              }}
+                            />
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button onClick={() => updateMetadataFromUrl(field.value)} variant="outline"
+                                        disabled={isMetadataLoading}>
+                                  {isMetadataLoading ?
+                                    <IconProgress className="animate-spin"/>
+                                    : <IconCloudDownload/>}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                Pull title, description and image from the URL.
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+
+              <div className="grid gap-3">
+                {renderTextareaField('description', 'Description')}
+              </div>
+
+              <div className="grid gap-3">
+                {renderTextareaField('comments', 'Comments')}
+              </div>
+
+              <div className="grid gap-3">
+                {renderTextField('image', 'Image URL')}
+              </div>
+
+              <div className="grid gap-3">
+                {renderTagsField()}
+              </div>
+
+              {store.type === ActionType.EDIT && (
+                <>
+                  <div className="grid gap-3">
+                    {renderTextField('created_at', 'Created at', true)}
+                  </div>
+                  <div className="grid gap-3">
+                    {renderTextField('updated_at', 'Updated at', true)}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="lg:col-span-1">
+              <FormItem>
+                <div
+                  className="border rounded-md p-4 bg-gray-50 dark:bg-[#202020] min-h-[200px] flex items-center justify-center">
+                  {imageUrl ? (
+                    <div className="text-center">
+                      <a href={imageUrl} target="_blank" rel="noopener noreferrer">
+                        <img
+                          src={imageUrl}
+                          className="max-w-full max-h-[300px] mx-auto rounded-md shadow-sm"
+                        />
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="text-center text-muted-foreground">
+                      <div className="w-16 h-16 mx-auto mb-2 bg-gray-200 rounded-full flex items-center justify-center">
+                        <span className="text-2xl"><Image/></span>
+                      </div>
+                      <p className="text-sm">No image available</p>
+                      <p className="text-xs">Enter an image URL</p>
+                    </div>
                   )}
+                </div>
+              </FormItem>
+            </div>
+          </div>
+          <div
+            className="bg-background border-t pt-4 mt-4 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto order-2 sm:order-1">
+              <Button
+                type="submit"
+                variant="default"
+                onClick={form.handleSubmit(handleSubmit)}
+                className="w-full sm:w-auto order-1"
+              >
+                Save & Close
+              </Button>
 
+              {store.type === ActionType.EDIT && (
+                <>
                   <Button
-                    onClick={handleClose}
+                    onClick={form.handleSubmit(handleSaveCopy)}
                     type="button"
                     variant="secondary"
-                    className="w-full sm:w-auto order-4"
+                    className="w-full sm:w-auto order-2"
                   >
-                    Close
+                    Save as Copy
                   </Button>
-                </div>
+                  <Button
+                    onClick={form.handleSubmit(handleSave)}
+                    type="button"
+                    variant="secondary"
+                    className="w-full sm:w-auto order-3"
+                  >
+                    Save
+                  </Button>
+                </>
+              )}
 
-                {store.type === ActionType.EDIT && (
-                  <div className="order-1 sm:order-2 w-full sm:w-auto">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" className="w-full sm:w-auto">
-                          Delete
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete your item.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="flex flex-col-reverse sm:flex-row">
-                          <AlertDialogCancel className="mt-2 sm:mt-0">
-                            Cancel
-                          </AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={handleDelete}
-                            className="bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60"
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                )}
-              </DialogFooter>
-            </DialogContent>
-          </DialogOverlay>
-        </DialogPortal>
+              <Button
+                onClick={handleClose}
+                type="button"
+                variant="secondary"
+                className="w-full sm:w-auto order-4"
+              >
+                Close
+              </Button>
+            </div>
+
+            {store.type === ActionType.EDIT && (
+              <div className="order-1 sm:order-2 w-full sm:w-auto">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="w-full sm:w-auto">
+                      Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your item.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex flex-col-reverse sm:flex-row">
+                      <AlertDialogCancel className="mt-2 sm:mt-0">
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDelete}
+                        className="bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            )}
+          </div>
+        </div>
       </form>
     </Form>
   );

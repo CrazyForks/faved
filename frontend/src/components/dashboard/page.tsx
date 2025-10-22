@@ -6,15 +6,14 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { useContext, useEffect, useState } from "react"
-import EditItemForm from "@/components/EditForm/EditItemForm"
-import { Dialog } from "@/components/ui/dialog"
 import { observer } from "mobx-react-lite"
 import { StoreContext } from "@/store/storeContext"
 import { AppSidebar } from "@/components/Sidebar/AppSidebar"
 import { DataTable } from "../Table/DataTable"
-import { SettingsDialog } from "../Settings/SettingsModal"
+import { SettingsDialog } from "../Settings/SettingsDialog.tsx"
 import { TagType } from "@/types/types"
 import Loading from "@/components/Loading"
+import {EditItemDialog} from "@/components/EditForm/EditItemDialog.tsx";
 
 
 export const Page = observer(() => {
@@ -53,14 +52,7 @@ export const Page = observer(() => {
           </div >
         </div >
       </SidebarInset >
-      <Dialog onOpenChange={(val) => {
-        store.setIsShowEditModal(val)
-        if (!val) {
-          store.fetchItems()
-        }
-      }} open={store.isShowEditModal} >
-        {store.isShowEditModal && <EditItemForm isCloseWindowOnSubmit={false} />}
-      </Dialog>
+      {store.isShowEditModal && <EditItemDialog />}
       {store.isOpenSettingsModal && <SettingsDialog />}
     </SidebarProvider >
   )
