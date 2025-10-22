@@ -27,7 +27,7 @@ export const Sorter: ({selectedSortColumn, isDesc, handleSortChange, sortableCol
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon"><ArrowDownUp/></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side='bottom' align='end' className='min-w-40'

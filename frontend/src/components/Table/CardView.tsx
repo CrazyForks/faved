@@ -121,10 +121,12 @@ export const CardView: React.FC<{ el: any }> = observer(({el}) => {
             </a>
           )}
           {el.tags && (
-            <div className="text-left w-full py-2 leading-6.5">
-              {el.tags.map((tagID, index) => (
-                <TagBadge key={index} tagID={tagID}/>
-              ))}
+            <div className="w-full py-2 leading-6.5 flex flex-wrap gap-1">
+              {el.tags.map((tagID) =>
+                 <React.Fragment key={tagID.toString()}>
+                   <TagBadge tagID={tagID}/>
+                 </React.Fragment>
+              )}
             </div>
           )}
           {(el.description || el.comments) && (

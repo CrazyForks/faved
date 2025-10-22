@@ -11,6 +11,6 @@ export const colorMap = {
   'red':  'bg-red-600',
   'yellow':  'bg-yellow-600',
   'aqua':  'bg-blue-600',
-  'white ':  'bg-neutral-100',
+  'white ':  'bg-neutral-300',
   'black':  'bg-neutral-950',
 }

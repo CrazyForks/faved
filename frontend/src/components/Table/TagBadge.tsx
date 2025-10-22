@@ -39,10 +39,10 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({tagID}) => {
       <TooltipTrigger asChild>
         <Badge
           variant={isTagSelected ? 'outline' : 'secondary'}
-          className="mr-2 cursor-pointer"
+          className="cursor-pointer"
           onClick={setTag}
         >
-          <span className={`w-3 h-3 rounded-full ${colorClass}`}></span>
+          <span className={`w-3 h-3 rounded-full flex-none ${colorClass}`}></span>
           <span>{tagName}</span>
         </Badge>
       </TooltipTrigger>

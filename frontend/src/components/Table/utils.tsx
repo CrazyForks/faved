@@ -56,7 +56,7 @@ const UrlCellContent = observer(({item}: { item: z.infer<typeof schema> }) => {
             {url}
           </a>
       }
-      {tags && <div className="text-left w-full py-2 leading-6.5">
+      {tags && <div className="w-full py-2 leading-6.5 flex flex-wrap gap-1">
         {tags.map((tagID) => (
           <TagBadge key={tagID} tagID={tagID}/>
         ))}
