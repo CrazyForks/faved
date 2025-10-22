@@ -37,8 +37,9 @@ use Framework\Application;
 use Framework\Middleware\AuthenticationMiddleware;
 use Framework\Middleware\CSRFMiddleware;
 use Framework\Middleware\DatabaseMigrations;
+use function Framework\startSession;
 
-session_start();
+startSession();
 
 date_default_timezone_set('UTC');
 

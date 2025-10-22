@@ -3,10 +3,11 @@
 namespace Framework;
 
 
+use Config;
 use Exception;
+use Framework\Responses\DataResponse;
 use Framework\Responses\PageResponse;
 use Framework\Responses\RedirectResponse;
-use Framework\Responses\DataResponse;
 use Models\Repository;
 
 function page($page_name, $data)
@@ -19,7 +20,8 @@ function redirect($location, $code = 303)
 	return new RedirectResponse($location, $code);
 }
 
-function data(array $data, $code = 200) {
+function data(array $data, $code = 200)
+{
 	return new DataResponse($data, $code);
 }
 
@@ -78,10 +80,26 @@ function validateUsername(string $username)
 	}
 }
 
+function startSession(): void
+{
+	// 7 days
+	$session_lifetime = Config::getSessionLifetime();
+
+	session_start([
+		'name' => Config::getSessionCookieName(),
+		'cookie_lifetime' => $session_lifetime,
+		'gc_maxlifetime' => $session_lifetime,
+		'cookie_path' => '/',
+		'cookie_secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+		'cookie_httponly' => true,
+		'cookie_samesite' => 'Lax',
+	]);
+}
+
 function loginUser(int $user_id): void
 {
 	if (!isset($_SESSION)) {
-		session_start();
+		startSession();
 	}
 
 	$_SESSION['user_id'] = $user_id;
