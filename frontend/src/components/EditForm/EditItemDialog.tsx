@@ -8,7 +8,7 @@ export const EditItemDialog = observer(() => {
   const store = useContext(StoreContext);
 
   return <Dialog onOpenChange={store.setIsShowEditModal} open={store.isShowEditModal} >
-    <DialogContent className="p-0">
+    <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}  className="p-0">
       <DialogTitle className="sr-only">Edit Item</DialogTitle>
        <EditItemForm isCloseWindowOnSubmit={false} />
     </DialogContent>
