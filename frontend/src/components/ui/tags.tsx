@@ -22,8 +22,8 @@ import { observer } from "mobx-react-lite"
 import {useContext, useEffect} from "react";
 import { StoreContext } from "@/store/storeContext.ts";
 import { toJS } from "mobx";
-import { colorMap } from "@/lib/utils.ts";
 import { TagsObjectType } from "@/types/types"
+import {getColorClass, TagBadgeMini} from "@/components/Table/TagBadge.tsx";
 
 
 const TagEdit = observer(({ className, values, onChange }: { className?: string, values: Array<string> | undefined, onChange: (values: string[]) => void }) => {
@@ -69,25 +69,28 @@ const TagEdit = observer(({ className, values, onChange }: { className?: string,
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={['text-left h-auto whitespace-normal'].join(' ')}
+            className={['text-left h-auto whitespace-normal w-full flex justify-start'].join(' ')}
           >
-            {selected.length > 0
-              ? selected.map(v => tags.find(t => t.id === v)?.fullPath.replaceAll('\\/', '/')).join(', ')
+            <div className="flex flex-wrap gap-1">
+              {selected.length > 0
+              ? selected.map(tagId => <TagBadgeMini tagID={tagId as number} />)
               : "Select tags..."}
-            <ChevronsUpDown className="opacity-50" />
+            </div>
+            <ChevronsUpDown className="opacity-50 ml-auto" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[400px] p-0 overflow-y-scroll" align="start" onWheel={(e) => e.stopPropagation()}>
+        <PopoverContent className="w-[calc(95dvw-var(--spacing)*6*2)] xl:max-w-[calc(72rem-var(--spacing)*6*2)] p-0 overflow-y-scroll" align="start" onWheel={(e) => e.stopPropagation()}>
 
           <Command shouldFilter={false} className={''} disablePointerSelection={false} loop={false} >
             <CommandInput value={query} onValueChange={setQuery} placeholder="Search tags..." className="h-9" />
 
             <CommandList>
               {/*<CommandEmpty>No tags found.</CommandEmpty>*/}
-              <CommandGroup >
+              <CommandGroup>
                 {tags
                   .filter(tag => tag.fullPath.toLowerCase().includes(query.toLowerCase().trim())).map((tag) => (
                     <CommandItem
+                      className="flex items-center gap-3"
                       key={tag.id}
                       value={tag.id}
                       keywords={[tag.fullPath]}
@@ -99,8 +102,8 @@ const TagEdit = observer(({ className, values, onChange }: { className?: string,
                         )
                       }}
                     >
-                      <span className={`w-3 h-3 rounded-full inline-block mr-1 ${colorMap[tag.color]}`}></span>
-                      {tag.fullPath}
+                      <span className={`w-3 h-3 flex-none rounded-full ${getColorClass(tag.color)}`}></span>
+                      <span>{tag.fullPath}</span>
                       <Check
                         className={cn(
                           "ml-auto",

@@ -18,11 +18,42 @@ interface MainStore {
   selectedTagId: number;
 }
 
+export const getColorClass = (color: string | undefined) => {
+  return colorMap[color as keyof typeof colorMap] || colorMap.gray;
+};
+
+const formatTagPathForDisplay = (path) => {
+  return path.replaceAll('\\/', '/');
+};
+
+export const TagBadgeMini: React.FC<{ tagID: number }> = observer(({tagID}) => {
+  const store = React.useContext(StoreContext) as unknown as MainStore;
+  const tag = store.tags[tagID];
+  if (!tag) {
+    return null;
+  }
+  const fullPath = formatTagPathForDisplay(tag.fullPath);
+  const colorClass = getColorClass(tag.color);
+
+  return (
+        <Badge
+          variant="secondary"
+        >
+          <span className={`w-3 h-3 rounded-full flex-none ${colorClass}`}></span>
+          <span>{fullPath}</span>
+        </Badge>)
+})
+
 
 export const TagBadge: React.FC<{ tagID: number }> = observer(({tagID}) => {
   const store = React.useContext(StoreContext) as unknown as MainStore;
-  const fullPath = store.tags?.[tagID]?.fullPath.replaceAll('\\/', '/') || "";
-  const tagName = store.tags?.[tagID]?.title;
+  const tag = store.tags[tagID];
+  if (!tag) {
+    return null;
+  }
+
+  const fullPath = formatTagPathForDisplay(tag.fullPath);
+  const tagTitle = tag.title;
   const isTagSelected = store.selectedTagId == tagID;
 
   const setTag = () => {
@@ -30,8 +61,8 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({tagID}) => {
     store.setCurrentPage(1);
   };
 
-  const colorClass = store.tags[tagID]?.color && colorMap[store.tags[tagID].color as keyof typeof colorMap]
-    ? colorMap[store.tags[tagID].color as keyof typeof colorMap]
+  const colorClass = tag.color && colorMap[tag.color as keyof typeof colorMap]
+    ? colorMap[tag.color as keyof typeof colorMap]
     : colorMap.gray;
 
   return (
@@ -43,7 +74,7 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({tagID}) => {
           onClick={setTag}
         >
           <span className={`w-3 h-3 rounded-full flex-none ${colorClass}`}></span>
-          <span>{tagName}</span>
+          <span>{tagTitle}</span>
         </Badge>
       </TooltipTrigger>
       <TooltipContent>

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 import { StoreContext } from "@/store/storeContext.ts";
 import { colorMap } from "@/lib/utils.ts";
+import {getColorClass} from "@/components/Table/TagBadge.tsx";
 
 
 export function SidebarTag({ tag, innerItems = [], level, isTagSelected, isChildTagSelected }: { tag: any, innerItems?: React.ReactNode[], level: number, isTagSelected: boolean, isChildTagSelected?: boolean }) {
@@ -83,7 +84,7 @@ export function SidebarTag({ tag, innerItems = [], level, isTagSelected, isChild
   const tagContent = (className = '') => {
     return (<>
       <div onClick={setTag} className={`${className} flex justify-start items-center text-left gap-2 py-2 w-full pe-6.5`}>
-        <span className={`w-2.5 h-2.5 rounded-full flex-none ${colorMap[tag.color]}`}></span>
+        <span className={`w-2.5 h-2.5 rounded-full flex-none ${getColorClass(tag.color)}`}></span>
         <input
           ref={inputRef}
           className={['tag-title-edit-input rounded-sm w-[85%]', (isRenaming ? '' : 'hidden'), (isMobile ? 'border-1' : 'border-none')].join(' ')}
