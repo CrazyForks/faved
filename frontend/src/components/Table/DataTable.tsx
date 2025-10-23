@@ -44,7 +44,7 @@ export const DataTable: React.FC = observer(() => {
   const data = store.selectedTagId === '0' ? store.items : store.items.filter((item => {
     return (store.selectedTagId === null && item.tags.length === 0) || item.tags.includes(Number(store.selectedTagId) as unknown as string);
   }))
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
 
   const [isTableView, setIsTableView] = React.useState<boolean>(getTableViewPreference());
 
