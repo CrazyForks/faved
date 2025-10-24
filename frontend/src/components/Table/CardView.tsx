@@ -62,7 +62,7 @@ export const CardView: React.FC<{ el: any }> = observer(({el}) => {
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => {
-                store.onCreateItem(el, true, false, null)
+                store.onCreateItem(el)
               }}>
                 Make a copy
               </DropdownMenuItem>

@@ -235,66 +235,32 @@ class mainStore {
       });
   }
   onDeleteItem = async (id: number) => {
-    this.runRequest(API_ENDPOINTS.items.deleteItem(id), 'DELETE', {}, 'Failed to delete item')
+    return this.runRequest(API_ENDPOINTS.items.deleteItem(id), 'DELETE', {}, 'Failed to delete item')
       .finally(() => {
         this.fetchItems()
         this.fetchTags()
       })
   }
-  onCreateItem = (val: ItemType, isCreateCopy = false as boolean, onSave = false, closeWindow = null) => {
-    const options = {
-      method: onSave ? 'PATCH' : !isCreateCopy ? this.type === ActionType.EDIT ? 'PATCH' : 'POST' : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
-      body: JSON.stringify({
+  onCreateItem = async (val: ItemType) => {
+    return this.sendItemRequest(API_ENDPOINTS.items.createItem, 'POST', val);
+  }
+  onUpdateItem = async (val: ItemType, itemId) => {
+    return this.sendItemRequest(API_ENDPOINTS.items.updateItem(itemId), 'PATCH', val);
+  }
+  sendItemRequest = async (endpoint, method, val: ItemType) => {
+    return this.runRequest(
+      endpoint,
+      method,
+      {
         title: val.title || '',
         description: val.description || '',
         url: val.url || '',
         comments: val.comments || '',
         image: val.image || '',
         tags: val.tags
-      })
-    };
-
-    fetch((isCreateCopy || this.type !== ActionType.EDIT ? API_ENDPOINTS.items.createItem : API_ENDPOINTS.items.updateItem(val.id)), options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then(response => {
-
-        let message = response.message;
-        if (closeWindow) {
-          message += "\n" + 'The window will close in 1 second.';
-          setTimeout(() => {
-            window.close()
-          }, 1000);
-        }
-
-        toast(message, {position: 'top-center', style: stylesTost()})
-
-      })
-      .catch(err => toast(err.message, {position: 'top-center', style: stylesTost()}))
-      .finally(() => {
-        if (!onSave) {
-          this.fetchItems()
-          this.fetchTags()
-          this.setCurrentPage(this.currentPage)
-        }
-
-      })
+      },
+      'Failed to create item'
+    )
   }
   getUser = async (noErrorEmit: boolean = false) => {
     return this.runRequest(API_ENDPOINTS.settings.getUser, 'GET', {},

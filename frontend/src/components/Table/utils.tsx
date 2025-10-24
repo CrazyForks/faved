@@ -101,7 +101,7 @@ const ActionsCell = observer(({row}: { row: any }) => {
   }
 
   const handleMakeCopy = () => {
-    store.onCreateItem(row.original, true)
+    store.onCreateItem(row.original)
   }
 
   const handleDelete = () => {

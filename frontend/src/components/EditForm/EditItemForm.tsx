@@ -103,34 +103,53 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
     }
   }, [isCloseWindowOnSubmit, urlParams, form]);
 
-  const handleSubmit = (values: ItemType) => {
-    store.onCreateItem(values, false, false, isCloseWindowOnSubmit ? window : null);
-    store.setIsShowEditModal(false);
-    form.reset();
+  const handleSaveClose = async (values: ItemType) => {
+    let result;
+
+    if (store.type === ActionType.EDIT && values.id) {
+      result = await store.onUpdateItem(values, values.id);
+    } else {
+      result = await store.onCreateItem(values);
+    }
+    if (!result) {
+      return;
+    }
+    success();
   };
 
-  const handleSaveCopy = (values: ItemType) => {
-    store.onCreateItem(values, true);
-    store.setIsShowEditModal(false);
-    form.reset();
+  const handleSaveCopy = async (values: ItemType) => {
+    const result = await store.onCreateItem(values);
+    if (!result) {
+      return;
+    }
+    success();
   };
 
-  const handleSave = (values: ItemType) => {
-    store.onCreateItem(values, false, true);
+  const handleDelete = async () => {
+    const result = await store.onDeleteItem(store.idItem as number);
+    if (!result) {
+      return;
+    }
+    success();
   };
 
-  const handleDelete = () => {
-    store.onDeleteItem(store.idItem as number);
-    store.setIsShowEditModal(false);
-    form.reset();
-  };
+  const success = () => {
+    if (isCloseWindowOnSubmit) {
+      setTimeout(() => {
+        window.close()
+      }, 1000);
+    } else {
+      store.fetchItems()
+      store.fetchTags()
+      store.setIsShowEditModal(false);
+      form.reset();
+    }
+  }
 
-  const handleClose = () => {
+  const cancel = () => {
     if (isCloseWindowOnSubmit) {
       window.close();
     } else {
-      store.fetchItems();
-      store.fetchTags();
       store.setIsShowEditModal(false);
       form.reset();
     }
@@ -218,7 +237,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <form onSubmit={form.handleSubmit(handleSaveClose)}>
         <div
           className={"overflow-y-auto p-6 h-[100dvh]" + (!isCloseWindowOnSubmit ? " md:h-auto md:max-h-[95dvh]" : '')}
         >
@@ -332,7 +351,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
             )}
 
             <Button
-              onClick={handleClose}
+              onClick={cancel}
               type="button"
               variant="outline"
               className="order-3 sm:order-none"
@@ -356,7 +375,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
             <Button
               type="submit"
               variant="default"
-              onClick={form.handleSubmit(handleSubmit)}
+              onClick={form.handleSubmit(handleSaveClose)}
               className="order-1 sm:order-none"
             >
               {store.type === ActionType.EDIT ? 'Save changes' : 'Create item'}
