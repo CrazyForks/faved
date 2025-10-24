@@ -21,10 +21,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '../ui/alert-dialog';
-import {Image} from 'lucide-react';
 import {IconCloudDownload, IconProgress} from "@tabler/icons-react";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
 import z from "zod";
+import {ImagePreview} from "@/components/EditForm/ImagePreview.tsx";
 
 
 interface EditItemFormProps {
@@ -184,7 +184,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <Textarea
-              className="max-h-[78px] overflow-y-auto"
+              className="overflow-y-auto"
               {...field}
               value={field.value ?? ''}
             />
@@ -225,8 +225,8 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
           <h2 className="text-left text-xl font-semibold tracking-tight mb-3">
             {store.type === ActionType.EDIT ? "Edit item" : "Create item"}
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 py-4">
-            <div className="lg:col-span-2 space-y-4">
+          <div className="py-4">
+            <div className="space-y-4">
               <div className="grid gap-3">
                 {renderTextField('title', 'Title')}
               </div>
@@ -279,8 +279,11 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
                 {renderTextareaField('comments', 'Comments')}
               </div>
 
-              <div className="grid gap-3">
-                {renderTextField('image', 'Image URL')}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="grow"> {renderTextField('image', 'Image URL')}</div>
+                <div className="sm:max-w-[40%] min-w-16 min-h-16">
+                  <ImagePreview imageUrl={imageUrl}/>
+                </div>
               </div>
 
               <div className="grid gap-3">
@@ -288,40 +291,11 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
               </div>
 
               {store.type === ActionType.EDIT && (
-                <>
-                  <div className="grid gap-3">
-                    {renderTextField('created_at', 'Created at', true)}
-                  </div>
-                  <div className="grid gap-3">
-                    {renderTextField('updated_at', 'Updated at', true)}
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="lg:col-span-1">
-              <FormItem>
-                <div
-                  className="border rounded-md p-4 bg-gray-50 dark:bg-[#202020] min-h-[200px] flex items-center justify-center">
-                  {imageUrl ? (
-                    <div className="text-center">
-                      <a href={imageUrl} target="_blank" rel="noopener noreferrer">
-                        <img
-                          src={imageUrl}
-                          className="max-w-full max-h-[300px] mx-auto rounded-md shadow-sm"
-                        />
-                      </a>
-                    </div>
-                  ) : (
-                    <div className="text-center text-muted-foreground">
-                      <div className="w-16 h-16 mx-auto mb-2 bg-gray-200 rounded-full flex items-center justify-center">
-                        <span className="text-2xl"><Image/></span>
-                      </div>
-                      <p className="text-sm">No image available</p>
-                      <p className="text-xs">Enter an image URL</p>
-                    </div>
-                  )}
+                <div className="sm:grid grid-cols-2 gap-3 space-y-4 sm:space-y-0">
+                  {renderTextField('created_at', 'Created at', true)}
+                  {renderTextField('updated_at', 'Updated at', true)}
                 </div>
-              </FormItem>
+              )}
             </div>
           </div>
           <div
