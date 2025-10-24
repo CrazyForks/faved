@@ -48,7 +48,7 @@ class mainStore {
     makeAutoObservable(this); // Makes state observable and actions transactional
   }
 
-  runRequest = (endpoint: string, method: string, bodyFields: object, defaultErrorMessage: string) => {
+  runRequest = (endpoint: string, method: string, bodyFields: object, defaultErrorMessage: string, skipSuccessMessage: boolean = false, skipErrorMessage: boolean = false) => {
     const options = {
       method: method,
       headers: {
@@ -62,25 +62,34 @@ class mainStore {
 
     return fetch(endpoint, options)
       .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          return response.json().then(data => {
-            throw new Error(data.message || `HTTP error! status: ${response.status}`);
-          });
+        if (response.ok) {
+          return response.json();
         }
-        return response.json();
+
+        if (response.status === 401) {
+          this.setIsAuthRequired(true)
+        }
+        if (response.status === 424) {
+          this.setIsshowInitializeDatabasePage(true)
+        }
+        return response.json().then(data => {
+          throw new Error(data.message || `HTTP error! status: ${response.status}`);
+        });
       })
       .then((data) => {
-        toast.success(data.message, {position: 'top-center', style: stylesTost()});
+        if (typeof data.message !== 'undefined' && !skipSuccessMessage) {
+          toast.success(data.message, {position: 'top-center', style: stylesTost()});
+        }
         return data
       })
       .catch((err, data) => {
-        toast.error((err instanceof Error ? err.message : defaultErrorMessage), {
-          position: 'top-center',
-          style: stylesTost()
-        })
+        if (!skipErrorMessage) {
+          toast.error((err instanceof Error ? err.message : defaultErrorMessage), {
+            position: 'top-center',
+            style: stylesTost()
+          })
+        }
+
         return null;
       })
   }
@@ -136,21 +145,13 @@ class mainStore {
     this.isAuthRequired = val;
   };
   fetchTags = async () => {
-    try {
-      const response = await fetch(API_ENDPOINTS.tags.list, {
-        headers: {
-          'Content-Type': 'application/json',
+    this.runRequest(API_ENDPOINTS.tags.list, 'GET', {}, 'Error fetching tags')
+      .then((data) => {
+        if (data === null) {
+          return;
         }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      this.setTags(data);
-    } catch (err) {
-      toast.error('Error fetching tags', {position: 'top-center', style: stylesTost()})
-    }
+        this.setTags(data);
+      })
   }
   onCreateTag = async (title: string) => {
     let tagID = null;
@@ -188,35 +189,15 @@ class mainStore {
   }
   onChangeTagColor = async (tagID: string, color: string) => {
 
-    this.runRequest(API_ENDPOINTS.tags.updateColor(tagID), "PATCH", {color},'Error updating tag color')
+    this.runRequest(API_ENDPOINTS.tags.updateColor(tagID), "PATCH", {color}, 'Error updating tag color')
       .finally(() => {
         const tag = {...this.tags[tagID as unknown as number], color}
         this.tags = {...this.tags, [tagID]: tag};
       })
   }
   onChangeTagPinned = async (tagID: string, pinned: boolean) => {
-    const options = {
-      method: "PATCH",
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
-      body: JSON.stringify({
-        pinned
-      })
-    };
-    fetch(API_ENDPOINTS.tags.updatePinned(tagID), options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => toast(data.message, {position: 'top-center', style: stylesTost()}))
-      .catch(err => console.error(err))
+
+    this.runRequest(API_ENDPOINTS.tags.updatePinned(tagID), "PATCH", {pinned}, 'Error updating tag pinned')
       .finally(() => {
         const tag = {...this.tags[tagID as unknown as number], pinned}
         this.tags = {...this.tags, [tagID]: tag};
@@ -242,88 +223,19 @@ class mainStore {
     this.preSelectedItemSettingsModal = val;
   };
   fetchItems = async () => {
-    const options = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
 
-    };
-    const fetchItems = async () => {
-      try {
-        const response = await fetch(API_ENDPOINTS.items.list, options);
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          throw new Error(`HTTP error! status: ${response.status}`);
+    this.runRequest(API_ENDPOINTS.items.list, 'GET', {}, 'Failed to fetch items')
+      .then((data) => {
+        if (data === null) {
+          return
         }
-        const data = await response.json();
         this.setItems(data);
         this.setItemsOriginal(data)
-      } catch (err) {
-        this.error = (err instanceof Error ? err.message : 'Failed to fetch items');
-        toast(err.message, {position: 'top-center', style: stylesTost()})
-      }
-    };
 
-
-    return fetch(API_ENDPOINTS.settings.getUser, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then(async ({data}) => {
-        if (data.user !== null) {
-          this.setUser(data.user.username);
-        }
-        await fetchItems();
-      })
-      .catch(err => {
-        toast(err.message, {position: 'top-center', style: stylesTost()})
-
-      })
-
-
+      });
   }
   onDeleteItem = async (id: number) => {
-    const options = {
-      method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
-    };
-    fetch(API_ENDPOINTS.items.deleteItem(id), options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => toast(response.message, {position: 'top-center', style: stylesTost()}))
-      .catch(err => toast(err.message, {position: 'top-center', style: stylesTost()}))
+    this.runRequest(API_ENDPOINTS.items.deleteItem(id), 'DELETE', {}, 'Failed to delete item')
       .finally(() => {
         this.fetchItems()
         this.fetchTags()
@@ -384,45 +296,18 @@ class mainStore {
 
       })
   }
-  getUser = async (noErrorEmit = false) => {
-    const options = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-
-    };
-
-    return fetch(API_ENDPOINTS.settings.getUser, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => {
-        if (response.data.user !== null) {
-          this.setUser(response.data.user.username);
+  getUser = async (noErrorEmit: boolean = false) => {
+    return this.runRequest(API_ENDPOINTS.settings.getUser, 'GET', {},
+      'Failed to fetch user', true, noErrorEmit)
+      .then(({data}) => {
+        if (data?.user !== null) {
+          this.setUser(data.user.username);
           return true;
         }
         return false;
       })
-      .catch(err => {
-        if (!noErrorEmit) {
-          toast(err.message, {position: 'top-center', style: stylesTost()})
-        }
-        return false;
-      })
-
   }
+
   onCreateUser = async (val: UsetType) => {
     const options = {
       method: 'POST',
