@@ -5,7 +5,7 @@ import {ActionType} from '@/components/dashboard/types';
 import type {ItemType, LoginType, PasswordType, TagsObjectType, TagType, UsernameType, UsetType} from '@/types/types';
 
 const stylesTost = () => ({
-  width: 320,
+  width: 'auto',
   left: '50%',
   transform: 'translateX(-50%)'
 });
@@ -73,7 +73,7 @@ class mainStore {
         return response.json();
       })
       .then((data) => {
-        toast(data.message, {position: 'top-center', style: stylesTost()});
+        toast.success(data.message, {position: 'top-center', style: stylesTost()});
         return data
       })
       .catch((err, data) => {
