@@ -136,7 +136,7 @@ export const SettingsImport = ({onSuccess}: { onSuccess?: () => void }) => {
               <ul className="ml-4 mt-3 list-disc space-y-2 text-sm">
                 <li>All browser bookmarks and folders.</li>
                 <li>Bookmark folders will be converted to tags.</li>
-                <li>Folder hierarchy will be preserved. Nested folder will become nested tags.</li>
+                <li>Folder hierarchy will be preserved. Nested folders will become nested tags.</li>
                 <li>All bookmarks will have "Imported from browser" tag.</li>
               </ul>
             </div>

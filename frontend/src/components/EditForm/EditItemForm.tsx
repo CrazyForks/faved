@@ -220,7 +220,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div
-          className="overflow-y-auto p-6 h-[100dvh] md:h-auto md:max-h-[95dvh] "
+          className={"overflow-y-auto p-6 h-[100dvh]" + (!isCloseWindowOnSubmit ? " md:h-auto md:max-h-[95dvh]" : '')}
         >
           <h2 className="text-left text-xl font-semibold tracking-tight mb-3">
             {store.type === ActionType.EDIT ? "Edit item" : "Create item"}
@@ -299,53 +299,12 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
             </div>
           </div>
           <div
-            className="bg-background border-t pt-4 mt-4 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 gap-2">
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto order-2 sm:order-1">
-              <Button
-                type="submit"
-                variant="default"
-                onClick={form.handleSubmit(handleSubmit)}
-                className="w-full sm:w-auto order-1"
-              >
-                Save & Close
-              </Button>
-
-              {store.type === ActionType.EDIT && (
-                <>
-                  <Button
-                    onClick={form.handleSubmit(handleSaveCopy)}
-                    type="button"
-                    variant="secondary"
-                    className="w-full sm:w-auto order-2"
-                  >
-                    Save as Copy
-                  </Button>
-                  <Button
-                    onClick={form.handleSubmit(handleSave)}
-                    type="button"
-                    variant="secondary"
-                    className="w-full sm:w-auto order-3"
-                  >
-                    Save
-                  </Button>
-                </>
-              )}
-
-              <Button
-                onClick={handleClose}
-                type="button"
-                variant="secondary"
-                className="w-full sm:w-auto order-4"
-              >
-                Close
-              </Button>
-            </div>
-
+            className="bg-background border-t pt-5 mt-4 flex flex-col sm:flex-row justify-end gap-2">
             {store.type === ActionType.EDIT && (
-              <div className="order-1 sm:order-2 w-full sm:w-auto">
+              <div className="mt-10 order-last sm:order-none sm:mr-auto sm:mt-0">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="w-full sm:w-auto">
+                    <Button variant="destructive" className="w-full">
                       Delete
                     </Button>
                   </AlertDialogTrigger>
@@ -371,6 +330,37 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
                 </AlertDialog>
               </div>
             )}
+
+            <Button
+              onClick={handleClose}
+              type="button"
+              variant="outline"
+              className="order-3 sm:order-none"
+            >
+              Cancel
+            </Button>
+
+            {store.type === ActionType.EDIT && (
+              <>
+                <Button
+                  onClick={form.handleSubmit(handleSaveCopy)}
+                  type="button"
+                  variant="outline"
+                  className="order-2 sm:order-none"
+                >
+                  Save as copy
+                </Button>
+              </>
+            )}
+
+            <Button
+              type="submit"
+              variant="default"
+              onClick={form.handleSubmit(handleSubmit)}
+              className="order-1 sm:order-none"
+            >
+              {store.type === ActionType.EDIT ? 'Save changes' : 'Create item'}
+            </Button>
           </div>
         </div>
       </form>
