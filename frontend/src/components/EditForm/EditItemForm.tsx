@@ -202,8 +202,9 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
       render={({field}) => (
         <FormItem>
           <FormLabel>Tags</FormLabel>
-          <FormControl>
+          <FormControl className="text-left">
             <TagEdit
+              className={'w-[calc(100dvw-var(--spacing)*6*2)]' + (!isCloseWindowOnSubmit ? ' md:w-[calc(95dvw-var(--spacing)*6*2)] max-w-[calc(72rem-var(--spacing)*6*2)]' : '')}
               onChange={field.onChange}
               values={field.value ?? []}
             />
@@ -219,11 +220,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <div
-          className="sm:max-w-[1200px] max-h-[90dvh] overflow-y-auto p-6"
-          style={{
-            WebkitOverflowScrolling: 'touch',
-            maxHeight: 'calc(100dvh)',
-          }}
+          className="overflow-y-auto p-6 h-[100dvh] md:h-auto md:max-h-[95dvh] "
         >
           <h2 className="text-left text-xl font-semibold tracking-tight mb-3">
             {store.type === ActionType.EDIT ? "Edit item" : "Create item"}

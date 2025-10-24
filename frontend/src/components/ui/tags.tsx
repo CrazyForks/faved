@@ -61,8 +61,6 @@ const TagEdit = observer(({ className, values, onChange }: { className?: string,
   }
 
   return (
-    <div className={[className, 'justify-between'].join(' ')}>
-
       <Popover open={open} onOpenChange={(v) => { setOpen(v); !v && setQuery(''); !v && sort() }}>
         <PopoverTrigger asChild>
           <Button
@@ -79,12 +77,19 @@ const TagEdit = observer(({ className, values, onChange }: { className?: string,
             <ChevronsUpDown className="opacity-50 ml-auto" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[calc(95dvw-var(--spacing)*6*2)] xl:max-w-[calc(72rem-var(--spacing)*6*2)] p-0 overflow-y-scroll" align="start" onWheel={(e) => e.stopPropagation()}>
+        <PopoverContent
+          className={
+          [className, 'p-0 overflow-y-hidden'].join(' ')}
+          align="start"
+          // Required to make the popover scrollable with mouse wheel and touch move inside modal
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+        >
 
-          <Command shouldFilter={false} className={''} disablePointerSelection={false} loop={false} >
+          <Command shouldFilter={false} disablePointerSelection={false} loop={false} >
             <CommandInput value={query} onValueChange={setQuery} placeholder="Search tags..." className="h-9" />
 
-            <CommandList>
+            <CommandList className="overflow-y-scroll max-h-[25dvh]">
               {/*<CommandEmpty>No tags found.</CommandEmpty>*/}
               <CommandGroup>
                 {tags
@@ -139,8 +144,6 @@ const TagEdit = observer(({ className, values, onChange }: { className?: string,
 
         </PopoverContent>
       </Popover>
-
-    </div>
   )
 })
 
