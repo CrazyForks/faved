@@ -4,12 +4,6 @@ import {API_ENDPOINTS} from './api';
 import {ActionType} from '@/components/dashboard/types';
 import type {ItemType, LoginType, PasswordType, TagsObjectType, TagType, UsernameType, UsetType} from '@/types/types';
 
-const stylesTost = () => ({
-  width: 'auto',
-  left: '50%',
-  transform: 'translateX(-50%)'
-});
-
 
 const getCookie = (name: string) => {
 
@@ -82,7 +76,7 @@ class mainStore {
       })
       .then((data) => {
         if (typeof data.message !== 'undefined' && !skipSuccessMessage) {
-          toast.success(data.message, {position: 'top-center', style: stylesTost()});
+          toast.success(data.message, {position: 'top-center'});
         }
         return data
       })
@@ -90,7 +84,6 @@ class mainStore {
         if (!skipErrorMessage) {
           toast.error((err instanceof Error ? err.message : defaultErrorMessage), {
             position: 'top-center',
-            style: stylesTost()
           })
         }
 
