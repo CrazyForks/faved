@@ -48,16 +48,20 @@ class mainStore {
     makeAutoObservable(this); // Makes state observable and actions transactional
   }
 
-  runRequest = (endpoint: string, method: string, bodyFields: object, defaultErrorMessage: string, skipSuccessMessage: boolean = false, skipErrorMessage: boolean = false) => {
+  runRequest = (endpoint: string, method: string, bodyData: object | FormData, defaultErrorMessage: string, skipSuccessMessage: boolean = false, skipErrorMessage: boolean = false) => {
     const options = {
       method: method,
       headers: {
-        'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
       },
     };
-    if (method !== 'GET' && method !== 'HEAD' && Object.keys(bodyFields).length > 0) {
-      options['body'] = JSON.stringify(bodyFields)
+
+    if (!(bodyData instanceof FormData)) {
+      options['headers']['Content-Type'] = 'application/json';
+    }
+    if (method !== 'GET' && method !== 'HEAD') {
+      options['body'] = bodyData instanceof FormData ? bodyData : JSON.stringify(bodyData)
     }
 
     return fetch(endpoint, options)
@@ -275,262 +279,111 @@ class mainStore {
   }
 
   onCreateUser = async (val: UsetType) => {
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
-      body: JSON.stringify({
-        username: val.username || '',
-        password: val.password || '',
-        confirm_password: val.passwordConfirm || '',
-      })
-    };
-
-    return fetch(API_ENDPOINTS.settings.create, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
+    this.runRequest(API_ENDPOINTS.settings.create, 'POST', {
+      username: val.username || '',
+      password: val.password || '',
+      confirm_password: val.passwordConfirm || '',
+    }, 'Failed to fetch user')
       .then((response) => {
+        if (response === null) {
+          return false;
+        }
         this.setUser(val.username);
-
-        toast.success(response.message, {position: 'top-center', style: stylesTost()})
-        return true
+        return true;
       })
-      .catch((err) => {
-        toast.error(err.message, {position: 'top-center', style: stylesTost()})
-        return false
-      })
-
   }
 
-  createUserName = (val: UsernameType) => {
-    const options = {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
-      body: JSON.stringify({
+  createUserName = async (val: UsernameType) => {
+    return this.runRequest(
+      API_ENDPOINTS.settings.userName,
+      'PATCH',
+      {
         username: val.username || '',
-
-      })
-    };
-
-    fetch(API_ENDPOINTS.settings.userName, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => {
-        toast(response.message, {position: 'top-center', style: stylesTost()})
-        this.setUser(val.username);
-
-      })
-      .catch((err) => {
-        toast(err.message, {position: 'top-center', style: stylesTost()})
-      })
-  }
-  createPassword = (val: PasswordType, reset: any) => {
-    const options = {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
       },
-      body: JSON.stringify({
+      'Failed to create user name'
+    ).then((response) => {
+      if (response === null) {
+        return;
+      }
+      this.setUser(val.username);
+    })
+  }
+  createPassword = async (val: PasswordType, reset: any) => {
+    return this.runRequest(
+      API_ENDPOINTS.settings.password,
+      'PATCH',
+      {
         password: val.password || '',
         confirm_password: val.passwordConfirm || '',
-      })
-    };
-
-    fetch(API_ENDPOINTS.settings.password, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => {
-        toast(response.message, {position: 'top-center', style: stylesTost()})
-        reset()
-      })
-      .catch((err) => {
-        toast(err.message, {position: 'top-center', style: stylesTost()})
-      })
+      },
+      'Failed to create password'
+    ).then((response) => {
+      if (response === null) {
+        return;
+      }
+      reset()
+    })
   }
   deleteUser = () => {
-    const options = {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
-    };
-
-    fetch(API_ENDPOINTS.settings.delete, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => {
-        toast(response.message, {position: 'top-center', style: stylesTost()})
-        this.unsetUser();
-      })
-      .catch((err) => {
-        toast(err.message, {position: 'top-center', style: stylesTost()})
-      })
+    return this.runRequest(
+      API_ENDPOINTS.settings.delete,
+      'DELETE',
+      {},
+      'Failed to delete user'
+    ).then((response) => {
+      if (response === null) {
+        return;
+      }
+      this.unsetUser();
+    })
   }
   logOut = () => {
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
-    };
-
-    fetch(API_ENDPOINTS.auth.logout, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => {
-        toast(response.message, {position: 'top-center', style: stylesTost()})
-        this.setIsAuthRequired(true);
-      })
-      .catch((err) => {
-        toast(err.message, {position: 'top-center', style: stylesTost()})
-      })
+    return this.runRequest(
+      API_ENDPOINTS.auth.logout,
+      'POST',
+      {},
+      'Failed to log out'
+    ).then((response) => {
+      if (response === null) {
+        return;
+      }
+      this.setIsAuthRequired(true);
+    })
   }
   login = (values: LoginType, setIsLoading: (val: boolean) => void) => {
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
-      body: JSON.stringify({
+    return this.runRequest(
+      API_ENDPOINTS.auth.login,
+      'POST',
+      {
         username: values.username || '',
         password: values.password || '',
-      })
-    };
-    setIsLoading(true)
-    fetch(API_ENDPOINTS.auth.login, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => {
-        this.setIsAuthRequired(false)
-      })
-      .catch((err) => {
-        toast(err.message, {
-          position: 'top-center', style: stylesTost()
-        })
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
+      },
+      'Failed to log in'
+    ).then((response) => {
+      if (response === null) {
+        return;
+      }
+      this.setIsAuthRequired(false);
+    }).finally(() => {
+      setIsLoading(false)
+    })
+
   }
   initializeDatabase = async () => {
-    const options = {
-      method: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN')
-      },
+    return this.runRequest(
+      API_ENDPOINTS.setup.setup,
+      'POST',
+      {},
+      'Failed to initialize database'
+    ).then((response) => {
+      if (response === null) {
+        return false;
+      }
+      this.setIsAuthRequired(false)
+      this.setIsshowInitializeDatabasePage(false)
+      return true;
+    })
 
-    };
-
-    return fetch(API_ENDPOINTS.setup.setup, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => {
-        toast.success(response.message, {
-          position: 'top-center', style: stylesTost()
-        })
-        this.setIsAuthRequired(false)
-        this.setIsshowInitializeDatabasePage(false)
-        return true
-      })
-      .catch((err) => {
-        toast.error(err.message, {
-          position: 'top-center', style: stylesTost()
-        })
-        return false
-      })
   }
   importPocketBookmarks = async (selectedFile: File, setIsLoading: (val: boolean) => void) => {
     return this.importBookmarks(selectedFile, setIsLoading, 'pocket-zip', API_ENDPOINTS.importBookmarks.pocket)
@@ -542,45 +395,27 @@ class mainStore {
   importBookmarks = async (selectedFile: File, setIsLoading: (val: boolean) => void, inputName: string, endpointUrl: string) => {
     const formData = new FormData();
     formData.append(inputName, selectedFile);
-    const options = {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-CSRF-TOKEN': getCookie('CSRF-TOKEN'),
-        'Accept': 'application/json',
-      }
-    };
+
     setIsLoading(true)
-    return fetch(endpointUrl, options)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 401) {
-            this.setIsAuthRequired(true)
-          }
-          if (response.status === 424) {
-            this.setIsshowInitializeDatabasePage(true)
-          }
-          return response.headers.get('Content-Type')?.includes('application/json')
-            ? response.json().then(json => Promise.reject(json))
-            : response.text().then(text => Promise.reject(new Error(text)));
-        }
-        return response.json();
-      })
-      .then((response) => {
-        this.setIsOpenSettingsModal(false);
-        this.fetchItems();
-        this.fetchTags();
-        toast.success(response.message, {position: 'top-center', style: stylesTost()});
-        return true;
-      })
-      .catch((err) => {
-        toast.error(err.message, {position: 'top-center', style: stylesTost()});
+
+    return this.runRequest(
+      endpointUrl,
+      'POST',
+      formData,
+      'Failed to import bookmarks'
+    ).then((response) => {
+      if (response === null) {
         return false;
-      })
+      }
+      this.setIsOpenSettingsModal(false);
+      this.fetchItems();
+      this.fetchTags();
+      return true;
+    })
       .finally(() => setIsLoading(false))
   };
 
-  fetchUrlMetadata = (url: string) => {
+  fetchUrlMetadata = async (url: string) => {
 
     return this.runRequest(API_ENDPOINTS.urlMetdata.fetch(url), 'GET', {}, 'Error fetching metadata from URL')
   }
