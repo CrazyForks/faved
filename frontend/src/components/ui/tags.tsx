@@ -71,7 +71,7 @@ const TagEdit = observer(({ className, values, onChange }: { className?: string,
           >
             <div className="flex flex-wrap gap-1">
               {selected.length > 0
-              ? selected.map(tagId => <TagBadgeMini tagID={tagId as number} />)
+              ? selected.map(tagId => <TagBadgeMini tagID={tagId as unknown as number} />)
               : "Select tags..."}
             </div>
             <ChevronsUpDown className="opacity-50 ml-auto" />

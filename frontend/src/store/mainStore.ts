@@ -80,9 +80,9 @@ class mainStore {
         }
         return data
       })
-      .catch((err, data) => {
+      .catch((reason) => {
         if (!skipErrorMessage) {
-          toast.error((err instanceof Error ? err.message : defaultErrorMessage), {
+          toast.error((reason instanceof Error ? reason.message : defaultErrorMessage), {
             position: 'top-center',
           })
         }
@@ -272,7 +272,7 @@ class mainStore {
   }
 
   onCreateUser = async (val: UsetType) => {
-    this.runRequest(API_ENDPOINTS.settings.create, 'POST', {
+    return this.runRequest(API_ENDPOINTS.settings.create, 'POST', {
       username: val.username || '',
       password: val.password || '',
       confirm_password: val.passwordConfirm || '',
