@@ -262,9 +262,9 @@ class mainStore {
   getUser = async (noErrorEmit: boolean = false) => {
     return this.runRequest(API_ENDPOINTS.settings.getUser, 'GET', {},
       'Failed to fetch user', true, noErrorEmit)
-      .then(({data}) => {
-        if (data?.user !== null) {
-          this.setUser(data.user.username);
+      .then((response) => {
+        if (response?.data?.user) {
+          this.setUser(response.data.user.username);
           return true;
         }
         return false;

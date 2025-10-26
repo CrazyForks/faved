@@ -34,7 +34,7 @@ export const SettingsDialog = observer(() => {
     return (
       <Dialog open={true} onOpenChange={store.setIsOpenSettingsModal}>
         <DialogContent className="overflow-hidden w-[100dvw] md:w-[95dvw] max-w-6xl rounded-none md:rounded-lg p-0">
-          <div className="h-[100dvh] md:max-h-[95dvh] p-3 pt-15 md:pt-3 relative">
+          <div className="h-[100dvh] md:h-[95dvh] md:max-h-[1000px] p-3 pt-15 md:pt-3 relative">
             <DialogHeader className="md:sr-only fixed w-full top-6">
               <DialogTitle className="text-center">{showTopNav ? 'Settings' : selectedNavTitle}</DialogTitle>
             </DialogHeader>

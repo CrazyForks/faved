@@ -36,98 +36,6 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   allTags: Record<string, TagType>;
 }
 
-const data = {
-  navMain: [
-    // {
-    //   title: "Untagged",
-    //   url: "#",
-    //   icon: IconDashboard,
-    // },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: IconDatabase,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
-    },
-  ],
-}
-
 export const AppSidebar = observer(({ allTags, ...props }: AppSidebarProps) => {
   const store = React.useContext(StoreContext);
   const selectedTag = store.selectedTagId ? allTags[store.selectedTagId] : null;
@@ -178,8 +86,8 @@ export const AppSidebar = observer(({ allTags, ...props }: AppSidebarProps) => {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className={'no-scrollbar'}>
-        <NavMain items={data.navMain} />
+      <SidebarContent className="no-scrollbar">
+        <NavMain />
         <SidebarMenu>
           {renderTag('0')}
         </SidebarMenu>

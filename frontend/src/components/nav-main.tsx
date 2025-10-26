@@ -1,6 +1,5 @@
-import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react"
+import {type Icon, IconDashboard} from "@tabler/icons-react"
 
-import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -12,15 +11,7 @@ import { StoreContext } from "@/store/storeContext.ts";
 import * as React from "react";
 import { observer } from "mobx-react-lite";
 
-export const NavMain = observer(({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon?: Icon
-  }[]
-}) => {
+export const NavMain = observer(() => {
   const store = React.useContext(StoreContext)
   const { isMobile, toggleSidebar } = useSidebar()
 
@@ -40,33 +31,33 @@ export const NavMain = observer(({
     }
   }
 
+  const navLinks = [
+    {
+      title: "All items",
+      onClick: setAllTags,
+      isSelected: store.selectedTagId === '0',
+      url: "#",
+      icon: null,
+    },
+    {
+      title: "Untagged",
+      onClick: setNoTags,
+      isSelected: store.selectedTagId === null,
+      url: "#",
+      icon: null,
+    }
+  ]
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              onClick={setAllTags}
-              tooltip="All items"
-              className={"active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear" + (store.selectedTagId === '0' ? " !bg-primary !text-primary-foreground" : "")}
-            >
-              <span>All items</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              onClick={setNoTags}
-              tooltip="Untagged items"
-              className={"active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear" + (store.selectedTagId === null ? " !bg-primary !text-primary-foreground" : "")}
-            >
-              <span>Untagged</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <SidebarMenu>
-          {items.map((item) => (
+          {navLinks.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
+              <SidebarMenuButton tooltip={item.title}
+                onClick={item.onClick}
+                className={"active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear" + (item.isSelected ? " !bg-primary !text-primary-foreground" : "")}
+              >
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>
