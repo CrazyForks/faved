@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import {useLayoutEffect} from "react";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
@@ -19,6 +20,12 @@ export function DataTablePagination<TData>({
   rowsPerPage,
   setRowsPerPage,
 }: DataTablePaginationProps<TData>) {
+  useLayoutEffect(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "instant" })
+    })
+  }, [table.getState().pagination.pageIndex])
+
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between px-2 gap-2 sm:gap-0 my-5">
       <div className="flex-1 text-sm text-muted-foreground w-full sm:w-auto text-center sm:text-right pr-10">
