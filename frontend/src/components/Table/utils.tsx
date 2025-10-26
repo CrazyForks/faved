@@ -100,8 +100,12 @@ const ActionsCell = observer(({row}: { row: any }) => {
     store.setIdItem(row.getValue("id"))
   }
 
-  const handleMakeCopy = () => {
-    store.onCreateItem(row.original)
+  const handleMakeCopy = async() => {
+    const result = await store.onCreateItem(row.original)
+    if (!result) {
+      return;
+    }
+    store.fetchItems()
   }
 
   const handleDelete = () => {

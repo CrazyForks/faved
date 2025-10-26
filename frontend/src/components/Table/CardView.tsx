@@ -61,8 +61,12 @@ export const CardView: React.FC<{ el: any }> = observer(({el}) => {
               >
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                store.onCreateItem(el)
+              <DropdownMenuItem onClick={async() => {
+                const result = await store.onCreateItem(el)
+                if (!result) {
+                  return;
+                }
+                store.fetchItems()
               }}>
                 Make a copy
               </DropdownMenuItem>

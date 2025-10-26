@@ -25,6 +25,7 @@ export function Search<TData>({
           table.setGlobalFilter('')
         }
       }}
+      name="search"
       className="h-9 pl-6"
       placeholder="Search..."/>
     <InputGroupAddon>
