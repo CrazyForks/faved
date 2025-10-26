@@ -36,18 +36,7 @@ https://github.com/user-attachments/assets/0ecbf26a-9ed8-49d9-a5ce-33d471c06fdf
 - [Introduction](https://faved.dev/docs/getting-started/introduction)
 - [Installation](https://faved.dev/docs/getting-started/installation)
 - [Updating](https://faved.dev/docs/getting-started/updating)
-
-
-## Using the Bookmarklet
-
-<img width="731" height="914" alt="screenshot-add-ff-slack-compressorio" src="https://github.com/user-attachments/assets/c7002582-d6f4-4716-a3d5-0c6cc1a4e5bb" />
-
-1. Navigate to Bookmarklet section in the application Settings. 
-2. Look for the bookmarklet link "Add to Faved".
-2. Drag the bookmarklet link to your browser's bookmarks bar.
-3. When browsing the web, click the bookmarklet on any page you want to save.
-4. The form to add the web page to Faved will open.
-5. Add tags and notes as desired, then save.
+- [Using browser bookmarklet](https://faved.dev/docs/getting-started/using-browser-bookmarklet)
 
 
 ## Project Structure
