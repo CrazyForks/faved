@@ -1,4 +1,3 @@
-import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
@@ -18,7 +17,7 @@ const formSchema = z.object({
   password: z
     .string().min(1, {message: "Password is required"})
 })
-export const LoginForm = observer(({className, ...props}: React.ComponentProps<"div">) => {
+export const LoginForm = observer(() => {
     const location = useLocation();
     const [isLoading, setIsLoading] = useState(false);
     const store = useContext(StoreContext);
@@ -51,65 +50,59 @@ export const LoginForm = observer(({className, ...props}: React.ComponentProps<"
 
     return (
 
-      <div className={cn("flex flex-col gap-6", className)} {...props}>
-        <div className="flex items-center justify-center">
+      <div className="flex flex-col gap-8 min-w-xs w-full max-w-sm">
+        <div className="flex items-center justify-center gap-2">
           <img
             src="logo.png"
             alt="Faved logo"
-            className="w-[36px] h-auto mr-3"
+            className="w-[28px] h-auto"
           />
-          <h2 className="text-2xl font-semibold tracking-tight m-0">Faved</h2>
+          <h2 className="text-xl font-semibold tracking-tight">Faved</h2>
         </div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <Card>
               <CardHeader>
-                <CardTitle>Login to your account</CardTitle>
+                <CardTitle className="text-xl">Sign in to your account</CardTitle>
                 <CardDescription>
-                  Enter your Username and Password below to login to your account
+                  Enter your username and password below
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col gap-6">
-                  <div className="grid gap-3">
-                    <FormField
-                      control={form.control}
-                      name="username"
-                      render={({field}) => (
-                        <FormItem>
-                          <FormLabel>Username</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Username" autoComplete="username" {...field} disabled={isLoading}/>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({field}) => (
-                        <FormItem>
-                          <div className="flex items-center">
-                            <FormLabel>Password</FormLabel>
-                          </div>
-                          <FormControl>
-                            <Input type="password" autoComplete="new-password" placeholder="Password" {...field}
-                                   disabled={isLoading}/>
-                          </FormControl>
-                          <FormMessage/>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <Button onClick={form.handleSubmit(onSubmit)} type="submit" className="w-full">
-                      {isLoading && <Loader2Icon className=" mr-2 h-4 w-4 animate-spin"/>}
-                      Login
-                    </Button>
-                  </div>
+                <div className="flex flex-col gap-6 text-left">
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({field}) => (
+                      <FormItem className="gap-3">
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Username" autoComplete="username" {...field} disabled={isLoading}/>
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({field}) => (
+                      <FormItem className="gap-3">
+                        <div className="flex items-center">
+                          <FormLabel>Password</FormLabel>
+                        </div>
+                        <FormControl>
+                          <Input type="password" autoComplete="new-password" placeholder="Password" {...field}
+                                 disabled={isLoading}/>
+                        </FormControl>
+                        <FormMessage/>
+                      </FormItem>
+                    )}
+                  />
+                  <Button onClick={form.handleSubmit(onSubmit)} type="submit" className="w-full">
+                    {isLoading && <Loader2Icon className=" mr-2 h-4 w-4 animate-spin"/>}
+                    Sign in
+                  </Button>
                 </div>
               </CardContent>
             </Card>
