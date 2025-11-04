@@ -45,8 +45,7 @@ const INITIAL_ITEM_DATA: ItemType = {
 const safeDecodeURIComponent = (encodedURI: string): string => {
   try {
     return encodedURI ? decodeURIComponent(encodedURI) : '';
-  } catch (error) {
-    console.error('Error decoding URI component:', error, encodedURI);
+  } catch {
     return encodedURI || '';
   }
 };

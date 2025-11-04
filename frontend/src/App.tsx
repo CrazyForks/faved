@@ -11,7 +11,6 @@ import { SetupBookmarklet } from './components/Setup/SetupBookmarklet';
 import { Toaster } from './components/ui/sonner';
 import { Page } from './components/dashboard/page';
 import EditItemForm from './components/EditForm/EditItemForm';
-import { Dialog } from './components/ui/dialog';
 import { NotFound } from './components/NotFound';
 import Loading from '@/components/Loading';
 
@@ -29,7 +28,7 @@ const SetupMiddleware = observer(() => {
     };
 
     loadData();
-  }, []);
+  }, [store]);
 
   if (isLoading) {
     return <Loading />;

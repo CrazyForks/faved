@@ -10,7 +10,7 @@ export const SettingsAuth = observer(() => {
   const store = React.useContext(StoreContext);
   React.useEffect(() => {
     store.getUser();
-  }, []);
+  }, [store]);
 
   if (!store.user) {
     return <UserCreate />;

@@ -66,7 +66,7 @@ export const DataTable: React.FC = observer(() => {
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     manualPagination: true,
-    globalFilterFn: (row, columnId, value, addMeta) => {
+    globalFilterFn: (row, columnId, value) => {
       const searchValue = String(value).toLocaleLowerCase().trim();
 
       if (searchValue === '') {
@@ -134,7 +134,7 @@ export const DataTable: React.FC = observer(() => {
       .map((column) => {
         column.toggleVisibility(false);
       });
-  }, []);
+  }, [table]);
 
   return (
     <div className="w-full">
@@ -152,7 +152,7 @@ export const DataTable: React.FC = observer(() => {
           type="single"
           value={isTableView ? 'table' : 'cards'}
           onValueChange={(v) => {
-            v && changeTableView(v === 'table');
+            if (v) changeTableView(v === 'table');
           }}
         >
           <ToggleGroupItem value="cards">

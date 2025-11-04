@@ -11,11 +11,12 @@ interface DataTablePaginationProps<TData> {
 }
 
 export function DataTablePagination<TData>({ table, rowsPerPage, setRowsPerPage }: DataTablePaginationProps<TData>) {
+  const pageIndex = table.getState().pagination.pageIndex;
   useLayoutEffect(() => {
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: 'instant' });
     });
-  }, [table.getState().pagination.pageIndex]);
+  }, [pageIndex]);
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between px-2 gap-2 sm:gap-0 my-5">

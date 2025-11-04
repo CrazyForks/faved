@@ -1,13 +1,12 @@
 import * as React from 'react';
 import {
-  Sidebar,
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   useSidebar,
 } from '@/components/ui/sidebar.tsx';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible.tsx';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible.tsx';
 import { IconChevronRight, IconDotsVertical, IconPinned } from '@tabler/icons-react';
 import {
   DropdownMenu,
@@ -52,7 +51,7 @@ export function SidebarTag({
       return;
     }
     setIsCollapsibleOpen(isChildTagSelected);
-  }, [isChildTagSelected]);
+  }, [isChildTagSelected, isCollapsibleOpen]);
 
   const store = React.useContext(StoreContext);
   const { isMobile, toggleSidebar } = useSidebar();
@@ -117,7 +116,7 @@ export function SidebarTag({
               }
             }}
             onBlur={() => {
-              !isMobile && revert();
+              if (!isMobile) revert();
             }}
           />
           {!isRenaming && (
@@ -125,7 +124,7 @@ export function SidebarTag({
               {tag.title}
             </span>
           )}
-          <IconPinned className={`ms-auto w-4 h-4 ` + (!!tag.pinned ? 'visible' : 'invisible')} />
+          <IconPinned className={`ms-auto w-4 h-4 ` + (tag.pinned ? 'visible' : 'invisible')} />
         </div>
       </>
     );

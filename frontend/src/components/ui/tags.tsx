@@ -5,7 +5,7 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { observer } from 'mobx-react-lite';
 import { useContext, useEffect } from 'react';
@@ -29,11 +29,12 @@ const TagEdit = observer(
     const [selected, setSelected] = React.useState(values.map((v) => v.toString()));
     const [query, setQuery] = React.useState('');
 
-    const getSortedTags = () => {
-      const t = Object.values(toJS(store.tags as TagsObjectType[]));
+    const getSortedTags = (tags, selectedTag) => {
+      const t = Object.values(toJS(tags as TagsObjectType[]));
       t.sort((a, b) => {
         return (
-          Number(selected.includes(b.id as unknown as string)) - Number(selected.includes(a.id as unknown as string))
+          Number(selectedTag.includes(b.id as unknown as string)) -
+          Number(selectedTag.includes(a.id as unknown as string))
         );
       });
       return t;
@@ -41,19 +42,19 @@ const TagEdit = observer(
     const [tags, setTags] = React.useState([]);
 
     React.useEffect(() => {
-      setTags(getSortedTags());
-    }, [store.tags]);
+      setTags(getSortedTags(store.tags, selected));
+    }, [store.tags, selected]);
 
     useEffect(() => {
       store.fetchTags();
-    }, []);
+    }, [store]);
 
     React.useEffect(() => {
       onChange(selected);
-    }, [selected]);
+    }, [selected, onChange]);
 
     const sort = () => {
-      setTags(getSortedTags());
+      setTags(getSortedTags(store.tags, selected));
     };
 
     return (
@@ -61,8 +62,11 @@ const TagEdit = observer(
         open={open}
         onOpenChange={(v) => {
           setOpen(v);
-          !v && setQuery('');
-          !v && sort();
+          if (v) {
+            return;
+          }
+          setQuery('');
+          sort();
         }}
       >
         <PopoverTrigger asChild>
@@ -122,7 +126,7 @@ const TagEdit = observer(
                       key="new_item"
                       value={query}
                       // keywords={[tag.fullPath]}
-                      onSelect={async (currentValue) => {
+                      onSelect={async () => {
                         const newTagID = await store.onCreateTag(query);
                         if (!newTagID) {
                           return;

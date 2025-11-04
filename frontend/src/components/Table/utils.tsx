@@ -40,7 +40,7 @@ export const schema = z.object({
 });
 
 const UrlCellContent = observer(({ item }: { item: z.infer<typeof schema> }) => {
-  const { url, title, tags, updated_at, created_at } = item;
+  const { url, title, tags, created_at } = item;
 
   return (
     <div className="flex flex-col items-start w-full text-left wrap-anywhere gap-2">
@@ -208,8 +208,7 @@ export const getTableViewPreference = (): boolean => {
   try {
     const stored = sessionStorage.getItem('isTableView');
     return stored !== null ? JSON.parse(stored) : false;
-  } catch (error) {
-    console.error('Error reading from session storage:', error);
+  } catch {
     return false;
   }
 };
@@ -217,7 +216,7 @@ export const getTableViewPreference = (): boolean => {
 export const setTableViewPreference = (value: boolean): void => {
   try {
     sessionStorage.setItem('isTableView', JSON.stringify(value));
-  } catch (error) {
-    console.error('Error writing to session storage:', error);
+  } catch {
+    // Ignore storage errors - failing silently is acceptable for preferences
   }
 };

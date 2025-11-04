@@ -91,7 +91,9 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
   const copyBookmarkletCode = async () => {
     const code = generateBookmarkletCode();
 
-    onSuccess && onSuccess();
+    if (onSuccess) {
+      onSuccess();
+    }
 
     if (isMobile) {
       window.prompt('Copy the bookmarklet code:', code);
@@ -100,7 +102,7 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
 
     try {
       await navigator.clipboard.writeText(code);
-    } catch (err) {
+    } catch {
       const textArea = document.createElement('textarea');
       textArea.value = code;
       document.body.appendChild(textArea);
@@ -172,8 +174,8 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
               href="#"
               ref={bookmarkletRef}
               draggable="true"
-              onDragEnd={(e) => {
-                onSuccess && onSuccess();
+              onDragEnd={() => {
+                if (onSuccess) onSuccess();
               }}
             >
               <Bookmark className="w-4 h-4" />

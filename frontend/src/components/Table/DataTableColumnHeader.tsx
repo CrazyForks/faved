@@ -1,4 +1,3 @@
-import type { Column } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -12,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-export function DataTableColumnHeader<TData, TValue>({ column, title, className }: any) {
+export function DataTableColumnHeader({ column, title, className }: any) {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }

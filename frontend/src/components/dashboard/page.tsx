@@ -20,7 +20,7 @@ export const Page = observer(() => {
     };
 
     loadData();
-  }, []);
+  }, [store]);
 
   if (isLoading) {
     return <Loading />;

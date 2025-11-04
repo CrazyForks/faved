@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import { StoreContext } from '@/store/storeContext';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-export const Setup = observer(({ className, ...props }: React.ComponentProps<'div'>) => {
+export const Setup = observer(() => {
   const store = useContext(StoreContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);

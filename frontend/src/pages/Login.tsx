@@ -32,7 +32,7 @@ export const Login = observer(() => {
       ? location.state.from.pathname + location.state?.from?.search
       : '/';
     navigate(redirectUrl, { replace: true });
-  }, [store.isAuthRequired]);
+  }, [store.isAuthRequired, location.state.from.pathname, location.state?.from?.search, navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
