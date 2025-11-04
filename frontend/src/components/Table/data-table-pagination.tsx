@@ -1,35 +1,26 @@
-import type { Table } from "@tanstack/react-table"
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react"
-import { Button } from "../ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import {useLayoutEffect} from "react";
+import type { Table } from '@tanstack/react-table';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { useLayoutEffect } from 'react';
 
 interface DataTablePaginationProps<TData> {
-  table: Table<TData>
-  rowsPerPage: number
+  table: Table<TData>;
+  rowsPerPage: number;
   setRowsPerPage: (val: number) => void;
 }
 
-export function DataTablePagination<TData>({
-  table,
-  rowsPerPage,
-  setRowsPerPage,
-}: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({ table, rowsPerPage, setRowsPerPage }: DataTablePaginationProps<TData>) {
   useLayoutEffect(() => {
     requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: "instant" })
-    })
-  }, [table.getState().pagination.pageIndex])
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+  }, [table.getState().pagination.pageIndex]);
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between px-2 gap-2 sm:gap-0 my-5">
       <div className="flex-1 text-sm text-muted-foreground w-full sm:w-auto text-center sm:text-right pr-10">
-        {table.getFilteredRowModel().rows.length} item{table.getFilteredRowModel().rows.length !== 1 ? "s" : ""} total
+        {table.getFilteredRowModel().rows.length} item{table.getFilteredRowModel().rows.length !== 1 ? 's' : ''} total
       </div>
       <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 w-full sm:w-auto">
         <div className="flex items-center space-x-2">
@@ -57,8 +48,7 @@ export function DataTablePagination<TData>({
         </div>
 
         <div className="flex items-center justify-center text-sm font-medium min-w-[100px]">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -99,7 +89,7 @@ export function DataTablePagination<TData>({
             <ChevronsRight />
           </Button>
         </div>
-      </div >
-    </div >
-  )
+      </div>
+    </div>
+  );
 }

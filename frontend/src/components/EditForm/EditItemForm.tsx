@@ -1,15 +1,15 @@
-import React, {useContext, useEffect, useMemo} from 'react';
-import {useForm} from 'react-hook-form';
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {TagEdit} from "@/components/ui/tags"
-import {Textarea} from '../ui/textarea';
-import {StoreContext} from '@/store/storeContext';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form"
-import {ActionType} from '../dashboard/types';
-import type {ItemType} from '@/types/types';
-import {useLocation} from 'react-router-dom';
+import React, { useContext, useEffect, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { TagEdit } from '@/components/ui/tags';
+import { Textarea } from '../ui/textarea';
+import { StoreContext } from '@/store/storeContext';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { ActionType } from '../dashboard/types';
+import type { ItemType } from '@/types/types';
+import { useLocation } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,28 +19,27 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTrigger,
 } from '../ui/alert-dialog';
-import {IconCloudDownload, IconProgress} from "@tabler/icons-react";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
-import z from "zod";
-import {ImagePreview} from "@/components/EditForm/ImagePreview.tsx";
-
+import { IconCloudDownload, IconProgress } from '@tabler/icons-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
+import z from 'zod';
+import { ImagePreview } from '@/components/EditForm/ImagePreview.tsx';
 
 interface EditItemFormProps {
-  isCloseWindowOnSubmit: boolean
+  isCloseWindowOnSubmit: boolean;
 }
 
 const INITIAL_ITEM_DATA: ItemType = {
-  id: "",
-  description: "",
-  title: "",
+  id: '',
+  description: '',
+  title: '',
   comments: '',
   created_at: undefined,
   image: '',
   tags: [],
   updated_at: undefined,
-  url: ''
+  url: '',
 };
 
 const safeDecodeURIComponent = (encodedURI: string): string => {
@@ -52,30 +51,32 @@ const safeDecodeURIComponent = (encodedURI: string): string => {
   }
 };
 
-const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
+const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
   const store = useContext(StoreContext);
   const location = useLocation();
   const [isMetadataLoading, setIsMetadataLoading] = React.useState(false);
 
   const currentItem = useMemo(() => {
     if (store.type === ActionType.EDIT && store.items.length > 0) {
-      return store.items.find(item => item.id as unknown as number === store.idItem) || INITIAL_ITEM_DATA;
+      return store.items.find((item) => (item.id as unknown as number) === store.idItem) || INITIAL_ITEM_DATA;
     }
     return INITIAL_ITEM_DATA;
   }, [store.type, store.items, store.idItem]);
 
   const form = useForm<ItemType>({
-    resolver: zodResolver(z.object({
-      title: z.string().min(1, {message: "Title is required"}),
-      url: z.string().min(1, {message: "URL is required"}),
-      description: z.any().optional(),
-      comments: z.any().optional(),
-      image: z.any().optional(),
-      tags: z.array(z.any()).optional(),
-      updated_at: z.any().optional(),
-      id: z.any().optional(),
-      created_at: z.any().optional(),
-    })),
+    resolver: zodResolver(
+      z.object({
+        title: z.string().min(1, { message: 'Title is required' }),
+        url: z.string().min(1, { message: 'URL is required' }),
+        description: z.any().optional(),
+        comments: z.any().optional(),
+        image: z.any().optional(),
+        tags: z.array(z.any()).optional(),
+        updated_at: z.any().optional(),
+        id: z.any().optional(),
+        created_at: z.any().optional(),
+      })
+    ),
     defaultValues: currentItem,
   });
 
@@ -88,7 +89,6 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
       image: safeDecodeURIComponent(searchParams.get('image') || ''),
     };
   }, [location.search]);
-
 
   useEffect(() => {
     form.reset(currentItem);
@@ -136,15 +136,15 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
   const success = () => {
     if (isCloseWindowOnSubmit) {
       setTimeout(() => {
-        window.close()
+        window.close();
       }, 1000);
     } else {
-      store.fetchItems()
-      store.fetchTags()
+      store.fetchItems();
+      store.fetchTags();
       store.setIsShowEditModal(false);
       form.reset();
     }
-  }
+  };
 
   const cancel = () => {
     if (isCloseWindowOnSubmit) {
@@ -158,7 +158,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
   const updateMetadataFromUrl = async (url) => {
     setIsMetadataLoading(true);
 
-    const data: { data: { title: string, description: string, image_url: string } } = await store.fetchUrlMetadata(url);
+    const data: { data: { title: string; description: string; image_url: string } } = await store.fetchUrlMetadata(url);
 
     setIsMetadataLoading(false);
 
@@ -166,17 +166,16 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
       return;
     }
 
-    form.setValue('title', data.data.title || '')
-    form.setValue('description', data.data.description || '')
-    form.setValue('image', data.data.image_url || '')
-
-  }
+    form.setValue('title', data.data.title || '');
+    form.setValue('description', data.data.description || '');
+    form.setValue('image', data.data.image_url || '');
+  };
 
   const renderTextField = (name: keyof ItemType, label: string, isDisabled = false) => (
     <FormField
       control={form.control}
       name={name}
-      render={({field}) => (
+      render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
@@ -188,7 +187,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
               value={field.value ?? ''}
             />
           </FormControl>
-          <FormMessage/>
+          <FormMessage />
         </FormItem>
       )}
     />
@@ -198,17 +197,13 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
     <FormField
       control={form.control}
       name={name}
-      render={({field}) => (
+      render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Textarea
-              className="overflow-y-auto"
-              {...field}
-              value={field.value ?? ''}
-            />
+            <Textarea className="overflow-y-auto" {...field} value={field.value ?? ''} />
           </FormControl>
-          <FormMessage/>
+          <FormMessage />
         </FormItem>
       )}
     />
@@ -218,12 +213,17 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
     <FormField
       control={form.control}
       name="tags"
-      render={({field}) => (
+      render={({ field }) => (
         <FormItem>
           <FormLabel>Tags</FormLabel>
           <FormControl className="text-left">
             <TagEdit
-              className={'w-[calc(100dvw-var(--spacing)*6*2)]' + (!isCloseWindowOnSubmit ? ' md:w-[calc(95dvw-var(--spacing)*6*2)] max-w-[calc(72rem-var(--spacing)*6*2)]' : '')}
+              className={
+                'w-[calc(100dvw-var(--spacing)*6*2)]' +
+                (!isCloseWindowOnSubmit
+                  ? ' md:w-[calc(95dvw-var(--spacing)*6*2)] max-w-[calc(72rem-var(--spacing)*6*2)]'
+                  : '')
+              }
               onChange={field.onChange}
               values={field.value ?? []}
             />
@@ -239,27 +239,25 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSaveClose)}>
         <div
-          className={"overflow-y-auto p-6 h-[100dvh]" + (!isCloseWindowOnSubmit ? " md:h-auto md:max-h-[95dvh]" : '')}
+          className={'overflow-y-auto p-6 h-[100dvh]' + (!isCloseWindowOnSubmit ? ' md:h-auto md:max-h-[95dvh]' : '')}
         >
           <h2 className="text-left text-xl font-semibold tracking-tight mb-3">
-            {store.type === ActionType.EDIT ? "Edit item" : "Create item"}
+            {store.type === ActionType.EDIT ? 'Edit item' : 'Create item'}
           </h2>
           <div className="py-4">
             <div className="space-y-4">
-              <div className="grid gap-3">
-                {renderTextField('title', 'Title')}
-              </div>
+              <div className="grid gap-3">{renderTextField('title', 'Title')}</div>
 
               <div className="grid gap-3">
                 <FormField
                   control={form.control}
                   name="url"
-                  render={({field}) => {
+                  render={({ field }) => {
                     return (
                       <FormItem>
                         <FormLabel>URL</FormLabel>
                         <FormControl>
-                          <div className='flex flex-row gap-2'>
+                          <div className="flex flex-row gap-2">
                             <Input
                               type="text"
                               id="name-1"
@@ -270,44 +268,41 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
                             />
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button onClick={() => updateMetadataFromUrl(field.value)} variant="outline"
-                                        disabled={isMetadataLoading}>
-                                  {isMetadataLoading ?
-                                    <IconProgress className="animate-spin"/>
-                                    : <IconCloudDownload/>}
+                                <Button
+                                  onClick={() => updateMetadataFromUrl(field.value)}
+                                  variant="outline"
+                                  disabled={isMetadataLoading}
+                                >
+                                  {isMetadataLoading ? (
+                                    <IconProgress className="animate-spin" />
+                                  ) : (
+                                    <IconCloudDownload />
+                                  )}
                                 </Button>
                               </TooltipTrigger>
-                              <TooltipContent>
-                                Pull title, description and image from the URL.
-                              </TooltipContent>
+                              <TooltipContent>Pull title, description and image from the URL.</TooltipContent>
                             </Tooltip>
                           </div>
                         </FormControl>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     );
                   }}
                 />
               </div>
 
-              <div className="grid gap-3">
-                {renderTextareaField('description', 'Description')}
-              </div>
+              <div className="grid gap-3">{renderTextareaField('description', 'Description')}</div>
 
-              <div className="grid gap-3">
-                {renderTextareaField('comments', 'Comments')}
-              </div>
+              <div className="grid gap-3">{renderTextareaField('comments', 'Comments')}</div>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="grow"> {renderTextField('image', 'Image URL')}</div>
                 <div className="sm:max-w-[40%] min-w-16 min-h-16">
-                  <ImagePreview imageUrl={imageUrl}/>
+                  <ImagePreview imageUrl={imageUrl} />
                 </div>
               </div>
 
-              <div className="grid gap-3">
-                {renderTagsField()}
-              </div>
+              <div className="grid gap-3">{renderTagsField()}</div>
 
               {store.type === ActionType.EDIT && (
                 <div className="sm:grid grid-cols-2 gap-3 space-y-4 sm:space-y-0">
@@ -317,8 +312,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
               )}
             </div>
           </div>
-          <div
-            className="bg-background border-t pt-5 mt-4 flex flex-col sm:flex-row justify-end gap-2">
+          <div className="bg-background border-t pt-5 mt-4 flex flex-col sm:flex-row justify-end gap-2">
             {store.type === ActionType.EDIT && (
               <div className="mt-10 order-last sm:order-none sm:mr-auto sm:mt-0">
                 <AlertDialog>
@@ -335,9 +329,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex flex-col-reverse sm:flex-row">
-                      <AlertDialogCancel className="mt-2 sm:mt-0">
-                        Cancel
-                      </AlertDialogCancel>
+                      <AlertDialogCancel className="mt-2 sm:mt-0">Cancel</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
                         className="bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60"
@@ -350,12 +342,7 @@ const EditItemForm = ({isCloseWindowOnSubmit}: EditItemFormProps) => {
               </div>
             )}
 
-            <Button
-              onClick={cancel}
-              type="button"
-              variant="outline"
-              className="order-3 sm:order-none"
-            >
+            <Button onClick={cancel} type="button" variant="outline" className="order-3 sm:order-none">
               Cancel
             </Button>
 

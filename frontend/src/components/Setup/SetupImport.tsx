@@ -1,18 +1,19 @@
-import {Button} from "@/components/ui/button"
-import {useNavigate} from "react-router-dom"
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
-import {SettingsImport} from "../Settings/SettingsImport"
-import {SetupWrapper} from "@/components/Setup/SetupWrapper";
+import { SettingsImport } from '../Settings/SettingsImport';
+import { SetupWrapper } from '@/components/Setup/SetupWrapper';
 
-
-export const SetupImport = (() => {
+export const SetupImport = () => {
   const navigate = useNavigate();
 
   return (
     <SetupWrapper currentStep={3}>
-      <SettingsImport onSuccess={() => navigate('/')}/>
+      <SettingsImport onSuccess={() => navigate('/')} />
 
-      <Button variant="link" className="" onClick={() => navigate('/')}>Skip for now</Button>
+      <Button variant="link" className="" onClick={() => navigate('/')}>
+        Skip for now
+      </Button>
     </SetupWrapper>
-  )
-})
+  );
+};

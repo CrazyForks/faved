@@ -1,18 +1,18 @@
-import * as React from "react"
-import {CardAction, CardDescription, CardFooter, CardHeader, CardTitle} from "../ui/card"
+import * as React from 'react';
+import { CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {IconDotsVertical} from "@tabler/icons-react"
-import {observer} from "mobx-react-lite"
-import {Button} from "../ui/button"
-import {ActionType} from "../dashboard/types"
-import {StoreContext} from "@/store/storeContext"
-import {TagBadge} from "./TagBadge"
+} from '@/components/ui/dropdown-menu';
+import { IconDotsVertical } from '@tabler/icons-react';
+import { observer } from 'mobx-react-lite';
+import { Button } from '../ui/button';
+import { ActionType } from '../dashboard/types';
+import { StoreContext } from '@/store/storeContext';
+import { TagBadge } from './TagBadge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,12 +23,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../ui/alert-dialog"
-import {PreviewImage} from "@/components/Table/PreviewImage.tsx";
+} from '../ui/alert-dialog';
+import { PreviewImage } from '@/components/Table/PreviewImage.tsx';
 
-
-export const CardView: React.FC<{ el: any }> = observer(({el}) => {
-  const store = React.useContext(StoreContext)
+export const CardView: React.FC<{ el: any }> = observer(({ el }) => {
+  const store = React.useContext(StoreContext);
 
   return (
     <div className="flex flex-col h-full hover-action-container ">
@@ -42,12 +41,8 @@ export const CardView: React.FC<{ el: any }> = observer(({el}) => {
         <CardAction>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="absolute top-2 right-2 hover-action"
-                size="icon"
-              >
-                <IconDotsVertical/>
+              <Button variant="outline" className="absolute top-2 right-2 hover-action" size="icon">
+                <IconDotsVertical />
                 <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>
@@ -61,22 +56,22 @@ export const CardView: React.FC<{ el: any }> = observer(({el}) => {
               >
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={async() => {
-                const result = await store.onCreateItem(el)
-                if (!result) {
-                  return;
-                }
-                store.fetchItems()
-              }}>
+              <DropdownMenuItem
+                onClick={async () => {
+                  const result = await store.onCreateItem(el);
+                  if (!result) {
+                    return;
+                  }
+                  store.fetchItems();
+                }}
+              >
                 Make a copy
               </DropdownMenuItem>
-              <DropdownMenuSeparator/>
+              <DropdownMenuSeparator />
               <div className="order-1 sm:order-2 w-full sm:w-auto">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <div
-                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-destructive/90 hover:text-white"
-                    >
+                    <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-destructive/90 hover:text-white">
                       Delete
                     </div>
                   </AlertDialogTrigger>
@@ -105,10 +100,7 @@ export const CardView: React.FC<{ el: any }> = observer(({el}) => {
         <div className="flex flex-col items-start w-full text-left wrap-anywhere gap-2">
           {el.title && (
             <CardTitle>
-              <h4
-                className="scroll-m-20 text-xl font-semibold tracking-tight line-clamp-3"
-                title={el.title}
-              >
+              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight line-clamp-3" title={el.title}>
                 {el.title}
               </h4>
             </CardTitle>
@@ -126,27 +118,23 @@ export const CardView: React.FC<{ el: any }> = observer(({el}) => {
           )}
           {el.tags && (
             <div className="w-full py-2 leading-6.5 flex flex-wrap gap-1">
-              {el.tags.map((tagID) =>
-                 <React.Fragment key={tagID.toString()}>
-                   <TagBadge tagID={tagID}/>
-                 </React.Fragment>
-              )}
+              {el.tags.map((tagID) => (
+                <React.Fragment key={tagID.toString()}>
+                  <TagBadge tagID={tagID} />
+                </React.Fragment>
+              ))}
             </div>
           )}
           {(el.description || el.comments) && (
             <CardDescription>
               {el.description && (
                 <div>
-                  <p className="leading-7 [&:not(:first-child)]:mt-6 whitespace-pre-line">
-                    {el.description}
-                  </p>
+                  <p className="leading-7 [&:not(:first-child)]:mt-6 whitespace-pre-line">{el.description}</p>
                 </div>
               )}
               {el.comments && (
                 <div>
-                  <blockquote className="mt-6 border-l-2 pl-6 italic whitespace-pre-line">
-                    {el.comments}
-                  </blockquote>
+                  <blockquote className="mt-6 border-l-2 pl-6 italic whitespace-pre-line">{el.comments}</blockquote>
                 </div>
               )}
             </CardDescription>
@@ -161,5 +149,5 @@ export const CardView: React.FC<{ el: any }> = observer(({el}) => {
         </div>
       </CardFooter>
     </div>
-  )
-})
+  );
+});

@@ -53,13 +53,13 @@
   visibility: hidden;
 }
 
-[data-slot="sidebar-menu-item"]>.peer\/menu-button:hover~.sidebar-menu-action,
+[data-slot='sidebar-menu-item'] > .peer\/menu-button:hover ~ .sidebar-menu-action,
 .sidebar-menu-action:hover,
-.sidebar-menu-action[data-state="open"] {
+.sidebar-menu-action[data-state='open'] {
   visibility: visible;
 }
 
-[data-selected="true"]>.sidebar-menu-action:not([data-state="open"]):not(:hover) {
+[data-selected='true'] > .sidebar-menu-action:not([data-state='open']):not(:hover) {
   color: var(--color-accent);
 }
 
@@ -75,10 +75,9 @@
 
 .hover-action-container:hover .hover-action,
 .hover-action:hover,
-.hover-action[data-state="open"] {
+.hover-action[data-state='open'] {
   visibility: visible;
 }
-
 
 @media (any-pointer: coarse) {
   .hover-action {

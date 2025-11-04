@@ -1,8 +1,5 @@
-
-export const AuthLayout = ({children}) => {
+export const AuthLayout = ({ children }) => {
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-3 md:p-10">
-      {children}
-    </div>
-  )
-}
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-3 md:p-10">{children}</div>
+  );
+};

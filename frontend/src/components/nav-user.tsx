@@ -1,12 +1,5 @@
-import {
-  IconDotsVertical,
-  IconLogout,
-} from "@tabler/icons-react"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,20 +7,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar"
-import { User } from "lucide-react"
-import { StoreContext } from "@/store/storeContext"
-import { useContext } from "react"
+} from '@/components/ui/dropdown-menu';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
+import { User } from 'lucide-react';
+import { StoreContext } from '@/store/storeContext';
+import { useContext } from 'react';
 
 export const NavUser = ({ username }: { username: string }) => {
   const store = useContext(StoreContext);
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarMenu>
@@ -40,18 +28,19 @@ export const NavUser = ({ username }: { username: string }) => {
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
                 <AvatarImage alt={username} />
-                <AvatarFallback className="rounded-lg"><User /></AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  <User />
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{username}</span>
-
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             align="end"
             sideOffset={4}
           >
@@ -68,9 +57,11 @@ export const NavUser = ({ username }: { username: string }) => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => {
-              store.logOut()
-            }}>
+            <DropdownMenuItem
+              onClick={() => {
+                store.logOut();
+              }}
+            >
               <IconLogout />
               Log out
             </DropdownMenuItem>
@@ -78,5 +69,5 @@ export const NavUser = ({ username }: { username: string }) => {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
-}
+  );
+};

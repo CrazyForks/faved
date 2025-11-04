@@ -1,14 +1,20 @@
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../ui/card"
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "../ui/tabs"
-import {useContext, useRef, useState} from "react"
-import {StoreContext} from "@/store/storeContext"
-import {Loader2Icon} from "lucide-react"
-import {IconBrandChrome, IconBrandEdge, IconBrandFirefox, IconBrandPocket, IconBrandSafari} from "@tabler/icons-react";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { useContext, useRef, useState } from 'react';
+import { StoreContext } from '@/store/storeContext';
+import { Loader2Icon } from 'lucide-react';
+import {
+  IconBrandChrome,
+  IconBrandEdge,
+  IconBrandFirefox,
+  IconBrandPocket,
+  IconBrandSafari,
+} from '@tabler/icons-react';
 
-export const SettingsImport = ({onSuccess}: { onSuccess?: () => void }) => {
+export const SettingsImport = ({ onSuccess }: { onSuccess?: () => void }) => {
   const store = useContext(StoreContext);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,18 +27,18 @@ export const SettingsImport = ({onSuccess}: { onSuccess?: () => void }) => {
   };
 
   const submitPocket = async () => {
-    const success = await store.importPocketBookmarks(selectedFile, setIsLoading)
+    const success = await store.importPocketBookmarks(selectedFile, setIsLoading);
     if (success && onSuccess) {
       onSuccess();
     }
-  }
+  };
 
   const submitBrowser = async () => {
-    const success = await store.importBrowserBookmarks(selectedFile, setIsLoading)
+    const success = await store.importBrowserBookmarks(selectedFile, setIsLoading);
     if (success && onSuccess) {
       onSuccess();
     }
-  }
+  };
 
   const resetFile = () => {
     setSelectedFile(null);
@@ -50,21 +56,19 @@ export const SettingsImport = ({onSuccess}: { onSuccess?: () => void }) => {
     <Card className="touch-pan-y">
       <CardHeader>
         <CardTitle className="text-lg">Import Bookmarks</CardTitle>
-        <CardDescription>
-          Import your bookmarks to Faved.
-        </CardDescription>
+        <CardDescription>Import your bookmarks to Faved.</CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <TabsList className="h-auto w-full items-stretch">
             <TabsTrigger value="browser" className="flex flex-wrap">
               <div className="inline-flex items-center gap-0.5">
-                <IconBrandChrome className="w-4 h-4"/>
+                <IconBrandChrome className="w-4 h-4" />
               </div>
               <span>From browser</span>
             </TabsTrigger>
             <TabsTrigger value="pocket" className="flex flex-wrap">
-              <IconBrandPocket className="w-4 h-4"/>
+              <IconBrandPocket className="w-4 h-4" />
               <span>From Pocket</span>
             </TabsTrigger>
           </TabsList>
@@ -80,9 +84,7 @@ export const SettingsImport = ({onSuccess}: { onSuccess?: () => void }) => {
                 onChange={handleFileChange}
                 disabled={isLoading}
               />
-              <p className="text-muted-foreground text-sm">
-                Select the ZIP file you exported from Pocket.
-              </p>
+              <p className="text-muted-foreground text-sm">Select the ZIP file you exported from Pocket.</p>
             </div>
 
             <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg dark:bg-blue-900/20 dark:border-blue-800">
@@ -114,14 +116,12 @@ export const SettingsImport = ({onSuccess}: { onSuccess?: () => void }) => {
                 onChange={handleFileChange}
                 disabled={isLoading}
               />
+              <p className="text-muted-foreground text-sm">Select your exported bookmarks file in HTML format.</p>
               <p className="text-muted-foreground text-sm">
-                Select your exported bookmarks file in HTML format.
-              </p>
-              <p className="text-muted-foreground text-sm">
-                Exports from <IconBrandChrome className="inline w-4 h-4 align-text-top ml-1"/> Chrome,
-                <IconBrandFirefox className=" inline w-4 h-4 align-text-top ml-1"/> Firefox,
-                <IconBrandSafari className=" inline w-4 h-4 align-text-top ml-1"/> Safari,
-                <IconBrandEdge className="inline  w-4 h-4 align-text-top ml-1"/> Edge, and most other browsers are
+                Exports from <IconBrandChrome className="inline w-4 h-4 align-text-top ml-1" /> Chrome,
+                <IconBrandFirefox className=" inline w-4 h-4 align-text-top ml-1" /> Firefox,
+                <IconBrandSafari className=" inline w-4 h-4 align-text-top ml-1" /> Safari,
+                <IconBrandEdge className="inline  w-4 h-4 align-text-top ml-1" /> Edge, and most other browsers are
                 supported.
               </p>
             </div>
@@ -150,10 +150,10 @@ export const SettingsImport = ({onSuccess}: { onSuccess?: () => void }) => {
           disabled={!selectedFile || isLoading}
           type="submit"
         >
-          {isLoading && <Loader2Icon className="animate-spin mr-2"/>}
+          {isLoading && <Loader2Icon className="animate-spin mr-2" />}
           Import {activeTab === 'pocket' ? 'Pocket' : 'Browser'} Bookmarks
         </Button>
       </CardFooter>
     </Card>
-  )
-}
+  );
+};

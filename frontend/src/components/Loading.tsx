@@ -1,16 +1,13 @@
-import { Skeleton } from "@/components/ui/skeleton"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import { Skeleton } from '@/components/ui/skeleton';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function Loading() {
   return (
     <SidebarProvider
       style={
         {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
+          '--sidebar-width': 'calc(var(--spacing) * 72)',
+          '--header-height': 'calc(var(--spacing) * 12)',
         } as React.CSSProperties
       }
     >
@@ -74,12 +71,11 @@ export default function Loading() {
         <div className="flex flex-1 flex-col p-4">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 md:gap-6">
-
               {/* Table Header */}
               <div className="flex items-center justify-between gap-2">
                 <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-8 w-8" />
-                  <Skeleton className="h-8 w-8" />
+                <Skeleton className="h-8 w-8" />
+                <Skeleton className="h-8 w-8" />
               </div>
 
               {/* Table Skeleton */}
@@ -119,11 +115,10 @@ export default function Loading() {
                   <Skeleton className="h-8 w-8" />
                 </div>
               </div>
-
             </div>
           </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

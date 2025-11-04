@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom';
-import './App.css'
+import './App.css';
 import { observer } from 'mobx-react-lite';
 import { useContext, useEffect, useState } from 'react';
 import { StoreContext } from './store/storeContext';
@@ -13,7 +13,7 @@ import { Page } from './components/dashboard/page';
 import EditItemForm from './components/EditForm/EditItemForm';
 import { Dialog } from './components/ui/dialog';
 import { NotFound } from './components/NotFound';
-import Loading from "@/components/Loading"
+import Loading from '@/components/Loading';
 
 const SetupMiddleware = observer(() => {
   const location = useLocation();
@@ -24,8 +24,8 @@ const SetupMiddleware = observer(() => {
   useEffect(() => {
     const loadData = async () => {
       // this call sets up store.showInitializeDatabasePage
-      await store.getUser(true)
-      setIsLoading(false)
+      await store.getUser(true);
+      setIsLoading(false);
     };
 
     loadData();
@@ -50,8 +50,7 @@ const SetupMiddleware = observer(() => {
 
   // Otherwise continue
   return <Outlet />;
-})
-
+});
 
 const App = observer(() => {
   return (
@@ -64,15 +63,13 @@ const App = observer(() => {
           <Route path="/setup/auth" element={<SetupAuth />} />
           <Route path="/setup/import" element={<SetupImport />} />
           <Route path="/setup/bookmarklet" element={<SetupBookmarklet />} />
-          <Route path="/create-item"
-            element={<EditItemForm isCloseWindowOnSubmit={true} />}
-          />
+          <Route path="/create-item" element={<EditItemForm isCloseWindowOnSubmit={true} />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
     </BrowserRouter>
   );
-})
+});
 
-export default App
+export default App;

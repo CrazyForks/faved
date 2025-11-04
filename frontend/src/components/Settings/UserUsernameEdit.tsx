@@ -1,21 +1,21 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { useContext } from "react"
-import { StoreContext } from "@/store/storeContext"
-import z from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useContext } from 'react';
+import { StoreContext } from '@/store/storeContext';
+import z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 const formSchema = z.object({
   username: z
     .string()
-    .min(2, { message: "Username must be at least 2 characters." })
-    .max(30, { message: "Username must be at most 30 characters." }),
-})
+    .min(2, { message: 'Username must be at least 2 characters.' })
+    .max(30, { message: 'Username must be at most 30 characters.' }),
+});
 
 export const UserUsernameEdit = () => {
   const store = useContext(StoreContext);
@@ -24,10 +24,10 @@ export const UserUsernameEdit = () => {
     defaultValues: {
       username: store.user.username ?? '',
     },
-  })
+  });
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    store.createUserName(values)
-  }
+    store.createUserName(values);
+  };
   return (
     <Card>
       <Form {...form}>
@@ -44,11 +44,7 @@ export const UserUsernameEdit = () => {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Username"
-                        autoComplete="username"
-                        {...field}
-                      />
+                      <Input placeholder="Username" autoComplete="username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -57,10 +53,12 @@ export const UserUsernameEdit = () => {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">Update Username</Button>
+            <Button type="submit" className="w-full">
+              Update Username
+            </Button>
           </CardFooter>
         </form>
       </Form>
     </Card>
-  )
-}
+  );
+};

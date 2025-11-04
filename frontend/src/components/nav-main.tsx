@@ -1,19 +1,20 @@
-import {type Icon, IconDashboard} from "@tabler/icons-react"
+import { type Icon, IconDashboard } from '@tabler/icons-react';
 
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem, useSidebar,
-} from "@/components/ui/sidebar"
-import { StoreContext } from "@/store/storeContext.ts";
-import * as React from "react";
-import { observer } from "mobx-react-lite";
+  SidebarMenuItem,
+  useSidebar,
+} from '@/components/ui/sidebar';
+import { StoreContext } from '@/store/storeContext.ts';
+import * as React from 'react';
+import { observer } from 'mobx-react-lite';
 
 export const NavMain = observer(() => {
-  const store = React.useContext(StoreContext)
-  const { isMobile, toggleSidebar } = useSidebar()
+  const store = React.useContext(StoreContext);
+  const { isMobile, toggleSidebar } = useSidebar();
 
   const setAllTags = () => {
     store.setCurrentTagId(0);
@@ -21,7 +22,7 @@ export const NavMain = observer(() => {
     if (isMobile) {
       toggleSidebar();
     }
-  }
+  };
 
   const setNoTags = () => {
     store.setCurrentTagId(null);
@@ -29,24 +30,24 @@ export const NavMain = observer(() => {
     if (isMobile) {
       toggleSidebar();
     }
-  }
+  };
 
   const navLinks = [
     {
-      title: "All items",
+      title: 'All items',
       onClick: setAllTags,
       isSelected: store.selectedTagId === '0',
-      url: "#",
+      url: '#',
       icon: null,
     },
     {
-      title: "Untagged",
+      title: 'Untagged',
       onClick: setNoTags,
       isSelected: store.selectedTagId === null,
-      url: "#",
+      url: '#',
       icon: null,
-    }
-  ]
+    },
+  ];
 
   return (
     <SidebarGroup>
@@ -54,9 +55,13 @@ export const NavMain = observer(() => {
         <SidebarMenu>
           {navLinks.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}
+              <SidebarMenuButton
+                tooltip={item.title}
                 onClick={item.onClick}
-                className={"active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear" + (item.isSelected ? " !bg-primary !text-primary-foreground" : "")}
+                className={
+                  'active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear' +
+                  (item.isSelected ? ' !bg-primary !text-primary-foreground' : '')
+                }
               >
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
@@ -66,5 +71,5 @@ export const NavMain = observer(() => {
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  )
-})
+  );
+});

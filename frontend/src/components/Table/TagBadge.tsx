@@ -1,9 +1,9 @@
-import React from "react";
-import {Badge} from "../ui/badge";
-import {observer} from "mobx-react-lite";
-import {StoreContext} from "@/store/storeContext";
-import {colorMap} from "@/lib/utils";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
+import React from 'react';
+import { Badge } from '../ui/badge';
+import { observer } from 'mobx-react-lite';
+import { StoreContext } from '@/store/storeContext';
+import { colorMap } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 
 type TagType = {
   fullPath: string;
@@ -26,7 +26,7 @@ const formatTagPathForDisplay = (path) => {
   return path.replaceAll('\\/', '/');
 };
 
-export const TagBadgeMini: React.FC<{ tagID: number }> = observer(({tagID}) => {
+export const TagBadgeMini: React.FC<{ tagID: number }> = observer(({ tagID }) => {
   const store = React.useContext(StoreContext) as unknown as MainStore;
   const tag = store.tags[tagID];
   if (!tag) {
@@ -36,16 +36,14 @@ export const TagBadgeMini: React.FC<{ tagID: number }> = observer(({tagID}) => {
   const colorClass = getColorClass(tag.color);
 
   return (
-        <Badge
-          variant="secondary"
-        >
-          <span className={`w-3 h-3 rounded-full flex-none ${colorClass}`}></span>
-          <span>{fullPath}</span>
-        </Badge>)
-})
+    <Badge variant="secondary">
+      <span className={`w-3 h-3 rounded-full flex-none ${colorClass}`}></span>
+      <span>{fullPath}</span>
+    </Badge>
+  );
+});
 
-
-export const TagBadge: React.FC<{ tagID: number }> = observer(({tagID}) => {
+export const TagBadge: React.FC<{ tagID: number }> = observer(({ tagID }) => {
   const store = React.useContext(StoreContext) as unknown as MainStore;
   const tag = store.tags[tagID];
   if (!tag) {
@@ -61,26 +59,20 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({tagID}) => {
     store.setCurrentPage(1);
   };
 
-  const colorClass = tag.color && colorMap[tag.color as keyof typeof colorMap]
-    ? colorMap[tag.color as keyof typeof colorMap]
-    : colorMap.gray;
+  const colorClass =
+    tag.color && colorMap[tag.color as keyof typeof colorMap]
+      ? colorMap[tag.color as keyof typeof colorMap]
+      : colorMap.gray;
 
   return (
     <Tooltip delayDuration={500}>
       <TooltipTrigger asChild>
-        <Badge
-          variant={isTagSelected ? 'outline' : 'secondary'}
-          className="cursor-pointer"
-          onClick={setTag}
-        >
+        <Badge variant={isTagSelected ? 'outline' : 'secondary'} className="cursor-pointer" onClick={setTag}>
           <span className={`w-3 h-3 rounded-full flex-none ${colorClass}`}></span>
           <span>{tagTitle}</span>
         </Badge>
       </TooltipTrigger>
-      <TooltipContent>
-        {fullPath}
-      </TooltipContent>
+      <TooltipContent>{fullPath}</TooltipContent>
     </Tooltip>
-
   );
 });
