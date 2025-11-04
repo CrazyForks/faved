@@ -3,7 +3,7 @@ import './App.css'
 import { observer } from 'mobx-react-lite';
 import { useContext, useEffect, useState } from 'react';
 import { StoreContext } from './store/storeContext';
-import { LoginPage } from './components/Login/LoginPage';
+import { Login } from './pages/Login.tsx';
 import { Setup } from './components/Setup/Setup';
 import { SetupAuth } from './components/Setup/SetupAuth';
 import { SetupImport } from './components/Setup/SetupImport';
@@ -59,7 +59,7 @@ const App = observer(() => {
       <Routes>
         <Route element={<SetupMiddleware />}>
           <Route path="/" element={<Page />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/setup" element={<Setup />} />
           <Route path="/setup/auth" element={<SetupAuth />} />
           <Route path="/setup/import" element={<SetupImport />} />
