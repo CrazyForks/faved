@@ -32,7 +32,7 @@ export const Login = observer(() => {
       ? location.state.from.pathname + location.state?.from?.search
       : '/';
     navigate(redirectUrl, { replace: true });
-  }, [store.isAuthRequired, location.state.from.pathname, location.state?.from?.search, navigate]);
+  }, [store.isAuthRequired, location.state?.from?.pathname, location.state?.from?.search, navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,11 +48,7 @@ export const Login = observer(() => {
 
   return (
     <AuthLayout>
-      <div className="flex flex-col gap-8 min-w-xs w-full max-w-sm">
-        <div className="flex items-center justify-center gap-2">
-          <img src="logo.png" alt="Faved logo" className="w-[28px] h-auto" />
-          <h2 className="text-xl font-semibold tracking-tight">Faved</h2>
-        </div>
+      <div className="min-w-xs w-full max-w-sm">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Card>
