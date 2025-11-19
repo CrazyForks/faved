@@ -7,11 +7,11 @@ Free and open source. No ads or tracking. All data is stored locally.
 
 <div align="center">
   
-  🧪 **[Try Live Demo](https://demo.faved.dev/)** | 🌐 **[Visit Website](https://faved.dev/)** |  ☁️ **[Cloud Version](https://faved.dev/waitlist?ref=gh-readme)** 
+  🧪 **[Try Live Demo](https://demo.faved.dev/?utm_source=github&utm_medium=readme)** | 🌐 **[Visit Website](https://faved.dev/?utm_source=github&utm_medium=readme)** |  ☁️ **[Cloud Version](https://faved.cloud/signup?utm_source=github&utm_medium=readme)** 
 </div>
 <div align="center">
   
-  📚 **[Read Blog](https://faved.dev/blog)** | 𝕏 **[Follow on X](https://x.com/FavedTool)**
+  📚 **[Read Blog](https://faved.dev/blog?utm_source=github&utm_medium=readme)** | 𝕏 **[Follow on X](https://x.com/FavedTool)**
 </div>
 
 <img width="2400" height="1400" alt="screenshot-list-desktop-mobile-safari" src="https://github.com/user-attachments/assets/9b5fb4d4-6b95-4fae-a9bd-fb1600a3d00c" />
@@ -33,10 +33,10 @@ https://github.com/user-attachments/assets/0ecbf26a-9ed8-49d9-a5ce-33d471c06fdf
 
 ## Documentation
 
-- [Introduction](https://faved.dev/docs/getting-started/introduction)
-- [Installation](https://faved.dev/docs/getting-started/installation)
-- [Updating](https://faved.dev/docs/getting-started/updating)
-- [Using browser bookmarklet](https://faved.dev/docs/getting-started/using-browser-bookmarklet)
+- [Introduction](https://faved.dev/docs/getting-started/introduction?utm_source=github&utm_medium=readme)
+- [Installation](https://faved.dev/docs/getting-started/installation?utm_source=github&utm_medium=readme)
+- [Updating](https://faved.dev/docs/getting-started/updating?utm_source=github&utm_medium=readme)
+- [Using browser bookmarklet](https://faved.dev/docs/getting-started/using-browser-bookmarklet?utm_source=github&utm_medium=readme)
 
 
 ## Project Structure
