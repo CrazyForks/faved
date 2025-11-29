@@ -12,8 +12,9 @@ use function Framework\data;
 use function Framework\loginUser;
 use function Framework\success;
 use function Framework\validatePassword;
-use function Framework\validatePasswordAndConfirmation;
+use function Framework\validatePasswordConfirmation;
 use function Framework\validateUsername;
+use function Utils\buildPublicUserObject;
 
 class UserCreateController implements ControllerInterface
 {

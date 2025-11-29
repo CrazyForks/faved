@@ -9,6 +9,7 @@ import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Spinner } from '@/components/ui/spinner.tsx';
 
 const formSchema = z
   .object({
@@ -16,16 +17,16 @@ const formSchema = z
       .string()
       .min(2, { message: 'Username must be at least 2 characters.' })
       .max(30, { message: 'Username must be at most 30 characters.' }),
-    password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
-    passwordConfirm: z.string().min(8, { message: 'Password confirmation must be at least 8 characters.' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+    confirm_password: z.string().min(6, { message: 'Password confirmation must be at least 6 characters.' }),
   })
   .refine(
-    (data: { password: string; passwordConfirm: string }) => {
-      return data.password === data.passwordConfirm;
+    (data: { password: string; confirm_password: string }) => {
+      return data.password === data.confirm_password;
     },
     {
       message: 'Passwords do not match.',
-      path: ['passwordConfirm'],
+      path: ['confirm_password'],
     }
   );
 
@@ -37,12 +38,12 @@ export const UserCreate = ({ onSuccess }: { onSuccess?: () => void }) => {
     defaultValues: {
       username: '',
       password: '',
-      passwordConfirm: '',
+      confirm_password: '',
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const success = await store.onCreateUser(values);
+    const success = await store.createUser(values);
     if (success && onSuccess) {
       onSuccess();
     }
@@ -92,7 +93,7 @@ export const UserCreate = ({ onSuccess }: { onSuccess?: () => void }) => {
             <div className="flex flex-col gap-3">
               <FormField
                 control={form.control}
-                name="passwordConfirm"
+                name="confirm_password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
@@ -106,7 +107,8 @@ export const UserCreate = ({ onSuccess }: { onSuccess?: () => void }) => {
             </div>
           </CardContent>
           <CardFooter>
-            <Button onClick={form.handleSubmit(onSubmit)} className="w-full">
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && <Spinner />}
               Create user
             </Button>
           </CardFooter>

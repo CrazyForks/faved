@@ -2,7 +2,16 @@ import { makeAutoObservable } from 'mobx';
 import { toast } from 'sonner';
 import { API_ENDPOINTS } from './api';
 import { ActionType } from '@/components/dashboard/types';
-import type { ItemType, LoginType, PasswordType, TagsObjectType, TagType, UsernameType, UsetType } from '@/types/types';
+import {
+  CreateUserType,
+  ItemType,
+  LoginType,
+  UpdatePasswordType,
+  TagsObjectType,
+  TagType,
+  UpdateUsernameType,
+  UserType,
+} from '@/types/types';
 
 const getCookie = (name: string) => {
   // Add a semicolon to the beginning of the cookie string to handle the first cookie
@@ -24,7 +33,7 @@ class mainStore {
   items: ItemType[] = [];
   tags: TagsObjectType[] = [];
   type: ActionType = '' as ActionType;
-  user: { username: string } | null = null;
+  user: UserType | null = null;
   idItem: number | undefined = undefined;
   isAuthRequired = false;
   showInitializeDatabasePage = false;
@@ -101,11 +110,10 @@ class mainStore {
   setCurrentTagId = (val: string | null | number) => {
     this.selectedTagId = val === null ? null : val.toString();
   };
-  setUser = (username: string) => {
-    this.user = {
-      username: username,
-    };
+  setUser = (user: UserType) => {
+    this.user = user;
   };
+
   unsetUser = () => {
     this.user = null;
   };
@@ -257,67 +265,62 @@ class mainStore {
     );
   };
   getUser = async (noErrorEmit: boolean = false) => {
-    return this.runRequest(API_ENDPOINTS.settings.getUser, 'GET', {}, 'Failed to fetch user', true, noErrorEmit).then(
-      (response) => {
-        if (response?.data?.user) {
-          this.setUser(response.data.user.username);
-          return true;
-        }
-        return false;
-      }
+    const response = await this.runRequest(
+      API_ENDPOINTS.settings.getUser,
+      'GET',
+      {},
+      'Failed to fetch user',
+      true,
+      noErrorEmit
     );
+
+    if (!response?.data?.user) {
+      return false;
+    }
+    this.setUser(response.data.user);
+    return true;
   };
 
-  onCreateUser = async (val: UsetType) => {
-    return this.runRequest(
-      API_ENDPOINTS.settings.create,
-      'POST',
-      {
-        username: val.username || '',
-        password: val.password || '',
-        confirm_password: val.passwordConfirm || '',
-      },
-      'Failed to fetch user'
-    ).then((response) => {
-      if (response === null) {
-        return false;
-      }
-      this.setUser(val.username);
-      return true;
-    });
+  createUser = async (values: CreateUserType) => {
+    const response = await this.runRequest(API_ENDPOINTS.settings.create, 'POST', values, 'Failed to create user');
+
+    if (response === null || !response?.data?.user) {
+      return false;
+    }
+
+    this.setUser(response.data.user);
+    return true;
   };
 
-  createUserName = async (val: UsernameType) => {
-    return this.runRequest(
+  updateUsername = async (values: UpdateUsernameType) => {
+    const response = await this.runRequest(
       API_ENDPOINTS.settings.userName,
       'PATCH',
-      {
-        username: val.username || '',
-      },
-      'Failed to create user name'
-    ).then((response) => {
-      if (response === null) {
-        return;
-      }
-      this.setUser(val.username);
-    });
+      values,
+      'Failed to update username'
+    );
+
+    if (response === null) {
+      return false;
+    }
+
+    this.setUser({ ...this.user, ...{ username: values.username } });
+    return true;
   };
-  createPassword = async (val: PasswordType, reset: any) => {
-    return this.runRequest(
+
+  updatePassword = async (values: UpdatePasswordType) => {
+    const response = await this.runRequest(
       API_ENDPOINTS.settings.password,
       'PATCH',
-      {
-        password: val.password || '',
-        confirm_password: val.passwordConfirm || '',
-      },
-      'Failed to create password'
-    ).then((response) => {
-      if (response === null) {
-        return;
-      }
-      reset();
-    });
+      values,
+      'Failed to update password'
+    );
+    if (response === null) {
+      return false;
+    }
+    return true;
   };
+
   deleteUser = () => {
     return this.runRequest(API_ENDPOINTS.settings.delete, 'DELETE', {}, 'Failed to delete user').then((response) => {
       if (response === null) {
@@ -334,25 +337,17 @@ class mainStore {
       this.setIsAuthRequired(true);
     });
   };
-  login = (values: LoginType, setIsLoading: (val: boolean) => void) => {
-    return this.runRequest(
-      API_ENDPOINTS.auth.login,
-      'POST',
-      {
-        username: values.username || '',
-        password: values.password || '',
-      },
-      'Failed to log in'
-    )
-      .then((response) => {
-        if (response === null) {
-          return;
-        }
-        this.setIsAuthRequired(false);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+
+  login = async (values: LoginType) => {
+    const response = await this.runRequest(API_ENDPOINTS.auth.login, 'POST', values, 'Failed to log in');
+
+    if (response === null || !response?.data?.user) {
+      return;
+    }
+
+    this.setIsAuthRequired(false);
+    // TODO: Maybe add
+    //  this.setUser(response.data.user);
   };
   initializeDatabase = async () => {
     return this.runRequest(API_ENDPOINTS.setup.setup, 'POST', {}, 'Failed to initialize database').then((response) => {
@@ -396,7 +391,7 @@ class mainStore {
   };
 
   fetchUrlMetadata = async (url: string) => {
-    return this.runRequest(API_ENDPOINTS.urlMetdata.fetch(url), 'GET', {}, 'Error fetching metadata from URL');
+    return await this.runRequest(API_ENDPOINTS.urlMetdata.fetch(url), 'GET', {}, 'Error fetching metadata from URL');
   };
 }
 

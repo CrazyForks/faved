@@ -1,11 +1,27 @@
-export type UsetType = {
+export type CreateUserType = {
   username: string;
   password: string;
-  passwordConfirm: string;
+  confirm_password: string;
 };
-export type UsernameType = Omit<UsetType, 'password' | 'passwordConfirm'>;
-export type PasswordType = Omit<UsetType, 'username'>;
-export type LoginType = Omit<UsetType, 'passwordConfirm'>;
+
+export type LoginType = {
+  username: string;
+  password: string;
+};
+
+export type UpdateUsernameType = {
+  username: string;
+};
+
+export type UserType = {
+  id: number;
+  username: string;
+};
+
+export type UpdatePasswordType = {
+  password: string;
+  confirm_password: string;
+};
 
 export type ItemType = {
   id?: string;

@@ -10,6 +10,7 @@ use Framework\ServiceContainer;
 use Models\Repository;
 use function Framework\data;
 use function Framework\getLoggedInUser;
+use function Framework\success;
 use function Framework\validatePassword;
 use function Framework\validatePasswordConfirmation;
 

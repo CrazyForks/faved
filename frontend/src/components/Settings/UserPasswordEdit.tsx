@@ -9,20 +9,20 @@ import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Spinner } from '@/components/ui/spinner.tsx';
 
 const formSchema = z
   .object({
-    username: z.string().optional(),
-    password: z.string().min(2, {
-      message: 'Password must be at least 2 characters.',
+    password: z.string().min(6, {
+      message: 'Password must be at least 6 characters.',
     }),
-    passwordConfirm: z.string().min(2, {
-      message: 'Password must be at least 2 characters.',
+    confirm_password: z.string().min(6, {
+      message: 'Password must be at least 6 characters.',
     }),
   })
-  .refine((data) => data.password === data.passwordConfirm, {
+  .refine((data) => data.password === data.confirm_password, {
     message: "Passwords don't match",
-    path: ['passwordConfirm'],
+    path: ['confirm_password'],
   });
 
 export function UserPasswordEdit() {
@@ -31,14 +31,17 @@ export function UserPasswordEdit() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: store.user?.username ?? '',
       password: '',
-      passwordConfirm: '',
+      confirm_password: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    store.createPassword(values, form.reset);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const success = await store.updatePassword(values);
+    if (success) {
+      form.reset();
+    }
+    return success;
   };
 
   return (
@@ -51,50 +54,34 @@ export function UserPasswordEdit() {
           <CardContent className="flex flex-col gap-4">
             <FormField
               control={form.control}
-              name="username"
+              name="password"
               render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel className="sr-only">Username</FormLabel>
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="text" autoComplete="username" {...field} className="hidden" />
+                    <Input type="password" placeholder="Password" autoComplete="new-password" {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
-
-            <div className="flex flex-col gap-3">
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Password" autoComplete="new-password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex flex-col gap-3">
-              <FormField
-                control={form.control}
-                name="passwordConfirm"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Confirm Password" autoComplete="new-password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="confirm_password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="Confirm Password" autoComplete="new-password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
-          <CardFooter>
-            <Button type="submit" className="w-full">
+          <CardFooter className="flex flex-col gap-4">
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && <Spinner />}
               Change Password
             </Button>
           </CardFooter>
