@@ -2,7 +2,7 @@
 
 namespace Framework\Middleware;
 
-use Controllers\AuthController;
+use Controllers\AuthLoginController;
 use Framework\Exceptions\DatabaseNotFound;
 use Framework\Exceptions\UnauthorizedException;
 use Framework\ServiceContainer;
@@ -13,7 +13,7 @@ class AuthenticationMiddleware extends MiddlewareAbstract
 {
 	protected array $skip_auth_routes = [
 		// API Auth routes
-		AuthController::class,
+		AuthLoginController::class,
 	];
 
 	public function handle()

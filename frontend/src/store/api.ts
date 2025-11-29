@@ -23,7 +23,7 @@ export const API_ENDPOINTS = {
     updatePinned: (id: any) => `${API_BASE}/tags/update-pinned?tag-id=${id}`,
   },
   auth: {
-    login: `${API_BASE}/auth`,
+    login: `${API_BASE}/auth/login`,
     logout: `${API_BASE}/auth/logout`,
   },
   setup: {

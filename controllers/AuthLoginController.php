@@ -3,13 +3,16 @@
 namespace Controllers;
 
 use Config;
+use Framework\Exceptions\ValidationException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
 use function Framework\data;
 use function Framework\loginUser;
+use function Framework\success;
+use function Utils\buildPublicUserObject;
 
-class AuthController
+class AuthLoginController
 {
 	public function __invoke(array $input): ResponseInterface
 	{
@@ -29,10 +32,7 @@ class AuthController
 		$password = $input['password'] ?? '';
 
 		if (empty($username) || empty($password)) {
-			return data([
-				'success' => false,
-				'message' => 'Username and password are required.',
-			], 422);
+			throw new ValidationException('Username and password are required.');
 		}
 
 		// Find user
@@ -40,10 +40,7 @@ class AuthController
 		$user = $repository->getUserByUsername($username);
 
 		if (!$user || !password_verify($password, $user['password_hash'])) {
-			return data([
-				'success' => false,
-				'message' => 'Invalid username or password.',
-			], 422);
+			throw new ValidationException('Invalid username or password.');
 		}
 
 		// Rehash password if needed
@@ -55,9 +52,8 @@ class AuthController
 		// Update user session
 		loginUser($user['id']);
 
-		return data([
-			'success' => true,
-			'message' => 'Sign in successful.',
-		], 200);
+		return success('Sign in successful.', [
+			'user' => buildPublicUserObject($user)
+		]);
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-use Controllers\AuthController;
+use Controllers\AuthLoginController;
 use Controllers\AuthLogoutController;
 use Controllers\ImportPocketController;
 use Controllers\ImportBookmarksController;
@@ -60,8 +60,8 @@ return [
 			],
 		],
 		'auth' => [
-			'/' => [
-				'POST' => AuthController::class,
+			'login' => [
+				'POST' => AuthLoginController::class,
 			],
 			'logout' => [
 				'POST' => AuthLogoutController::class
