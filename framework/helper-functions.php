@@ -4,15 +4,15 @@ namespace Framework;
 
 
 use Config;
-use Exception;
+use Framework\Exceptions\ValidationException;
 use Framework\Responses\DataResponse;
 use Framework\Responses\PageResponse;
 use Framework\Responses\RedirectResponse;
 use Models\Repository;
 
-function page($page_name, $data)
+function page($page_name, $data, $code = 200)
 {
-	return new PageResponse($page_name, $data);
+	return new PageResponse($page_name, $data, $code);
 }
 
 function redirect($location, $code = 303)
@@ -23,6 +23,15 @@ function redirect($location, $code = 303)
 function data(array $data, $code = 200)
 {
 	return new DataResponse($data, $code);
+}
+
+function success($message, $data = [], $code = 200)
+{
+	return data([
+		'success' => true,
+		'message' => $message,
+		'data' => $data,
+	], $code);
 }
 
 function flattenRoutesArray(array $array, string $prefix = ''): array
@@ -44,26 +53,30 @@ function flattenRoutesArray(array $array, string $prefix = ''): array
 	return $result;
 }
 
-function validatePasswordAndConfirmation(string $password, string $confirm_password)
+function validatePassword(string $password)
 {
 	$password = trim($password);
 
 	if (empty($password)) {
-		throw new Exception('New password cannot be empty');
+		throw new ValidationException('Password cannot be empty');
 	}
 
 	if (!is_string($password) || strlen($password) < 6) {
-		throw new Exception('Password must be at least 6 characters long');
+		throw new ValidationException('Password must be at least 6 characters long');
 	}
+}
 
+function validatePasswordConfirmation(string $password, string $confirm_password)
+{
+	$password = trim($password);
 	$confirm_password = trim($confirm_password);
 
 	if (empty($confirm_password)) {
-		throw new Exception('Password confirmation cannot be empty');
+		throw new ValidationException('Password confirmation cannot be empty');
 	}
 
 	if ($password !== $confirm_password) {
-		throw new Exception('Password confirmation does not match the new password');
+		throw new ValidationException('Password confirmation does not match the password');
 	}
 }
 
@@ -72,11 +85,11 @@ function validateUsername(string $username)
 	$username = trim($username);
 
 	if (empty($username)) {
-		throw new Exception('Username cannot be empty');
+		throw new ValidationException('Username cannot be empty');
 	}
 
 	if (!is_string($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-		throw new Exception('Username format is invalid. Please use alphanumeric characters and underscores.');
+		throw new ValidationException('Username format is invalid. Please use alphanumeric characters and underscores.');
 	}
 }
 

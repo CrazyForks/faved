@@ -3,11 +3,13 @@
 namespace Controllers;
 
 use Framework\ControllerInterface;
+use Framework\Exceptions\UnauthorizedException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
-use function Framework\data;
 use function Framework\getLoggedInUser;
+use function Framework\success;
+use function Utils\buildPublicUserObject;
 
 class UserGetController implements ControllerInterface
 {
@@ -17,7 +19,7 @@ class UserGetController implements ControllerInterface
 		$repository = ServiceContainer::get(Repository::class);
 		$auth_enabled = $repository->userTableNotEmpty();
 
-		if (! $auth_enabled) {
+		if (!$auth_enabled) {
 			return data([
 				'message' => 'User has not been created.',
 				'data' => [
@@ -28,23 +30,12 @@ class UserGetController implements ControllerInterface
 
 		$user = getLoggedInUser();
 
-		if( ! $user) {
-			return data([
-				'message' => 'No user is currently logged in.',
-				'data' => [
-					'user' => null,
-				],
-			], 403);
+		if (!$user) {
+			throw new UnauthorizedException('No user is currently logged in.');
 		}
 
-		return data([
-			'message' => 'User retrieved successfully.',
-			'data' => [
-				'user' => array_intersect_key(
-					$user,
-					array_flip(['id', 'username', 'created_at', 'updated_at'])
-				),
-			],
-		], 200);
+		return success('User retrieved successfully.', [
+			'user' => buildPublicUserObject($user)
+		]);
 	}
 }

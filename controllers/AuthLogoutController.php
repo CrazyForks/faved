@@ -5,8 +5,8 @@ namespace Controllers;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
-use function Framework\data;
 use function Framework\logoutUser;
+use function Framework\success;
 
 class AuthLogoutController
 {
@@ -25,9 +25,6 @@ class AuthLogoutController
 
 		logoutUser();
 
-		return data([
-			'success' => true,
-			'message' => 'User logged out successfully.',
-		], 200);
+		return success('User logged out successfully.');
 	}
 }

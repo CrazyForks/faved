@@ -31,19 +31,20 @@ class Application
 			$response = $controller($input);
 
 		} catch (\Exception $e) {
+			$http_code = isValidHttpCode($e->getCode()) ? $e->getCode() : 500;
+
 			if ($expects_json) {
 				$response = data([
 					'success' => false,
 					'message' => $e->getMessage(),
 					'error' => $e->getMessage(),
-				], isValidHttpCode($e->getCode()) ? $e->getCode() : 500);
+				], $http_code);
 			} elseif (isset($this->error_redirects[get_class($e)])) {
 				FlashMessages::set('error', $e->getMessage());
 				$redirect_url = $this->error_redirects[get_class($e)];
 				$response = redirect($redirect_url);
 			} else {
-				http_response_code($e->getCode());
-				$response = page('error', ['message' => $e->getMessage()])
+				$response = page('error', ['message' => $e->getMessage()], $http_code)
 					->layout('primary');
 			}
 		}

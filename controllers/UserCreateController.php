@@ -3,13 +3,15 @@
 namespace Controllers;
 
 use Config;
-use Exception;
 use Framework\ControllerInterface;
+use Framework\Exceptions\DataWriteException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
 use function Framework\data;
 use function Framework\loginUser;
+use function Framework\success;
+use function Framework\validatePassword;
 use function Framework\validatePasswordAndConfirmation;
 use function Framework\validateUsername;
 
@@ -29,38 +31,27 @@ class UserCreateController implements ControllerInterface
 			], 400);
 		}
 
-		try {
-			$username = trim($input['username'] ?? '');
-			validateUsername($username);
+		$username = trim($input['username'] ?? '');
+		validateUsername($username);
 
-			$password = $input['password'] ?? '';
-			$confirm_password = $input['confirm_password'] ?? '';
-			validatePasswordAndConfirmation(
-				$password,
-				$confirm_password
-			);
-		} catch (Exception $e) {
-			return data([
-				'success' => false,
-				'message' => $e->getMessage(),
-			], 422);
-		}
+		$password = $input['password'] ?? '';
+		$confirm_password = $input['confirm_password'] ?? '';
+		validatePassword($password);
+		validatePasswordConfirmation($password, $confirm_password);
 
 		$password_hash = password_hash($password, Config::getPasswordAlgo());
 		$user_id = $repository->createUser($username, $password_hash);
 
 		if (!$user_id) {
-			return data([
-				'success' => false,
-				'message' => 'Failed to create user.',
-			], 500);
+			throw new DataWriteException('Failed to create user.');
 		}
 
 		loginUser($user_id);
 
-		return data([
-			'success' => true,
-			'message' => 'User created successfully.',
-		], 200);
+		$user = $repository->getUser($user_id);
+
+		return success('User created successfully.', [
+			'user' => buildPublicUserObject($user)
+		], 201);
 	}
 }

@@ -11,12 +11,16 @@ use function Framework\getLoggedInUser;
 
 class AuthenticationMiddleware extends MiddlewareAbstract
 {
+	protected array $skip_auth_routes = [
+		// API Auth routes
+		AuthController::class,
+	];
+
 	public function handle()
 	{
 		$controller_class = $this->controller_class;
-
-		// Skip authentication for login route
-		if ($controller_class === AuthController::class) {
+		// Skip authentication for specific routes
+		if (in_array($controller_class, $this->skip_auth_routes)) {
 			return $this->next && $this->next->handle();
 		}
 

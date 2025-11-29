@@ -234,3 +234,13 @@ function createWelcomeContent($repository)
 	);
 	$repository->attachItemTags([$welcome_tag_id], $item_id);
 }
+
+function buildPublicUserObject(array $user): array
+{
+	return [
+		...array_intersect_key(
+			$user,
+			array_flip(['id', 'username', 'created_at', 'updated_at'])
+		),
+	];
+}

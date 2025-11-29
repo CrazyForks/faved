@@ -7,8 +7,18 @@ use Framework\Exceptions\ForbiddenException;
 
 class CSRFMiddleware extends MiddlewareAbstract
 {
+
+	protected array $skipped_routes = [
+	];
+
 	public function handle()
 	{
+		$controller_class = $this->controller_class;
+		// Skip for specific routes
+		if (in_array($controller_class, $this->skipped_routes)) {
+			return $this->next && $this->next->handle();
+		}
+
 		$stored_token = $_COOKIE['CSRF-TOKEN'] ?? null;
 		$token = CSRFProtection::generateToken();
 		if ($stored_token !== $token) {

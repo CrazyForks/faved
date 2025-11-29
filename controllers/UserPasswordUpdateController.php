@@ -3,14 +3,15 @@
 namespace Controllers;
 
 use Config;
-use Exception;
 use Framework\ControllerInterface;
+use Framework\Exceptions\DataWriteException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
 use function Framework\data;
 use function Framework\getLoggedInUser;
-use function Framework\validatePasswordAndConfirmation;
+use function Framework\validatePassword;
+use function Framework\validatePasswordConfirmation;
 
 class UserPasswordUpdateController implements ControllerInterface
 {
@@ -28,35 +29,20 @@ class UserPasswordUpdateController implements ControllerInterface
 			], 400);
 		}
 
+
+		$password = $input['password'] ?? '';
+		$confirm_password = $input['confirm_password'] ?? '';
+		validatePassword($password);
+		validatePasswordConfirmation($password, $confirm_password);
+
 		$user = getLoggedInUser();
-
-		try {
-			$password = $input['password'] ?? '';
-			$confirm_password = $input['confirm_password'] ?? '';
-			validatePasswordAndConfirmation(
-				$password,
-				$confirm_password
-			);
-		} catch (Exception $e) {
-			return data([
-				'success' => false,
-				'message' => $e->getMessage(),
-			], 422);
-		}
-
 		$password_hash = password_hash($password, Config::getPasswordAlgo());
 		$result = $repository->updatePasswordHash($user['id'], $password_hash);
 
 		if (!$result) {
-			return data([
-				'success' => false,
-				'message' => 'Failed to update password.',
-			], 500);
+			throw new DataWriteException('Failed to update password.');
 		}
 
-		return data([
-			'success' => true,
-			'message' => 'Password updated successfully.',
-		], 200);
+		return success('Password updated successfully.');
 	}
 }

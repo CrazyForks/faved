@@ -8,7 +8,7 @@ class PageResponse implements ResponseInterface
 {
 	protected array $layouts = [];
 
-	public function __construct(protected string $page_name, protected array $data)
+	public function __construct(protected string $page_name, protected array $data, protected int $code)
 	{
 	}
 
@@ -29,6 +29,8 @@ class PageResponse implements ResponseInterface
 		foreach ($this->layouts as [$layout_name, $data]) {
 			$content = $this->viewOutput("/views/layouts/{$layout_name}.php", array_merge($data, compact('content')));
 		}
+
+		http_response_code($this->code);
 		echo $content;
 	}
 
