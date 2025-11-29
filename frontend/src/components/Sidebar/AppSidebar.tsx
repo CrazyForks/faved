@@ -16,6 +16,7 @@ import { observer } from 'mobx-react-lite';
 import { SidebarTag } from '@/components/Sidebar/SidebarTag.tsx';
 import { PresetActions } from '../dashboard/PresetActions';
 import { TagType } from '@/types/types';
+import { Logo } from '@/layouts/Logo.tsx';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   allTags: Record<string, TagType>;
@@ -63,10 +64,7 @@ export const AppSidebar = observer(({ allTags, ...props }: AppSidebarProps) => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="flex w-full justify-between">
-            <div className="flex flex-row items-start justify-center text-center">
-              <img src="logo.png" alt="Faved logo" className="img-fluid pr-2 w-[36px] h-auto"></img>
-              <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">Faved</h2>
-            </div>
+            <Logo />
             <PresetActions />
           </SidebarMenuItem>
         </SidebarMenu>
