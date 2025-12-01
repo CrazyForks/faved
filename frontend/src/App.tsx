@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation, useMatches } from 'react-router-dom';
 import './App.css';
 import { observer } from 'mobx-react-lite';
 import { useContext, useEffect, useState } from 'react';
@@ -13,9 +13,11 @@ import { Page } from './components/dashboard/page';
 import EditItemForm from './components/EditForm/EditItemForm';
 import { NotFound } from './components/NotFound';
 import Loading from '@/components/Loading';
+import { RouterProvider } from 'react-router';
 
 const SetupMiddleware = observer(() => {
   const location = useLocation();
+  const matches = useMatches();
 
   const store = useContext(StoreContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,16 +36,18 @@ const SetupMiddleware = observer(() => {
     return <Loading />;
   }
 
-  // If we are not on the setup page, and need to be, redirect to setup
-  const isSetupPage = location.pathname === '/setup';
+  // If we are not on the setup page while DB is not initialized, redirect to setup
+  const currentRouteMatch = matches[matches.length - 1];
+  const currentRouteId = currentRouteMatch?.id;
+  const isSetupPage = currentRouteId === 'setup';
 
   if (!isSetupPage && store.showInitializeDatabasePage) {
     return <Navigate to="/setup" replace />;
   }
 
-  // If we are not on the login page, and need to be, redirect to login
-  const isLoginPage = location.pathname === '/login';
-  if (store.isAuthRequired && !isLoginPage) {
+  // If we are not on the login page while not signed in, redirect to login
+  const isLoginPage = currentRouteId === 'auth-login';
+  if (!isLoginPage && store.isAuthRequired) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
@@ -51,23 +55,28 @@ const SetupMiddleware = observer(() => {
   return <Outlet />;
 });
 
+const router = createBrowserRouter([
+  {
+    element: <SetupMiddleware />,
+    children: [
+      { path: '/', element: <Page /> },
+      { path: '/login', element: <Login />, id: 'auth-login' },
+      { path: '/setup', element: <Setup />, id: 'setup' },
+      { path: '/setup/auth', element: <SetupAuth /> },
+      { path: '/setup/import', element: <SetupImport /> },
+      { path: '/setup/bookmarklet', element: <SetupBookmarklet /> },
+      { path: '/create-item', element: <EditItemForm isCloseWindowOnSubmit={true} /> },
+    ],
+  },
+  { path: '*', element: <NotFound /> },
+]);
+
 const App = observer(() => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<SetupMiddleware />}>
-          <Route path="/" element={<Page />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/setup" element={<Setup />} />
-          <Route path="/setup/auth" element={<SetupAuth />} />
-          <Route path="/setup/import" element={<SetupImport />} />
-          <Route path="/setup/bookmarklet" element={<SetupBookmarklet />} />
-          <Route path="/create-item" element={<EditItemForm isCloseWindowOnSubmit={true} />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+    <>
+      <RouterProvider router={router} />
       <Toaster />
-    </BrowserRouter>
+    </>
   );
 });
 

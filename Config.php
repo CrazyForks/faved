@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 class Config
 {
@@ -19,12 +20,12 @@ class Config
 		return PASSWORD_DEFAULT;
 	}
 
-	public static function getSessionLifetime() : int
+	public static function getSessionLifetime(): int
 	{
 		return 60 * 60 * 24 * 7; // 7 days
 	}
 
-	public static function getSessionCookieName() : string
+	public static function getSessionCookieName(): string
 	{
 		return 'faved-session';
 	}

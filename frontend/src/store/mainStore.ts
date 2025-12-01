@@ -346,8 +346,7 @@ class mainStore {
     }
 
     this.setIsAuthRequired(false);
-    // TODO: Maybe add
-    //  this.setUser(response.data.user);
+    this.setUser(response.data.user);
   };
   initializeDatabase = async () => {
     return this.runRequest(API_ENDPOINTS.setup.setup, 'POST', {}, 'Failed to initialize database').then((response) => {
