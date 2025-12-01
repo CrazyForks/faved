@@ -7,6 +7,7 @@ use Framework\Exceptions\UnauthorizedException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
+use function Framework\data;
 use function Framework\getLoggedInUser;
 use function Framework\success;
 use function Utils\buildPublicUserObject;

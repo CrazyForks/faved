@@ -3,6 +3,7 @@
 namespace Framework;
 
 
+use Exception;
 use Framework\Exceptions\ValidationException;
 
 class Application
@@ -30,21 +31,22 @@ class Application
 			$controller = new $controller_class();
 			$response = $controller($input);
 
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$http_code = isValidHttpCode($e->getCode()) ? $e->getCode() : 500;
+			$message = $e->getMessage();
 
 			if ($expects_json) {
 				$response = data([
 					'success' => false,
-					'message' => $e->getMessage(),
-					'error' => $e->getMessage(),
+					'message' => $message,
+					'error' => $message,
 				], $http_code);
 			} elseif (isset($this->error_redirects[get_class($e)])) {
-				FlashMessages::set('error', $e->getMessage());
+				FlashMessages::set('error', $message);
 				$redirect_url = $this->error_redirects[get_class($e)];
 				$response = redirect($redirect_url);
 			} else {
-				$response = page('error', ['message' => $e->getMessage()], $http_code)
+				$response = page('error', ['message' => $message], $http_code)
 					->layout('primary');
 			}
 		}
