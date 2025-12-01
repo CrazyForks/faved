@@ -1,3 +1,17 @@
+# Stage 1 – Build static assets (Vite/Node)
+FROM node:24 AS vite
+
+WORKDIR /app
+
+# Copy only what Vite needs
+COPY frontend ./
+
+RUN npm ci && \
+    npm run build
+
+# ––––––––––––––––––––––––––––––––––––––
+
+# Stage 2: Final runtime image
 FROM php:8.4-apache
 
 # Install system dependencies
@@ -24,6 +38,7 @@ COPY controllers controllers
 COPY framework framework
 COPY models models
 COPY public public
+COPY --from=vite /app/dist public/dist
 COPY utils utils
 COPY views views
 
