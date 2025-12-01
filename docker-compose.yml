@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
+      - temp-data:/tmp/
       - storage:/var/www/html/storage/
       - apache-conf:/etc/apache2/sites-enabled/
       - certbot-conf:/etc/letsencrypt/
@@ -14,6 +15,7 @@ services:
       - "${SSL_PORT:-8443}:443"
 
 volumes:
+  temp-data:
   storage:
   apache-conf:
   certbot-conf:
