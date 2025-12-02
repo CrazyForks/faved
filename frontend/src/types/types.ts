@@ -1,3 +1,5 @@
+import z from 'zod';
+
 export type CreateUserType = {
   username: string;
   password: string;
@@ -23,17 +25,26 @@ export type UpdatePasswordType = {
   confirm_password: string;
 };
 
-export type ItemType = {
-  id?: string;
-  title: string;
-  url: string;
-  description?: string;
-  comments?: string;
-  image?: string;
-  tags?: string[];
-  updated_at?: any;
-  created_at?: any;
-};
+export const UrlSchema = z
+  .string()
+  .trim()
+  .min(1, { message: 'URL is required' })
+  .transform((val) => (val.includes(':') ? val : `https://${val}`))
+  .pipe(z.url());
+
+export const ItemSchema = z.object({
+  id: z.any().optional(),
+  title: z.string().min(1, { message: 'Title is required' }),
+  url: UrlSchema,
+  description: z.string().optional(),
+  comments: z.string().optional(),
+  image: UrlSchema.optional().or(z.literal('')),
+  tags: z.array(z.any()).optional(),
+  created_at: z.any().optional(),
+  updated_at: z.any().optional(),
+});
+
+export type ItemType = z.infer<typeof ItemSchema>;
 
 export type TagType = {
   id: number | string;

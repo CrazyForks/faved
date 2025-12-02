@@ -2,7 +2,7 @@ import { Image } from 'lucide-react';
 import React from 'react';
 import { PreviewImage } from '@/components/Table/PreviewImage.tsx';
 
-export const ImagePreview = ({ imageUrl }) => (
+export const ImagePreview = ({ imageUrl }: { imageUrl: string }) => (
   <>
     {imageUrl ? (
       <PreviewImage imageUrl={imageUrl} className="w-auto max-h-[100px] object-contain rounded-sm shadow-sm" />

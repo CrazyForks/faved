@@ -8,7 +8,7 @@ import { StoreContext } from '@/store/storeContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { ActionType } from '../dashboard/types';
-import type { ItemType } from '@/types/types';
+import { ItemSchema, ItemType, UrlSchema } from '@/types/types';
 import { useLocation } from 'react-router-dom';
 import {
   AlertDialog,
@@ -23,8 +23,9 @@ import {
 } from '../ui/alert-dialog';
 import { IconCloudDownload, IconProgress } from '@tabler/icons-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
-import z from 'zod';
 import { ImagePreview } from '@/components/EditForm/ImagePreview.tsx';
+import { toast } from 'sonner';
+import { Spinner } from '@/components/ui/spinner.tsx';
 
 interface EditItemFormProps {
   isCloseWindowOnSubmit: boolean;
@@ -32,14 +33,14 @@ interface EditItemFormProps {
 
 const INITIAL_ITEM_DATA: ItemType = {
   id: '',
-  description: '',
   title: '',
+  url: '',
+  description: '',
   comments: '',
-  created_at: undefined,
   image: '',
   tags: [],
+  created_at: undefined,
   updated_at: undefined,
-  url: '',
 };
 
 const safeDecodeURIComponent = (encodedURI: string): string => {
@@ -63,19 +64,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
   }, [store.type, store.items, store.idItem]);
 
   const form = useForm<ItemType>({
-    resolver: zodResolver(
-      z.object({
-        title: z.string().min(1, { message: 'Title is required' }),
-        url: z.string().min(1, { message: 'URL is required' }),
-        description: z.any().optional(),
-        comments: z.any().optional(),
-        image: z.any().optional(),
-        tags: z.array(z.any()).optional(),
-        updated_at: z.any().optional(),
-        id: z.any().optional(),
-        created_at: z.any().optional(),
-      })
-    ),
+    resolver: zodResolver(ItemSchema),
     defaultValues: currentItem,
   });
 
@@ -154,10 +143,30 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
     }
   };
 
-  const updateMetadataFromUrl = async (url) => {
+  const updateMetadataFromUrl = async (event) => {
+    event.preventDefault();
+
+    let processedUrl;
+
+    try {
+      const result = await form.trigger('url');
+      if (!result) {
+        throw new Error();
+      }
+      processedUrl = UrlSchema.parse(form.getValues('url'));
+
+      if (!processedUrl.startsWith('http://') && !processedUrl.startsWith('https://')) {
+        throw new Error();
+      }
+    } catch (error) {
+      toast.error('Please provide a valid URL starting with http or https.', { position: 'top-center' });
+      return;
+    }
+
     setIsMetadataLoading(true);
 
-    const data: { data: { title: string; description: string; image_url: string } } = await store.fetchUrlMetadata(url);
+    const data: { data: { title: string; description: string; image_url: string } } =
+      await store.fetchUrlMetadata(processedUrl);
 
     setIsMetadataLoading(false);
 
@@ -232,7 +241,12 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
     />
   );
 
-  const imageUrl = form.watch('image');
+  let imageUrl = form.watch('image');
+  try {
+    imageUrl = UrlSchema.parse(imageUrl);
+  } catch (error) {
+    /* empty */
+  }
 
   return (
     <Form {...form}>
@@ -259,7 +273,6 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
                           <div className="flex flex-row gap-2">
                             <Input
                               type="text"
-                              id="name-1"
                               value={field.value ?? undefined}
                               onChange={(value) => {
                                 field.onChange(value ?? null);
@@ -268,7 +281,8 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button
-                                  onClick={() => updateMetadataFromUrl(field.value)}
+                                  type="button"
+                                  onClick={(e) => updateMetadataFromUrl(e)}
                                   variant="outline"
                                   disabled={isMetadataLoading}
                                 >
@@ -363,7 +377,9 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
               variant="default"
               onClick={form.handleSubmit(handleSaveClose)}
               className="order-1 sm:order-none"
+              disabled={form.formState.isSubmitting}
             >
+              {form.formState.isSubmitting && <Spinner />}
               {store.type === ActionType.EDIT ? 'Save changes' : 'Create item'}
             </Button>
           </div>
