@@ -7,42 +7,46 @@ use Framework\Exceptions\ValidationException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
-use function Framework\data;
+use Respect\Validation\Validator;
+use function Framework\success;
 
 class ItemsCreateController implements ControllerInterface
 {
-	public function __invoke(array $input) : ResponseInterface
+	public function validateInput(): Validator
+	{
+		return Validator::key('title', Validator::stringType()->notEmpty())
+			->key('url', Validator::url()->setName('URL'))
+			->key('description', Validator::stringType()->setName('Description'))
+			->key('comments', Validator::stringType()->setName('Notes'))
+			->key('image', Validator::optional(Validator::url())->setName('Image URL'))
+			->key('tags', Validator::arrayType()->setName('Tags'));
+	}
+
+	public function __invoke(array $input): ResponseInterface
 	{
 		$repository = ServiceContainer::get(Repository::class);
 
-		if(!isset($input['tags']) || !is_array($input['tags'])) {
-			return throw new ValidationException('Tags must be an array');
-		}
-
+		// Handle tags
 		$new_tag_ids = array_map('intval', $input['tags']);
-
 		$tags = $repository->getTags();
 		$exising_tag_ids = array_keys($tags);
-		if ( array_diff($new_tag_ids, $exising_tag_ids) ) {;
-			return throw new ValidationException('Non-existing tags provided');
+		if (array_diff($new_tag_ids, $exising_tag_ids)) {
+			throw new ValidationException('Non-existing tags provided');
 		}
 
+		// Save item in DB
+		$url = $input['url'];
 		$title = $input['title'];
 		$description = $input['description'];
-		$url = $input['url'];
-		$comments = $input['comments'];
 		$image = $input['image'];
+		$comments = $input['comments'];
 
 		$item_id = $repository->createItem($title, $description, $url, $comments, $image);
 
 		$repository->updateItemTags($new_tag_ids, $item_id);
 
-		return data([
-			'success' => true,
-			'message' => 'Item created successfully',
-			'data' => [
-				'item_id' => $item_id,
-			]
+		return success('Item created successfully', [
+			'item_id' => $item_id,
 		]);
 	}
 }

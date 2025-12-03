@@ -29,6 +29,10 @@ class Application
 			$input = $this->getInput();
 
 			$controller = new $controller_class();
+			if (method_exists($controller, 'validateInput')) {
+				$validator = $controller->validateInput();
+				$validator->check($input);
+			}
 			$response = $controller($input);
 
 		} catch (Exception $e) {
