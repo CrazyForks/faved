@@ -8,8 +8,8 @@ export const ImagePreview = ({ imageUrl }: { imageUrl: string }) => (
       <PreviewImage imageUrl={imageUrl} className="w-auto max-h-[100px] object-contain rounded-sm shadow-sm" />
     ) : (
       <div
-        className="text-muted-foreground w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center"
-        title="No image available"
+        className="flex items-center justify-center w-16 h-16 rounded-full text-muted-foreground bg-gray-200"
+        title="No image"
       >
         <Image />
       </div>

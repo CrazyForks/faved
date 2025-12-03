@@ -30,11 +30,11 @@ export const CardView: React.FC<{ el: any }> = observer(({ el }) => {
   const store = React.useContext(StoreContext);
 
   return (
-    <div className="flex flex-col h-full hover-action-container ">
+    <div className="flex flex-col gap-5 h-full hover-action-container ">
       {el.image && (
         <PreviewImage
           imageUrl={el.image}
-          className="w-full aspect-[1.91/1] -mt-6 mb-4 rounded-tl-[13px] rounded-tr-[13px] object-cover"
+          className="w-full aspect-[1.91/1] -mt-6 rounded-tl-[13px] rounded-tr-[13px] object-cover"
         />
       )}
       <CardHeader className="flex-grow">
@@ -141,7 +141,7 @@ export const CardView: React.FC<{ el: any }> = observer(({ el }) => {
           )}
         </div>
       </CardHeader>
-      <CardFooter className="pt-3 text-left">
+      <CardFooter className="text-left">
         <div>
           <p className="text-muted-foreground text-sm">
             <small className="text-sm leading-none font-medium">Created at:</small> {el.created_at}
