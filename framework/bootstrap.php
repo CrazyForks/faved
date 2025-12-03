@@ -1,9 +1,9 @@
 <?php
 
 use Framework\Application;
-use Framework\Middleware\AuthenticationMiddleware;
-use Framework\Middleware\CSRFMiddleware;
-use Framework\Middleware\DatabaseMigrations;
+use Framework\Middlewares\AuthenticationMiddleware;
+use Framework\Middlewares\CSRFMiddleware;
+use Framework\Middlewares\DatabaseMigrations;
 use function Framework\startSession;
 
 startSession();

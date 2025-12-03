@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Middleware;
+namespace Framework\Middlewares;
 
 use Controllers\AuthLoginController;
 use Framework\Exceptions\DatabaseNotFound;

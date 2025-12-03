@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Middleware;
+namespace Framework\Middlewares;
 
 use Framework\CSRFProtection;
 use Framework\Exceptions\ForbiddenException;

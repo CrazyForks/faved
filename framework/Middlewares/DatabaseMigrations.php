@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Middleware;
+namespace Framework\Middlewares;
 
 use Framework\Exceptions\DatabaseNotFound;
 use Framework\ServiceContainer;
