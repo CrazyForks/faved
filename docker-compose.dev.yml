@@ -25,6 +25,13 @@ services:
     environment:
       - "BACKEND_PORT=${BACKEND_PORT:-8000}"
     command: sh -c "npm install && npm run dev -- --host"
+  composer:
+      image: composer/composer
+      restart: "no"
+      working_dir: /app
+      volumes:
+        - .:/app:delegated
+      command: ["composer", "install"]
 
 volumes:
   temp-data:

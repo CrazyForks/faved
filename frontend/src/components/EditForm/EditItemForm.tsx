@@ -158,7 +158,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
       if (!processedUrl.startsWith('http://') && !processedUrl.startsWith('https://')) {
         throw new Error();
       }
-    } catch (error) {
+    } catch {
       toast.error('Please provide a valid URL starting with http or https.', { position: 'top-center' });
       return;
     }
@@ -244,7 +244,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
   let imageUrl = form.watch('image');
   try {
     imageUrl = UrlSchema.parse(imageUrl);
-  } catch (error) {
+  } catch {
     /* empty */
   }
 

@@ -11,7 +11,19 @@ RUN npm ci && \
 
 # ––––––––––––––––––––––––––––––––––––––
 
-# Stage 2: Final runtime image
+# Stage 2: Composer runtime dependencies
+FROM composer/composer AS composer
+
+WORKDIR /app
+
+# Copy only what Composer needs
+COPY composer.json composer.lock ./
+
+RUN composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction --no-scripts
+
+# ––––––––––––––––––––––––––––––––––––––
+
+# Stage 3: Final runtime image
 FROM php:8.4-apache
 
 # Install system dependencies
@@ -41,6 +53,7 @@ COPY public public
 COPY --from=vite /app/dist public/dist
 COPY utils utils
 COPY views views
+COPY --from=composer /app/vendor vendor
 
 RUN mkdir /var/www/html/storage && \
     chown www-data:www-data /var/www/html/storage
