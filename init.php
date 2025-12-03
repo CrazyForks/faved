@@ -1,10 +1,4 @@
 <?php
-require_once ROOT_DIR . '/utils/util-functions.php';
-require_once ROOT_DIR . '/utils/PocketImporter.php';
-require_once ROOT_DIR . '/utils/BookmarkImporter.php';
-require_once ROOT_DIR . '/utils/DOMParser.php';
-require_once ROOT_DIR . '/models/TagCreator.php';
-require_once ROOT_DIR . '/models/Repository.php';
 
 use Framework\Exceptions\DatabaseNotFound;
 use Framework\ServiceContainer;
