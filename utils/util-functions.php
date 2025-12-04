@@ -198,7 +198,7 @@ function createWelcomeContent($repository)
 		'Free open-source bookmark manager with customisable nested tags. Super fast and lightweight. All data is stored locally. - denho/faved',
 		'https://github.com/denho/faved',
 		'',
-		'https://repository-images.githubusercontent.com/995300772/35566533-7ffc-4101-a7ce-926f5d82b6ca',
+		'https://repository-images.githubusercontent.com/995300772/895299f8-4360-4b17-a87e-4be5fb8f7e94',
 		null
 	);
 	$repository->attachItemTags([$faved_tag_id]
