@@ -16,8 +16,8 @@ FROM composer/composer AS composer
 
 WORKDIR /app
 
-# Copy only what Composer needs
-COPY composer.json composer.lock ./
+# Copy source files needed for Composer install and autoload
+COPY . .
 
 RUN composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction --no-scripts
 
