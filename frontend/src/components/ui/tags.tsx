@@ -74,18 +74,18 @@ const TagEdit = observer(
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={['text-left h-auto whitespace-normal w-full flex justify-start'].join(' ')}
+            className={['flex h-auto w-full justify-start text-left whitespace-normal'].join(' ')}
           >
             <div className="flex flex-wrap gap-1">
               {selected.length > 0
                 ? selected.map((tagId) => <TagBadgeMini tagID={tagId as unknown as number} />)
                 : 'Select tags...'}
             </div>
-            <ChevronsUpDown className="opacity-50 ml-auto" />
+            <ChevronsUpDown className="ml-auto opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className={[className, 'p-0 overflow-y-hidden'].join(' ')}
+          className={[className, 'overflow-y-hidden p-0'].join(' ')}
           align="start"
           // Required to make the popover scrollable with mouse wheel and touch move inside modal
           onWheel={(e) => e.stopPropagation()}
@@ -94,7 +94,7 @@ const TagEdit = observer(
           <Command shouldFilter={false} disablePointerSelection={false} loop={false}>
             <CommandInput value={query} onValueChange={setQuery} placeholder="Search tags..." className="h-9" />
 
-            <CommandList className="overflow-y-scroll max-h-[25dvh]">
+            <CommandList className="max-h-[25dvh] overflow-y-scroll">
               {/*<CommandEmpty>No tags found.</CommandEmpty>*/}
               <CommandGroup>
                 {tags
@@ -113,7 +113,7 @@ const TagEdit = observer(
                         );
                       }}
                     >
-                      <span className={`w-3 h-3 flex-none rounded-full ${getColorClass(tag.color)}`}></span>
+                      <span className={`h-3 w-3 flex-none rounded-full ${getColorClass(tag.color)}`}></span>
                       <span>{tag.fullPath}</span>
                       <Check className={cn('ml-auto', selected.includes(tag.id) ? 'opacity-100' : 'opacity-0')} />
                     </CommandItem>

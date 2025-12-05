@@ -9,7 +9,7 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
     <div data-slot="table-container" className="relative w-full overflow-x-visible">
       <table
         data-slot="table"
-        className={cn('w-full caption-bottom text-sm border-separate border-spacing-0', className)}
+        className={cn('w-full caption-bottom border-separate border-spacing-0 text-sm', className)}
         {...props}
       />
     </div>
@@ -45,7 +45,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   return (
     <tr
       data-slot="table-row"
-      className={cn('align-top hover:bg-muted/50 data-[state=selected]:bg-muted transition-colors', className)}
+      className={cn('hover:bg-muted/50 data-[state=selected]:bg-muted align-top transition-colors', className)}
       {...props}
     />
   );
@@ -58,8 +58,8 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
       className={cn(
         'text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
         'bg-background',
-        '[&:first-child]:border-l [&:first-child]:border-t [&:first-child]:border-b',
-        '[&:last-child]:border-r [&:last-child]:border-t [&:last-child]:border-b',
+        '[&:first-child]:border-t [&:first-child]:border-b [&:first-child]:border-l',
+        '[&:last-child]:border-t [&:last-child]:border-r [&:last-child]:border-b',
         '[&:not(:first-child):not(:last-child)]:border-t [&:not(:first-child):not(:last-child)]:border-b',
         className
       )}
@@ -73,8 +73,8 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
     <td
       data-slot="table-cell"
       className={cn(
-        'p-3 align-top whitespace-normal break-words hyphenate bg-background',
-        '[&:first-child]:border-l [&:first-child]:border-b',
+        'hyphenate bg-background p-3 align-top break-words whitespace-normal',
+        '[&:first-child]:border-b [&:first-child]:border-l',
         '[&:last-child]:border-r [&:last-child]:border-b',
         '[&:not(:first-child):not(:last-child)]:border-b',
         className

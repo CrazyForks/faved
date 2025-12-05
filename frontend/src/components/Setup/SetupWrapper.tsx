@@ -17,10 +17,10 @@ export const SetupWrapper = ({ currentStep, children }: SetupWrapperProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-start justify-center text-left min-h-svh w-full px-3 py-16">
-      <div className={`setup-wrapper w-full md:w-3xl flex flex-col items-stretch gap-4`}>
-        <nav className="w-full mb-8">
-          <div className="w-full flex items-center justify-between">
+    <div className="flex min-h-svh w-full items-start justify-center px-3 py-16 text-left">
+      <div className={`setup-wrapper flex w-full flex-col items-stretch gap-4 md:w-3xl`}>
+        <nav className="mb-8 w-full">
+          <div className="flex w-full items-center justify-between">
             {steps.map((step, index) => (
               <React.Fragment key={step.id}>
                 <div
@@ -34,7 +34,7 @@ export const SetupWrapper = ({ currentStep, children }: SetupWrapperProps) => {
                   onClick={() => currentStep > step.id && navigate(step.url)}
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
+                    className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full ${
                       currentStep > step.id
                         ? 'bg-primary text-secondary'
                         : currentStep === step.id
@@ -43,7 +43,7 @@ export const SetupWrapper = ({ currentStep, children }: SetupWrapperProps) => {
                     }`}
                   >
                     {currentStep > step.id ? (
-                      <Check className="w-4 h-4" />
+                      <Check className="h-4 w-4" />
                     ) : (
                       <span className="text-sm font-medium">{step.id}</span>
                     )}
@@ -53,7 +53,7 @@ export const SetupWrapper = ({ currentStep, children }: SetupWrapperProps) => {
                   </div>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`flex-1 h-px mx-4 ${currentStep > step.id ? 'bg-primary' : 'bg-gray-200'}`} />
+                  <div className={`mx-4 h-px flex-1 ${currentStep > step.id ? 'bg-primary' : 'bg-gray-200'}`} />
                 )}
               </React.Fragment>
             ))}

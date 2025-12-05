@@ -21,13 +21,6 @@ export default tseslint.config([
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/no-empty-function': 'warn',
-      'react/no-children-prop': 'off',
-      'react-hooks/rules-of-hooks': 'warn',
-      'react-hooks/exhaustive-deps': 'warn',
-      'no-console': 'warn',
-      'no-debugger': 'warn',
     },
   },
 ])

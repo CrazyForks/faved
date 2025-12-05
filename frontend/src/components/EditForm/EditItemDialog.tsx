@@ -11,7 +11,7 @@ export const EditItemDialog = observer(() => {
     <Dialog onOpenChange={store.setIsShowEditModal} open={store.isShowEditModal}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className="p-0 w-[100dvw] md:w-[95dvw] max-w-6xl rounded-none md:rounded-lg"
+        className="w-[100dvw] max-w-6xl rounded-none p-0 md:w-[95dvw] md:rounded-lg"
       >
         <DialogTitle className="sr-only">Edit Item</DialogTitle>
         <EditItemForm isCloseWindowOnSubmit={false} />

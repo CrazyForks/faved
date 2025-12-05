@@ -37,7 +37,7 @@ export const TagBadgeMini: React.FC<{ tagID: number }> = observer(({ tagID }) =>
 
   return (
     <Badge variant="secondary">
-      <span className={`w-3 h-3 rounded-full flex-none ${colorClass}`}></span>
+      <span className={`h-3 w-3 flex-none rounded-full ${colorClass}`}></span>
       <span>{fullPath}</span>
     </Badge>
   );
@@ -68,7 +68,7 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({ tagID }) => {
     <Tooltip delayDuration={500}>
       <TooltipTrigger asChild>
         <Badge variant={isTagSelected ? 'outline' : 'secondary'} className="cursor-pointer" onClick={setTag}>
-          <span className={`w-3 h-3 rounded-full flex-none ${colorClass}`}></span>
+          <span className={`h-3 w-3 flex-none rounded-full ${colorClass}`}></span>
           <span>{tagTitle}</span>
         </Badge>
       </TooltipTrigger>

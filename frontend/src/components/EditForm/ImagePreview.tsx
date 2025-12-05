@@ -5,10 +5,10 @@ import { PreviewImage } from '@/components/Table/PreviewImage.tsx';
 export const ImagePreview = ({ imageUrl }: { imageUrl: string }) => (
   <>
     {imageUrl ? (
-      <PreviewImage imageUrl={imageUrl} className="w-auto max-h-[100px] object-contain rounded-sm shadow-sm" />
+      <PreviewImage imageUrl={imageUrl} className="max-h-[100px] w-auto rounded-sm object-contain shadow-sm" />
     ) : (
       <div
-        className="flex items-center justify-center w-16 h-16 rounded-full text-muted-foreground bg-gray-200"
+        className="text-muted-foreground flex h-16 w-16 items-center justify-center rounded-full bg-gray-200"
         title="No image"
       >
         <Image />

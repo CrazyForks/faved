@@ -132,31 +132,31 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap justify-around">
-            <Card className="text-center border-none shadow-none">
+            <Card className="border-none text-center shadow-none">
               <CardContent className="p-0">
-                <GitCompare className="w-8 h-8 text-primary mx-auto mb-3" />
-                <h4 className="font-semibold text-primary mb-2">Compatible</h4>
-                <p className="text-sm text-muted-foreground max-w-[180px] mx-auto">
+                <GitCompare className="text-primary mx-auto mb-3 h-8 w-8" />
+                <h4 className="text-primary mb-2 font-semibold">Compatible</h4>
+                <p className="text-muted-foreground mx-auto max-w-[180px] text-sm">
                   Works in all modern desktop and mobile browsers
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center border-none shadow-none">
+            <Card className="border-none text-center shadow-none">
               <CardContent className="p-0">
-                <Shield className="w-8 h-8 text-primary mx-auto mb-3" />
-                <h4 className="font-semibold text-primary mb-2">Secure</h4>
-                <p className="text-sm text-muted-foreground max-w-[180px] mx-auto">
+                <Shield className="text-primary mx-auto mb-3 h-8 w-8" />
+                <h4 className="text-primary mb-2 font-semibold">Secure</h4>
+                <p className="text-muted-foreground mx-auto max-w-[180px] text-sm">
                   No access to your page data until activated
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center border-none shadow-none">
+            <Card className="border-none text-center shadow-none">
               <CardContent className="p-0">
-                <Feather className="w-8 h-8 text-primary mx-auto mb-3" />
-                <h4 className="font-semibold text-primary mb-2">Lightweight</h4>
-                <p className="text-sm text-muted-foreground max-w-[180px] mx-auto">No browser extension is needed</p>
+                <Feather className="text-primary mx-auto mb-3 h-8 w-8" />
+                <h4 className="text-primary mb-2 font-semibold">Lightweight</h4>
+                <p className="text-muted-foreground mx-auto max-w-[180px] text-sm">No browser extension is needed</p>
               </CardContent>
             </Card>
           </div>
@@ -168,9 +168,9 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
           <CardTitle className="text-lg">Installation</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <div className="flex flex-col items-center gap-4 sm:flex-row">
             <a
-              className="gap-2 bg-background/20 border-2 border-dashed border-1 hover:bg-background/30 cursor-move w-full sm:w-auto py-1 px-3 flex justify-center items-center rounded-md"
+              className="bg-background/20 hover:bg-background/30 flex w-full cursor-move items-center justify-center gap-2 rounded-md border-1 border-2 border-dashed px-3 py-1 sm:w-auto"
               href="#"
               ref={bookmarkletRef}
               draggable="true"
@@ -178,16 +178,16 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
                 if (onSuccess) onSuccess();
               }}
             >
-              <Bookmark className="w-4 h-4" />
+              <Bookmark className="h-4 w-4" />
               Add to Faved
             </a>
-            <Button onClick={copyBookmarkletCode} className="gap-2 w-full sm:w-auto">
-              <Copy className="w-4 h-4" />
+            <Button onClick={copyBookmarkletCode} className="w-full gap-2 sm:w-auto">
+              <Copy className="h-4 w-4" />
               {copied ? 'Copied!' : 'Copy Code'}
             </Button>
           </div>
           <Tabs defaultValue="drag" className="w-full">
-            <TabsList className="grid grid-cols-2 w-full">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="drag">Drag</TabsTrigger>
               <TabsTrigger value="manual">Manual</TabsTrigger>
             </TabsList>

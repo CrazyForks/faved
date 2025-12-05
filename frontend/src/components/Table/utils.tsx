@@ -43,15 +43,15 @@ const UrlCellContent = observer(({ item }: { item: z.infer<typeof schema> }) => 
   const { url, title, tags, created_at } = item;
 
   return (
-    <div className="flex flex-col items-start w-full text-left wrap-anywhere gap-2">
+    <div className="flex w-full flex-col items-start gap-2 text-left wrap-anywhere">
       {title && (
-        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight line-clamp-3" title={title}>
+        <h4 className="line-clamp-3 scroll-m-20 text-xl font-semibold tracking-tight" title={title}>
           {title}
         </h4>
       )}
       {url && (
         <a
-          className="text-custom-blue underline line-clamp-3 break-all"
+          className="text-custom-blue line-clamp-3 break-all underline"
           href={url}
           target="_blank"
           rel="noopener noreferrer"
@@ -60,13 +60,13 @@ const UrlCellContent = observer(({ item }: { item: z.infer<typeof schema> }) => 
         </a>
       )}
       {tags && (
-        <div className="w-full py-2 leading-6.5 flex flex-wrap gap-1">
+        <div className="flex w-full flex-wrap gap-1 py-2 leading-6.5">
           {tags.map((tagID) => (
             <TagBadge key={tagID} tagID={tagID} />
           ))}
         </div>
       )}
-      <div className="text-muted-foreground text-sm mt-auto">
+      <div className="text-muted-foreground mt-auto text-sm">
         <small className="text-sm leading-none font-medium">Created at:</small> {created_at}
       </div>
     </div>
@@ -77,13 +77,13 @@ const DescriptionCellContent = ({ item }: { item: z.infer<typeof schema> }) => {
   const { comments, image, description } = item;
 
   return (
-    <div className="flex flex-col items-start text-left w-full max-w-full">
-      {image && <PreviewImage imageUrl={image} className="w-auto h-auto max-h-[200px] rounded-sm" />}
+    <div className="flex w-full max-w-full flex-col items-start text-left">
+      {image && <PreviewImage imageUrl={image} className="h-auto max-h-[200px] w-auto rounded-sm" />}
       {description && (
-        <p className="leading-7 [&:not(:first-child)]:mt-6 whitespace-pre-line break-words max-w-full">{description}</p>
+        <p className="max-w-full leading-7 break-words whitespace-pre-line [&:not(:first-child)]:mt-6">{description}</p>
       )}
       {comments && (
-        <blockquote className="mt-6 border-l-2 pl-6 italic whitespace-pre-line break-words max-w-full">
+        <blockquote className="mt-6 max-w-full border-l-2 pl-6 break-words whitespace-pre-line italic">
           {comments}
         </blockquote>
       )}
@@ -125,7 +125,7 @@ const ActionsCell = observer(({ row }: { row: any }) => {
         <DropdownMenuSeparator />
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-destructive/90 hover:text-white">
+            <div className="focus:bg-accent focus:text-accent-foreground hover:bg-destructive/90 relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none hover:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
               Delete
             </div>
           </AlertDialogTrigger>
@@ -140,7 +140,7 @@ const ActionsCell = observer(({ row }: { row: any }) => {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDelete}
-                className="w-full sm:w-auto order-first sm:order-last mt-2 sm:mt-0 bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60"
+                className="bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 order-first mt-2 w-full text-white shadow-xs sm:order-last sm:mt-0 sm:w-auto"
               >
                 Delete
               </AlertDialogAction>

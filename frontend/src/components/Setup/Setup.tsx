@@ -24,9 +24,9 @@ export const Setup = observer(() => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start text-left min-h-svh w-full px-3 py-16 gap-8">
+    <div className="flex min-h-svh w-full flex-col items-center justify-start gap-8 px-3 py-16 text-left">
       <div className="flex items-center justify-center gap-2.5">
-        <img src="logo.png" alt="Faved logo" className="w-[30px] h-auto" />
+        <img src="logo.png" alt="Faved logo" className="h-auto w-[30px]" />
         <h2 className="text-2xl font-semibold tracking-tight">Faved</h2>
       </div>
       <Card className="max-w-3xl">
@@ -36,7 +36,7 @@ export const Setup = observer(() => {
         <CardContent className="flex flex-col gap-8">
           <p>Before you can use the application, we need to set up the database. Click the button below to proceed.</p>
 
-          <div className="bg-blue-100 p-4 rounded-lg  dark:bg-blue-600">
+          <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-600">
             <p className="italic">
               <strong>Note:</strong> This will create a database file in the <code>/storage</code> folder of your
               application installation directory.

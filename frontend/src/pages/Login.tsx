@@ -47,7 +47,7 @@ export const Login = observer(() => {
 
   return (
     <AuthLayout>
-      <div className="min-w-xs w-full max-w-sm">
+      <div className="w-full max-w-sm min-w-xs">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Card>
@@ -56,7 +56,7 @@ export const Login = observer(() => {
                 <CardDescription>Enter your username and password below</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col gap-6 text-left pb-3">
+                <div className="flex flex-col gap-6 pb-3 text-left">
                   <FormField
                     control={form.control}
                     name="username"

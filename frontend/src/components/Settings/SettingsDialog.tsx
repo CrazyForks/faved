@@ -33,26 +33,26 @@ export const SettingsDialog = observer(() => {
 
   return (
     <Dialog open={true} onOpenChange={store.setIsOpenSettingsModal}>
-      <DialogContent className="overflow-hidden w-[100dvw] md:w-[95dvw] max-w-6xl rounded-none md:rounded-lg p-0">
-        <div className="h-[100dvh] md:h-[95dvh] md:max-h-[1000px] p-3 pt-15 md:pt-3 relative">
-          <DialogHeader className="md:sr-only fixed w-full top-6">
+      <DialogContent className="w-[100dvw] max-w-6xl overflow-hidden rounded-none p-0 md:w-[95dvw] md:rounded-lg">
+        <div className="relative h-[100dvh] p-3 pt-15 md:h-[95dvh] md:max-h-[1000px] md:pt-3">
+          <DialogHeader className="fixed top-6 w-full md:sr-only">
             <DialogTitle className="text-center">{showTopNav ? 'Settings' : selectedNavTitle}</DialogTitle>
           </DialogHeader>
           <Tabs
             defaultValue={defaultNav}
             onValueChange={(v) => setSelectedNav(v)}
-            className="flex flex-row items-stretch justify-normal gap-0 w-full h-full "
+            className="flex h-full w-full flex-row items-stretch justify-normal gap-0"
           >
             <TabsList
               className={
-                'md:p-2 h-full w-full min-w-56 md:w-auto bg-transparent md:bg-muted flex-col items-stretch justify-start gap-1' +
+                'md:bg-muted h-full w-full min-w-56 flex-col items-stretch justify-start gap-1 bg-transparent md:w-auto md:p-2' +
                 (showTopNav ? ' inline-flex' : ' hidden md:inline-flex')
               }
             >
               {data.nav.map((item) => (
                 <TabsTrigger
                   key={item.id}
-                  className="py-2 px-3 text-base md:text-sm md:py-1 flex items-center gap-3 justify-start items-center rounded-sm flex-0 data-[state=active]:shadow-none md:data-[state=active]:bg-primary/90 md:data-[state=active]:text-primary-foreground hover:bg-primary/5"
+                  className="md:data-[state=active]:bg-primary/90 md:data-[state=active]:text-primary-foreground hover:bg-primary/5 flex flex-0 items-center justify-start gap-3 rounded-sm px-3 py-2 text-base data-[state=active]:shadow-none md:py-1 md:text-sm"
                   value={item.id}
                   onClick={() => {
                     setShowTopNav(false);
@@ -66,14 +66,14 @@ export const SettingsDialog = observer(() => {
             </TabsList>
             <div
               className={
-                'px-1 md:px-8 py-3 w-full h-full overflow-y-scroll overflow-x-hidden ' +
+                'h-full w-full overflow-x-hidden overflow-y-scroll px-1 py-3 md:px-8 ' +
                 (showTopNav ? ' hidden md:inline-flex' : '')
               }
             >
               <Button
                 onClick={() => setShowTopNav(true)}
                 variant="outline"
-                className="md:hidden rounded-full aspect-square w-10 h-10 fixed top-4 left-4 z-10"
+                className="fixed top-4 left-4 z-10 aspect-square h-10 w-10 rounded-full md:hidden"
               >
                 <ChevronLeft />
               </Button>

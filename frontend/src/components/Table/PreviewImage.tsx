@@ -14,7 +14,7 @@ export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; classN
   if (isImageError) {
     return (
       <div
-        className={`${className} flex items-center justify-center text-muted-foreground bg-gray-200 min-w-16 min-h-16`}
+        className={`${className} text-muted-foreground flex min-h-16 min-w-16 items-center justify-center bg-gray-200`}
         title={`Image link is broken: ${imageUrl}`}
       >
         <ImageOff />
@@ -29,7 +29,7 @@ export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; classN
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 any-pointer-coarse:opacity-100 active:opacity-100 transition-opacity duration-200"
+            className="absolute right-2 bottom-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100 active:opacity-100 any-pointer-coarse:opacity-100"
             size="icon"
           >
             <ZoomIn />
@@ -39,20 +39,20 @@ export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; classN
         <DialogContent
           aria-describedby={undefined}
           showCloseButton={false}
-          className="w-max p-0 shadow-none bg-transparent border-0"
+          className="w-max border-0 bg-transparent p-0 shadow-none"
         >
           <DialogTitle className="hidden">Image Preview</DialogTitle>
           <DialogClose asChild>
             <button
               type="button"
-              className="absolute -top-4 -right-4 bg-background hover:bg-accent rounded-full shadow p-2  transition"
+              className="bg-background hover:bg-accent absolute -top-4 -right-4 rounded-full p-2 shadow transition"
               aria-label="Close"
             >
               <IconX size={20} />
             </button>
           </DialogClose>
           <img
-            className="w-auto h-auto max-h-[90vh] object-contain"
+            className="h-auto max-h-[90vh] w-auto object-contain"
             src={imageUrl}
             title={imageUrl}
             alt={'Preview of image: ' + imageUrl}

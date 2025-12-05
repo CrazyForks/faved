@@ -96,13 +96,13 @@ export function SidebarTag({
       <>
         <div
           onClick={setTag}
-          className={`${className} flex justify-start items-center text-left gap-2 py-2 w-full pe-6.5`}
+          className={`${className} flex w-full items-center justify-start gap-2 py-2 pe-6.5 text-left`}
         >
-          <span className={`w-2.5 h-2.5 rounded-full flex-none ${getColorClass(tag.color)}`}></span>
+          <span className={`h-2.5 w-2.5 flex-none rounded-full ${getColorClass(tag.color)}`}></span>
           <input
             ref={inputRef}
             className={[
-              'tag-title-edit-input rounded-sm w-[85%]',
+              'tag-title-edit-input w-[85%] rounded-sm',
               isRenaming ? '' : 'hidden',
               isMobile ? 'border-1' : 'border-none',
             ].join(' ')}
@@ -124,7 +124,7 @@ export function SidebarTag({
               {tag.title}
             </span>
           )}
-          <IconPinned className={`ms-auto w-4 h-4 ` + (tag.pinned ? 'visible' : 'invisible')} />
+          <IconPinned className={`ms-auto h-4 w-4 ` + (tag.pinned ? 'visible' : 'invisible')} />
         </div>
       </>
     );
@@ -133,7 +133,7 @@ export function SidebarTag({
   const actionButtons = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <SidebarMenuAction className="data-[state=open]:bg-accent hover:bg-sidebar-accent rounded-sm sidebar-menu-action cursor-pointer">
+        <SidebarMenuAction className="data-[state=open]:bg-accent hover:bg-sidebar-accent sidebar-menu-action cursor-pointer rounded-sm">
           <IconDotsVertical />
           <span className="sr-only">More</span>
         </SidebarMenuAction>
@@ -161,7 +161,7 @@ export function SidebarTag({
                   className={`text-${colorMap[color]}-foreground hover:bg-${colorMap[color]}-foreground/10`}
                   onClick={() => store.onChangeTagColor(tag.id, color)}
                 >
-                  <span className={`w-3 h-3 rounded-full inline-block mr-1 ${colorMap[color]}`}></span>{' '}
+                  <span className={`mr-1 inline-block h-3 w-3 rounded-full ${colorMap[color]}`}></span>{' '}
                   {color.charAt(0).toUpperCase() + color.slice(1)}
                   <span className="ml-auto">{tag.color === color ? '✓' : ''}</span>
                 </DropdownMenuItem>
@@ -183,12 +183,12 @@ export function SidebarTag({
         <SidebarMenuItem data-selected={isTagSelected}>
           <SidebarMenuButton
             className={
-              'p-0 gap-0 active:bg-primary/90 active:text-primary-foreground' +
+              'active:bg-primary/90 active:text-primary-foreground gap-0 p-0' +
               (isTagSelected ? ' !bg-primary !text-primary-foreground' : '')
             }
           >
             <div className="p-2 hover:cursor-pointer" onClick={() => setIsCollapsibleOpen(!isCollapsibleOpen)}>
-              <IconChevronRight className={`transition-transform w-4 h-4 ` + (isCollapsibleOpen ? ` rotate-90` : '')} />
+              <IconChevronRight className={`h-4 w-4 transition-transform ` + (isCollapsibleOpen ? ` rotate-90` : '')} />
             </div>
             {tagContent()}
           </SidebarMenuButton>

@@ -12,7 +12,7 @@ export default function Loading() {
       }
     >
       {/* Sidebar Skeleton */}
-      <div className="hidden md:flex h-screen w-72 flex-col border-r bg-sidebar">
+      <div className="bg-sidebar hidden h-screen w-72 flex-col border-r md:flex">
         <div className="flex h-12 items-center gap-2 px-4">
           <Skeleton className="h-8 w-8 rounded" />
           <Skeleton className="h-4 w-24" />
@@ -84,7 +84,7 @@ export default function Loading() {
                 <div className="grid grid-cols-3 gap-4 border-b p-4">
                   <Skeleton className="h-4 w-16" />
                   <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-12 ms-auto" />
+                  <Skeleton className="ms-auto h-4 w-12" />
                 </div>
 
                 {/* Table Rows */}
@@ -98,7 +98,7 @@ export default function Loading() {
                       <Skeleton className="h-5 w-12 rounded-full" />
                       <Skeleton className="h-5 w-16 rounded-full" />
                     </div>
-                    <div className="flex gap-1 justify-end">
+                    <div className="flex justify-end gap-1">
                       <Skeleton className="h-6 w-6" />
                       <Skeleton className="h-6 w-6" />
                     </div>

@@ -138,7 +138,7 @@ export const DataTable: React.FC = observer(() => {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between gap-2 py-4 m-4">
+      <div className="m-4 flex items-center justify-between gap-2 py-4">
         <Search table={table} globalFilter={globalFilter} />
         <Sorter
           selectedSortColumn={sorting[0]?.id}
@@ -163,9 +163,9 @@ export const DataTable: React.FC = observer(() => {
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
-      <div className="m-4 overflow-hidden ">
+      <div className="m-4 overflow-hidden">
         {isTableView ? (
-          <Table className=" table-fixed w-full">
+          <Table className="w-full table-fixed">
             <TableBody>
               {currentRows.length ? (
                 currentRows.map((row) => (
@@ -178,7 +178,7 @@ export const DataTable: React.FC = observer(() => {
                       return (
                         <TableCell
                           key={cell.id}
-                          className={`${cell.id.split('_')[1] !== 'id' ? 'w-full pb-5 pt-5 pl-6 break-words' : 'w-16'}`}
+                          className={`${cell.id.split('_')[1] !== 'id' ? 'w-full pt-5 pb-5 pl-6 break-words' : 'w-16'}`}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
@@ -196,7 +196,7 @@ export const DataTable: React.FC = observer(() => {
             </TableBody>
           </Table>
         ) : (
-          <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @2xl/main:grid-cols-2 @5xl/main:grid-cols-3 @7xl/main:grid-cols-4 @min-[108rem]/main:grid-cols-5  @min-[126rem]/main:grid-cols-6 @min-[142rem]/main:grid-cols-7">
+          <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @2xl/main:grid-cols-2 @5xl/main:grid-cols-3 @7xl/main:grid-cols-4 @min-[108rem]/main:grid-cols-5 @min-[126rem]/main:grid-cols-6 @min-[142rem]/main:grid-cols-7">
             {currentRows.length > 0 ? (
               currentRows.map((row) => {
                 const el = row.original;
@@ -207,7 +207,7 @@ export const DataTable: React.FC = observer(() => {
                 );
               })
             ) : (
-              <div className="col-span-full text-center py-8 text-muted-foreground">No results found.</div>
+              <div className="text-muted-foreground col-span-full py-8 text-center">No results found.</div>
             )}
           </div>
         )}

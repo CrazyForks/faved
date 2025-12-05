@@ -63,12 +63,12 @@ export const SettingsImport = ({ onSuccess }: { onSuccess?: () => void }) => {
           <TabsList className="h-auto w-full items-stretch">
             <TabsTrigger value="browser" className="flex flex-wrap">
               <div className="inline-flex items-center gap-0.5">
-                <IconBrandChrome className="w-4 h-4" />
+                <IconBrandChrome className="h-4 w-4" />
               </div>
               <span>From browser</span>
             </TabsTrigger>
             <TabsTrigger value="pocket" className="flex flex-wrap">
-              <IconBrandPocket className="w-4 h-4" />
+              <IconBrandPocket className="h-4 w-4" />
               <span>From Pocket</span>
             </TabsTrigger>
           </TabsList>
@@ -87,14 +87,14 @@ export const SettingsImport = ({ onSuccess }: { onSuccess?: () => void }) => {
               <p className="text-muted-foreground text-sm">Select the ZIP file you exported from Pocket.</p>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg dark:bg-blue-900/20 dark:border-blue-800">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
-                  <span className="text-white text-xs font-semibold">i</span>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+              <div className="mb-2 flex items-center gap-2">
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500">
+                  <span className="text-xs font-semibold text-white">i</span>
                 </div>
                 <h3 className="text-lg font-semibold tracking-tight dark:text-blue-200">What will be imported:</h3>
               </div>
-              <ul className="ml-4 mt-3 list-disc space-y-2 text-sm">
+              <ul className="mt-3 ml-4 list-disc space-y-2 text-sm">
                 <li>All Pocket bookmarks, tags, collections and notes.</li>
                 <li>Unread and Archived bookmarks will be assigned corresponding tags under "Status" parent tag.</li>
                 <li>All imported bookmarks will have "Imported from Pocket" tag.</li>
@@ -118,22 +118,22 @@ export const SettingsImport = ({ onSuccess }: { onSuccess?: () => void }) => {
               />
               <p className="text-muted-foreground text-sm">Select your exported bookmarks file in HTML format.</p>
               <p className="text-muted-foreground text-sm">
-                Exports from <IconBrandChrome className="inline w-4 h-4 align-text-top ml-1" /> Chrome,
-                <IconBrandFirefox className=" inline w-4 h-4 align-text-top ml-1" /> Firefox,
-                <IconBrandSafari className=" inline w-4 h-4 align-text-top ml-1" /> Safari,
-                <IconBrandEdge className="inline  w-4 h-4 align-text-top ml-1" /> Edge, and most other browsers are
+                Exports from <IconBrandChrome className="ml-1 inline h-4 w-4 align-text-top" /> Chrome,
+                <IconBrandFirefox className="ml-1 inline h-4 w-4 align-text-top" /> Firefox,
+                <IconBrandSafari className="ml-1 inline h-4 w-4 align-text-top" /> Safari,
+                <IconBrandEdge className="ml-1 inline h-4 w-4 align-text-top" /> Edge, and most other browsers are
                 supported.
               </p>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg dark:bg-blue-900/20 dark:border-blue-800">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
-                  <span className="text-white text-xs font-semibold">i</span>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+              <div className="mb-2 flex items-center gap-2">
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500">
+                  <span className="text-xs font-semibold text-white">i</span>
                 </div>
                 <h3 className="text-lg font-semibold tracking-tight dark:text-blue-200">What will be imported:</h3>
               </div>
-              <ul className="ml-4 mt-3 list-disc space-y-2 text-sm">
+              <ul className="mt-3 ml-4 list-disc space-y-2 text-sm">
                 <li>All browser bookmarks and folders.</li>
                 <li>Bookmark folders will be converted to tags.</li>
                 <li>Folder hierarchy will be preserved. Nested folders will become nested tags.</li>
@@ -150,7 +150,7 @@ export const SettingsImport = ({ onSuccess }: { onSuccess?: () => void }) => {
           disabled={!selectedFile || isLoading}
           type="submit"
         >
-          {isLoading && <Loader2Icon className="animate-spin mr-2" />}
+          {isLoading && <Loader2Icon className="mr-2 animate-spin" />}
           Import {activeTab === 'pocket' ? 'Pocket' : 'Browser'} Bookmarks
         </Button>
       </CardFooter>

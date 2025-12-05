@@ -191,7 +191,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
             <Input
               type="text"
               disabled={isDisabled}
-              className={isDisabled ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : ''}
+              className={isDisabled ? 'cursor-not-allowed bg-gray-200 text-gray-500' : ''}
               {...field}
               value={field.value ?? ''}
             />
@@ -230,7 +230,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
               className={
                 'w-[calc(100dvw-var(--spacing)*6*2)]' +
                 (!isCloseWindowOnSubmit
-                  ? ' md:w-[calc(95dvw-var(--spacing)*6*2)] max-w-[calc(72rem-var(--spacing)*6*2)]'
+                  ? ' max-w-[calc(72rem-var(--spacing)*6*2)] md:w-[calc(95dvw-var(--spacing)*6*2)]'
                   : '')
               }
               onChange={field.onChange}
@@ -253,9 +253,9 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSaveClose)}>
         <div
-          className={'overflow-y-auto p-6 h-[100dvh]' + (!isCloseWindowOnSubmit ? ' md:h-auto md:max-h-[95dvh]' : '')}
+          className={'h-[100dvh] overflow-y-auto p-6' + (!isCloseWindowOnSubmit ? ' md:h-auto md:max-h-[95dvh]' : '')}
         >
-          <h2 className="text-left text-xl font-semibold tracking-tight mb-3">
+          <h2 className="mb-3 text-left text-xl font-semibold tracking-tight">
             {store.type === ActionType.EDIT ? 'Edit item' : 'Create item'}
           </h2>
           <div className="py-4">
@@ -307,9 +307,9 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
 
               <div className="grid gap-3">{renderTextareaField('description', 'Description')}</div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <div className="grow"> {renderTextField('image', 'Image URL')}</div>
-                <div className="sm:max-w-[40%] min-w-16 min-h-16">
+                <div className="min-h-16 min-w-16 sm:max-w-[40%]">
                   <ImagePreview imageUrl={imageUrl} />
                 </div>
               </div>
@@ -321,16 +321,16 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
               <div className="grid gap-3">{renderTagsField()}</div>
 
               {store.type === ActionType.EDIT && (
-                <div className="sm:grid grid-cols-2 gap-3 space-y-4 sm:space-y-0">
+                <div className="grid-cols-2 gap-3 space-y-4 sm:grid sm:space-y-0">
                   {renderTextField('created_at', 'Created at', true)}
                   {renderTextField('updated_at', 'Updated at', true)}
                 </div>
               )}
             </div>
           </div>
-          <div className="bg-background border-t pt-5 mt-4 flex flex-col sm:flex-row justify-end gap-2">
+          <div className="bg-background mt-4 flex flex-col justify-end gap-2 border-t pt-5 sm:flex-row">
             {store.type === ActionType.EDIT && (
-              <div className="mt-10 order-last sm:order-none sm:mr-auto sm:mt-0">
+              <div className="order-last mt-10 sm:order-none sm:mt-0 sm:mr-auto">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="w-full">
@@ -348,7 +348,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
                       <AlertDialogCancel className="mt-2 sm:mt-0">Cancel</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDelete}
-                        className="bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60"
+                        className="bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white shadow-xs"
                       >
                         Delete
                       </AlertDialogAction>
