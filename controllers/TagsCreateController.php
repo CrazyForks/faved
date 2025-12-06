@@ -2,13 +2,14 @@
 
 namespace Controllers;
 
+use Framework\ControllerInterface;
 use Framework\Exceptions\ValidationException;
 use Framework\Responses\ResponseInterface;
 use function Framework\data;
 use function Utils\createTagsFromSegments;
 use function Utils\extractTagSegments;
 
-class TagsCreateController
+class TagsCreateController implements ControllerInterface
 {
 	public function __invoke(array $input): ResponseInterface
 	{

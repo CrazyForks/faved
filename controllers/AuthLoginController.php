@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Config;
+use Framework\ControllerInterface;
 use Framework\Exceptions\ValidationException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
@@ -12,7 +13,7 @@ use function Framework\loginUser;
 use function Framework\success;
 use function Utils\buildPublicUserObject;
 
-class AuthLoginController
+class AuthLoginController implements ControllerInterface
 {
 	public function __invoke(array $input): ResponseInterface
 	{

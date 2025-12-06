@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Framework\ControllerInterface;
 use Framework\Exceptions\ValidationException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
@@ -10,7 +11,7 @@ use function Framework\data;
 use function Utils\createTagsFromSegments;
 use function Utils\extractTagSegments;
 
-class TagsUpdateTitleController
+class TagsUpdateTitleController implements ControllerInterface
 {
 	public function __invoke(array $input): ResponseInterface
 	{

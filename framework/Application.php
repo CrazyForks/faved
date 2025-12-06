@@ -5,6 +5,7 @@ namespace Framework;
 
 use Exception;
 use Framework\Exceptions\ValidationException;
+use Framework\Middlewares\MiddlewareAbstract;
 
 class Application
 {
@@ -20,8 +21,14 @@ class Application
 		try {
 			$router = new Router($this->routes);
 			$controller_class = $router->match_controller($path, $method);
+			if (!is_subclass_of($controller_class, ControllerInterface::class)) {
+				throw new Exception("$controller_class must implement ControllerInterface");
+			}
 
 			foreach (array_reverse($this->middleware_classes) as $middleware_class) {
+				if (!is_subclass_of($middleware_class, MiddlewareAbstract::class)) {
+					throw new Exception("$middleware_class must extend MiddlewareAbstract");
+				}
 				$middleware = new $middleware_class($middleware ?? null, $path, $method, $controller_class);
 			}
 			isset($middleware) && $middleware->handle();

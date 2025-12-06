@@ -2,13 +2,14 @@
 
 namespace Controllers;
 
+use Framework\ControllerInterface;
 use Framework\Exceptions\ValidationException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
 use function Framework\data;
 
-class TagsUpdatePinnedController
+class TagsUpdatePinnedController implements ControllerInterface
 {
 	public function __invoke(array $input): ResponseInterface
 	{
