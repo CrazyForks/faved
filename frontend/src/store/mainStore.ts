@@ -6,9 +6,9 @@ import {
   CreateUserType,
   ItemType,
   LoginType,
-  UpdatePasswordType,
   TagsObjectType,
   TagType,
+  UpdatePasswordType,
   UpdateUsernameType,
   UserType,
 } from '@/types/types';
@@ -44,6 +44,11 @@ class mainStore {
   selectedTagId: string | null = '0'; // Default to '0' for no tag selected
   itemsOriginal: ItemType[] = [];
   isShowEditModal: boolean = false;
+  appInfo: {
+    installed_version: string | null;
+    latest_version: string | null;
+    update_available: boolean | null;
+  } | null = null;
 
   constructor() {
     makeAutoObservable(this); // Makes state observable and actions transactional
@@ -391,6 +396,17 @@ class mainStore {
 
   fetchUrlMetadata = async (url: string) => {
     return await this.runRequest(API_ENDPOINTS.urlMetdata.fetch(url), 'GET', {}, 'Error fetching metadata from URL');
+  };
+
+  getAppInfo = async () => {
+    const response = await this.runRequest(API_ENDPOINTS.appInfo, 'GET', {}, 'Error fetching app info', true, true);
+
+    if (response === null || !response.data) {
+      return;
+    }
+
+    this.appInfo = response.data;
+    return response.data;
   };
 }
 

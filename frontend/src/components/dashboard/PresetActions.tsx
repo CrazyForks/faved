@@ -15,6 +15,7 @@ export const PresetActions = observer(() => {
     <Button
       variant="secondary"
       size="icon"
+      className="relative"
       onClick={() => {
         store.setPreSelectedItemSettingsModal(null);
         store.setIsOpenSettingsModal(true);
@@ -23,8 +24,11 @@ export const PresetActions = observer(() => {
         }
       }}
     >
-      <span className="sr-only">Actions</span>
+      <span className="sr-only">Settings</span>
       <SlidersHorizontal />
+      {store.appInfo?.update_available && (
+        <div className="absolute -top-0.5 -right-0.5 h-2 w-2 flex-none rounded-full border-1 border-yellow-500 bg-yellow-500"></div>
+      )}
     </Button>
   );
 });

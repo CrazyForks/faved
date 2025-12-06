@@ -18,9 +18,20 @@ import { RouterProvider } from 'react-router';
 const SetupMiddleware = observer(() => {
   const location = useLocation();
   const matches = useMatches();
+  const currentRouteMatch = matches[matches.length - 1];
+  const currentRouteId = currentRouteMatch?.id;
 
   const store = useContext(StoreContext);
   const [isLoading, setIsLoading] = useState(true);
+
+  const isDashboardPage = currentRouteId === 'dashboard';
+  useEffect(() => {
+    if (!isDashboardPage) {
+      return;
+    }
+
+    store.getAppInfo();
+  }, [isDashboardPage, store]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -37,8 +48,7 @@ const SetupMiddleware = observer(() => {
   }
 
   // If we are not on the setup page while DB is not initialized, redirect to setup
-  const currentRouteMatch = matches[matches.length - 1];
-  const currentRouteId = currentRouteMatch?.id;
+
   const isSetupPage = currentRouteId === 'setup';
 
   if (!isSetupPage && store.showInitializeDatabasePage) {
@@ -59,7 +69,7 @@ const router = createBrowserRouter([
   {
     element: <SetupMiddleware />,
     children: [
-      { path: '/', element: <Page /> },
+      { path: '/', element: <Page />, id: 'dashboard' },
       { path: '/login', element: <Login />, id: 'auth-login' },
       { path: '/setup', element: <Setup />, id: 'setup' },
       { path: '/setup/auth', element: <SetupAuth /> },

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Bookmark, ChevronLeft, ChevronRight, Import, Keyboard } from 'lucide-react';
+import { Bookmark, ChevronLeft, ChevronRight, Import, InfoIcon, Keyboard } from 'lucide-react';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
@@ -11,25 +11,37 @@ import { SettingsImport } from './SettingsImport';
 
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-const data = {
-  nav: [
-    { id: 'auth', title: 'Authentication', icon: Keyboard, component: <SettingsAuth /> },
-    { id: 'bookmarklet', title: 'Bookmarklet', icon: Bookmark, component: <SettingsBookmarklet /> },
-    { id: 'import', title: 'Import', icon: Import, component: <SettingsImport /> },
-  ],
-};
+import { SettingsAbout } from '@/components/Settings/SettingsAbout.tsx';
 
 export const SettingsDialog = observer(() => {
   const store = React.useContext(StoreContext);
 
-  const defaultNav = store.preSelectedItemSettingsModal ?? data.nav[0].id;
+  const navLinks = [
+    { id: 'auth', title: 'Authentication', icon: Keyboard, component: <SettingsAuth />, warningMessage: null },
+    {
+      id: 'bookmarklet',
+      title: 'Bookmarklet',
+      icon: Bookmark,
+      component: <SettingsBookmarklet />,
+      warningMessage: null,
+    },
+    { id: 'import', title: 'Import', icon: Import, component: <SettingsImport />, warningMessage: null },
+    {
+      id: 'about',
+      title: 'About',
+      icon: InfoIcon,
+      component: <SettingsAbout />,
+      warningMessage: store.appInfo?.update_available ? 'Update available' : null,
+    },
+  ];
+
+  const defaultNav = store.preSelectedItemSettingsModal ?? navLinks[0].id;
 
   const [showTopNav, setShowTopNav] = React.useState(!store.preSelectedItemSettingsModal);
 
   // For title display
   const [selectedNav, setSelectedNav] = React.useState(defaultNav);
-  const selectedNavTitle = data.nav.find((item) => item.id === selectedNav)?.title;
+  const selectedNavTitle = navLinks.find((item) => item.id === selectedNav)?.title;
 
   return (
     <Dialog open={true} onOpenChange={store.setIsOpenSettingsModal}>
@@ -49,17 +61,20 @@ export const SettingsDialog = observer(() => {
                 (showTopNav ? ' inline-flex' : ' hidden md:inline-flex')
               }
             >
-              {data.nav.map((item) => (
+              {navLinks.map((item) => (
                 <TabsTrigger
                   key={item.id}
-                  className="md:data-[state=active]:bg-primary/90 md:data-[state=active]:text-primary-foreground hover:bg-primary/5 flex flex-0 items-center justify-start gap-3 rounded-sm px-3 py-2 text-base data-[state=active]:shadow-none md:py-1 md:text-sm"
+                  className={
+                    'md:data-[state=active]:bg-primary/90 md:data-[state=active]:text-primary-foreground md:hover:bg-primary/5 dark:data-[state=active]:bg-background dark:text-accent-foreground dark:data-[state=active]:text-accent-foreground flex flex-0 items-center justify-start gap-3 rounded-sm px-3 py-2 text-base data-[state=active]:shadow-none md:py-1 md:text-sm dark:data-[state=active]:border-0 dark:data-[state=active]:shadow-none' +
+                    (item.warningMessage ? ' text-yellow-700 dark:text-yellow-400' : '')
+                  }
                   value={item.id}
                   onClick={() => {
                     setShowTopNav(false);
                   }}
                 >
                   <item.icon />
-                  <span>{item.title}</span>
+                  <span>{item.warningMessage ?? item.title}</span>
                   <ChevronRight className="ml-auto block md:hidden" />
                 </TabsTrigger>
               ))}
@@ -77,7 +92,7 @@ export const SettingsDialog = observer(() => {
               >
                 <ChevronLeft />
               </Button>
-              {data.nav.map((item) => {
+              {navLinks.map((item) => {
                 return (
                   <TabsContent key={item.id} value={item.id}>
                     {item.component}

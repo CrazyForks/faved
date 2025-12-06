@@ -36,4 +36,5 @@ export const API_ENDPOINTS = {
   urlMetdata: {
     fetch: (url: string) => `${API_BASE}/url-metadata?url=${url}`,
   },
+  appInfo: `${API_BASE}/app-info`,
 };
