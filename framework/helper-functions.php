@@ -10,22 +10,22 @@ use Framework\Responses\PageResponse;
 use Framework\Responses\RedirectResponse;
 use Models\Repository;
 
-function page($page_name, $data, $code = 200)
+function page(string $page_name, array $data, int $code = 200)
 {
 	return new PageResponse($page_name, $data, $code);
 }
 
-function redirect($location, $code = 303)
+function redirect(string $location, int $code = 303)
 {
 	return new RedirectResponse($location, $code);
 }
 
-function data(array $data, $code = 200)
+function data(array $data, int $code = 200)
 {
 	return new DataResponse($data, $code);
 }
 
-function success($message, $data = [], $code = 200)
+function success(string $message, array $data = [], int $code = 200)
 {
 	return data([
 		'success' => true,

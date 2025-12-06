@@ -1,5 +1,6 @@
 <?php
 
+use Controllers\AppInfoController;
 use Controllers\AuthLoginController;
 use Controllers\AuthLogoutController;
 use Controllers\ImportBookmarksController;
@@ -81,9 +82,10 @@ return [
 			],
 		],
 		'url-metadata' => [
-			'/' => [
-				'GET' => UrlMetadataController::class,
-			],
+			'GET' => UrlMetadataController::class,
+		],
+		'app-info' => [
+			'GET' => AppInfoController::class,
 		],
 	]
 ];
