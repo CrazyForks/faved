@@ -45,7 +45,7 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 RUN rm -rf /etc/apache2/sites-enabled/*
 COPY ./apache-conf /etc/apache2/sites-enabled
 
-COPY Config.php init.php routes.php .
+COPY Config.php init.php routes.php app-info.json .
 COPY controllers controllers
 COPY framework framework
 COPY models models
