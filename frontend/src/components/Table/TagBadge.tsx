@@ -14,7 +14,6 @@ type TagType = {
 interface MainStore {
   tags: Record<number, TagType>;
   setCurrentTagId: (id: number) => void;
-  setCurrentPage: (page: number) => void;
   selectedTagId: number;
 }
 
@@ -56,7 +55,6 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({ tagID }) => {
 
   const setTag = () => {
     store.setCurrentTagId(tagID);
-    store.setCurrentPage(1);
   };
 
   const colorClass =

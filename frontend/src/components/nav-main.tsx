@@ -16,7 +16,6 @@ export const NavMain = observer(() => {
 
   const setAllTags = () => {
     store.setCurrentTagId(0);
-    store.setCurrentPage(1);
     if (isMobile) {
       toggleSidebar();
     }
@@ -24,7 +23,6 @@ export const NavMain = observer(() => {
 
   const setNoTags = () => {
     store.setCurrentTagId(null);
-    store.setCurrentPage(1);
     if (isMobile) {
       toggleSidebar();
     }

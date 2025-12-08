@@ -198,6 +198,23 @@ export const createColumns = (): ColumnDef<z.infer<typeof schema>>[] => [
     enableHiding: false,
     cell: ({ row }) => <ActionsCell row={row} />,
   },
+  {
+    accessorKey: 'tags',
+    header: 'Tags',
+    enableSorting: true,
+    enableHiding: true,
+    filterFn: (row, columnId, filterValue) => {
+      if (filterValue === '0') {
+        return true;
+      }
+      const tags = row.getValue('tags') as number[];
+      if (filterValue === null && tags.length === 0) {
+        return true;
+      }
+
+      return tags.includes(Number(filterValue) as unknown as number);
+    },
+  },
 ];
 
 export const getTableViewPreference = (): boolean => {

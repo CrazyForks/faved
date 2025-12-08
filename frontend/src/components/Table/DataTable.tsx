@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -40,18 +41,23 @@ export const DataTable: React.FC = observer(() => {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const columns: ColumnDef<ItemType>[] = createColumns() as unknown as ColumnDef<ItemType>[];
-  const data =
-    store.selectedTagId === '0'
-      ? store.items
-      : store.items.filter((item) => {
-          return (
-            (store.selectedTagId === null && item.tags.length === 0) ||
-            item.tags.includes(Number(store.selectedTagId) as unknown as string)
-          );
-        });
-  const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  const data = store.items;
 
-  const [isTableView, setIsTableView] = React.useState<boolean>(getTableViewPreference());
+  const [isTableView, setIsTableView] = useState<boolean>(getTableViewPreference());
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 25,
+  });
+
+  useEffect(() => {
+    setColumnFilters([
+      {
+        id: 'tags',
+        value: store.selectedTagId,
+      },
+    ]);
+  }, [store.selectedTagId]);
 
   const table = useReactTable({
     data,
@@ -65,50 +71,18 @@ export const DataTable: React.FC = observer(() => {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
-    manualPagination: true,
-    globalFilterFn: (row, columnId, value) => {
-      const searchValue = String(value).toLocaleLowerCase().trim();
-
-      if (searchValue === '') {
-        return true;
-      }
-
-      const searchTerms = searchValue.split(/[ ,.;\t\n]+/).filter((term) => term !== '');
-
-      return searchTerms.every((term) => {
-        for (const cell of row.getAllCells()) {
-          const cellValue = String(cell.getValue()).toLocaleLowerCase();
-
-          if (cellValue.includes(term)) {
-            store.setCurrentPage(1);
-            return true;
-          }
-        }
-        return false;
-      });
-    },
+    globalFilterFn: 'includesString',
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
       globalFilter,
-      pagination: {
-        pageIndex: store.currentPage - 1,
-        pageSize: rowsPerPage,
-      },
+      pagination,
     },
-    onPaginationChange: (updaterOrValue) => {
-      const newPagination =
-        typeof updaterOrValue === 'function' ? updaterOrValue(table.getState().pagination) : updaterOrValue;
-
-      store.setCurrentPage(newPagination.pageIndex + 1);
-      setRowsPerPage(newPagination.pageSize);
-    },
+    onPaginationChange: setPagination,
   });
-  const startIndex = (store.currentPage - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const currentRows = table.getRowModel().rows.slice(startIndex, endIndex);
+  const currentRows = table.getPaginationRowModel().rows;
   const sortableColumns = columns.filter((column) => column.enableSorting);
 
   const handleSortChange = (columnAccessorKey: string, isDesc: boolean) => {
@@ -118,8 +92,6 @@ export const DataTable: React.FC = observer(() => {
         desc: isDesc,
       },
     ]);
-
-    store.setCurrentPage(1);
   };
 
   const changeTableView = (newValue) => {
@@ -212,7 +184,7 @@ export const DataTable: React.FC = observer(() => {
           </div>
         )}
       </div>
-      <DataTablePagination table={table} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
+      <DataTablePagination table={table} />
     </div>
   );
 });

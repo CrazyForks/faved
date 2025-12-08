@@ -6,11 +6,9 @@ import { useLayoutEffect } from 'react';
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
-  rowsPerPage: number;
-  setRowsPerPage: (val: number) => void;
 }
 
-export function DataTablePagination<TData>({ table, rowsPerPage, setRowsPerPage }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
   const pageIndex = table.getState().pagination.pageIndex;
   useLayoutEffect(() => {
     requestAnimationFrame(() => {
@@ -28,15 +26,14 @@ export function DataTablePagination<TData>({ table, rowsPerPage, setRowsPerPage 
           <p className="hidden text-sm font-medium sm:block">Items per page</p>
           <p className="text-sm font-medium sm:hidden">Items:</p>
           <Select
-            value={rowsPerPage.toString()}
+            value={table.getState().pagination.pageSize.toString()}
             onValueChange={(value) => {
               const newPageSize = Number(value);
-              setRowsPerPage(newPageSize);
               table.setPageSize(newPageSize);
             }}
           >
             <SelectTrigger>
-              <SelectValue placeholder={rowsPerPage} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent side="top">
               {[10, 25, 50, 100].map((pageSize) => (
@@ -56,7 +53,7 @@ export function DataTablePagination<TData>({ table, rowsPerPage, setRowsPerPage 
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(0)}
+            onClick={() => table.firstPage()}
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Go to first page</span>
@@ -83,7 +80,7 @@ export function DataTablePagination<TData>({ table, rowsPerPage, setRowsPerPage 
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            onClick={() => table.lastPage()}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Go to last page</span>

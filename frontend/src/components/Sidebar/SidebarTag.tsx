@@ -85,7 +85,6 @@ export function SidebarTag({
     }
 
     store.setCurrentTagId(tag.id);
-    store.setCurrentPage(1);
     if (isMobile) {
       toggleSidebar();
     }

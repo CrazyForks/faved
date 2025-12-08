@@ -40,7 +40,6 @@ class mainStore {
   error: string | null = null;
   isOpenSettingsModal: boolean = false;
   preSelectedItemSettingsModal: string | null = null;
-  currentPage: number = 1;
   selectedTagId: string | null = '0'; // Default to '0' for no tag selected
   itemsOriginal: ItemType[] = [];
   isShowEditModal: boolean = false;
@@ -124,9 +123,6 @@ class mainStore {
   };
   setIsShowEditModal = (val: boolean) => {
     this.isShowEditModal = val;
-  };
-  setCurrentPage = (val: number) => {
-    this.currentPage = val;
   };
   setItemsOriginal = (val: ItemType[]) => {
     this.itemsOriginal = val;
