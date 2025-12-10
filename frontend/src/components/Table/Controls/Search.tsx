@@ -2,8 +2,8 @@
 
 import type { Table } from '@tanstack/react-table';
 import { SearchIcon, X } from 'lucide-react';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
-import { Kbd } from '@/components/ui/kbd';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group.tsx';
+import { Kbd } from '@/components/ui/kbd.tsx';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

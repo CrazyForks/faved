@@ -1,6 +1,6 @@
 import { Image } from 'lucide-react';
 import React from 'react';
-import { PreviewImage } from '@/components/Table/PreviewImage.tsx';
+import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
 
 export const ImagePreview = ({ imageUrl }: { imageUrl: string }) => (
   <>

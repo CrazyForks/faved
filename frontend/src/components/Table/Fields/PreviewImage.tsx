@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog.tsx';
 import { IconX } from '@tabler/icons-react';
 import { ImageOff, ZoomIn } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';

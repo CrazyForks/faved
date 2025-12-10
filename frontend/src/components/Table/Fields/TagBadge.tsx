@@ -1,8 +1,8 @@
 import React from 'react';
-import { Badge } from '../ui/badge';
+import { Badge } from '../../ui/badge.tsx';
 import { observer } from 'mobx-react-lite';
-import { StoreContext } from '@/store/storeContext';
-import { colorMap } from '@/lib/utils';
+import { StoreContext } from '@/store/storeContext.ts';
+import { colorMap } from '@/lib/utils.ts';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 
 type TagType = {

@@ -258,75 +258,69 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
           <h2 className="mb-3 text-left text-xl font-semibold tracking-tight">
             {store.type === ActionType.EDIT ? 'Edit item' : 'Create item'}
           </h2>
-          <div className="py-4">
-            <div className="space-y-4">
-              <div className="grid gap-3">
-                <FormField
-                  control={form.control}
-                  name="url"
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel>URL</FormLabel>
-                        <FormControl>
-                          <div className="flex flex-row gap-2">
-                            <Input
-                              type="text"
-                              value={field.value ?? undefined}
-                              onChange={(value) => {
-                                field.onChange(value ?? null);
-                              }}
-                            />
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  type="button"
-                                  onClick={(e) => updateMetadataFromUrl(e)}
-                                  variant="outline"
-                                  disabled={isMetadataLoading}
-                                >
-                                  {isMetadataLoading ? (
-                                    <IconProgress className="animate-spin" />
-                                  ) : (
-                                    <IconCloudDownload />
-                                  )}
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Pull title, description and image from the URL.</TooltipContent>
-                            </Tooltip>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-              </div>
-
-              <div className="grid gap-3">{renderTextField('title', 'Title')}</div>
-
-              <div className="grid gap-3">{renderTextareaField('description', 'Description')}</div>
-
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <div className="grow"> {renderTextField('image', 'Image URL')}</div>
-                <div className="min-h-16 min-w-16 sm:max-w-[40%]">
-                  <ImagePreview imageUrl={imageUrl} />
-                </div>
-              </div>
-
-              <Separator className="my-5" />
-
-              <div className="grid gap-3">{renderTextareaField('comments', 'Notes')}</div>
-
-              <div className="grid gap-3">{renderTagsField()}</div>
-
-              {store.type === ActionType.EDIT && (
-                <div className="grid-cols-2 gap-3 space-y-4 sm:grid sm:space-y-0">
-                  {renderTextField('created_at', 'Created at', true)}
-                  {renderTextField('updated_at', 'Updated at', true)}
-                </div>
-              )}
+          <div className="space-y-4 py-4">
+            <div className="grid gap-3">
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>URL</FormLabel>
+                      <FormControl>
+                        <div className="flex flex-row gap-2">
+                          <Input
+                            type="text"
+                            value={field.value ?? undefined}
+                            onChange={(value) => {
+                              field.onChange(value ?? null);
+                            }}
+                          />
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                type="button"
+                                onClick={(e) => updateMetadataFromUrl(e)}
+                                variant="outline"
+                                disabled={isMetadataLoading}
+                              >
+                                {isMetadataLoading ? <IconProgress className="animate-spin" /> : <IconCloudDownload />}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Pull title, description and image from the URL.</TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
             </div>
+
+            <div className="grid gap-3">{renderTextField('title', 'Title')}</div>
+
+            <div className="grid gap-3">{renderTextareaField('description', 'Description')}</div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="grow"> {renderTextField('image', 'Image URL')}</div>
+              <div className="min-h-16 min-w-16 sm:max-w-[40%]">
+                <ImagePreview imageUrl={imageUrl} />
+              </div>
+            </div>
+
+            <Separator className="my-5" />
+
+            <div className="grid gap-3">{renderTextareaField('comments', 'Notes')}</div>
+
+            <div className="grid gap-3">{renderTagsField()}</div>
+
+            {store.type === ActionType.EDIT && (
+              <div className="grid-cols-2 gap-3 space-y-4 sm:grid sm:space-y-0">
+                {renderTextField('created_at', 'Created at', true)}
+                {renderTextField('updated_at', 'Updated at', true)}
+              </div>
+            )}
           </div>
           <div className="bg-background mt-4 flex flex-col justify-end gap-2 border-t pt-5 sm:flex-row">
             {store.type === ActionType.EDIT && (

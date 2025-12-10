@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/dropdown-menu.tsx';
 import { StoreContext } from '@/store/storeContext.ts';
 import { colorMap } from '@/lib/utils.ts';
-import { getColorClass } from '@/components/Table/TagBadge.tsx';
+import { getColorClass } from '@/components/Table/Fields/TagBadge.tsx';
 
 export function SidebarTag({
   tag,
