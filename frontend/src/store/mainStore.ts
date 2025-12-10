@@ -156,7 +156,7 @@ class mainStore {
     this.isAuthRequired = val;
   };
   fetchTags = async () => {
-    this.runRequest(API_ENDPOINTS.tags.list, 'GET', {}, 'Error fetching tags').then((data) => {
+    return this.runRequest(API_ENDPOINTS.tags.list, 'GET', {}, 'Error fetching tags').then((data) => {
       if (data === null) {
         return;
       }
@@ -182,7 +182,7 @@ class mainStore {
       return;
     }
 
-    this.runRequest(API_ENDPOINTS.tags.deleteTag(tagID), 'DELETE', {}, 'Error deleting tag').finally(() => {
+    return this.runRequest(API_ENDPOINTS.tags.deleteTag(tagID), 'DELETE', {}, 'Error deleting tag').finally(() => {
       this.fetchTags();
       this.fetchItems();
     });
@@ -195,7 +195,7 @@ class mainStore {
     );
   };
   onChangeTagColor = async (tagID: string, color: string) => {
-    this.runRequest(API_ENDPOINTS.tags.updateColor(tagID), 'PATCH', { color }, 'Error updating tag color').finally(
+    return this.runRequest(API_ENDPOINTS.tags.updateColor(tagID), 'PATCH', { color }, 'Error updating tag color').finally(
       () => {
         const tag = { ...this.tags[tagID as unknown as number], color };
         this.tags = { ...this.tags, [tagID]: tag };
@@ -203,7 +203,7 @@ class mainStore {
     );
   };
   onChangeTagPinned = async (tagID: string, pinned: boolean) => {
-    this.runRequest(API_ENDPOINTS.tags.updatePinned(tagID), 'PATCH', { pinned }, 'Error updating tag pinned').finally(
+    return this.runRequest(API_ENDPOINTS.tags.updatePinned(tagID), 'PATCH', { pinned }, 'Error updating tag pinned').finally(
       () => {
         const tag = { ...this.tags[tagID as unknown as number], pinned };
         this.tags = { ...this.tags, [tagID]: tag };
@@ -230,7 +230,7 @@ class mainStore {
     this.preSelectedItemSettingsModal = val;
   };
   fetchItems = async () => {
-    this.runRequest(API_ENDPOINTS.items.list, 'GET', {}, 'Failed to fetch items').then((data) => {
+    return this.runRequest(API_ENDPOINTS.items.list, 'GET', {}, 'Failed to fetch items').then((data) => {
       if (data === null) {
         return;
       }
@@ -391,7 +391,7 @@ class mainStore {
   };
 
   fetchUrlMetadata = async (url: string) => {
-    return await this.runRequest(API_ENDPOINTS.urlMetdata.fetch(url), 'GET', {}, 'Error fetching metadata from URL');
+    return this.runRequest(API_ENDPOINTS.urlMetdata.fetch(url), 'GET', {}, 'Error fetching metadata from URL');
   };
 
   getAppInfo = async () => {
