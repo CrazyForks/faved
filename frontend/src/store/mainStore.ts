@@ -195,20 +195,26 @@ class mainStore {
     );
   };
   onChangeTagColor = async (tagID: string, color: string) => {
-    return this.runRequest(API_ENDPOINTS.tags.updateColor(tagID), 'PATCH', { color }, 'Error updating tag color').finally(
-      () => {
-        const tag = { ...this.tags[tagID as unknown as number], color };
-        this.tags = { ...this.tags, [tagID]: tag };
-      }
-    );
+    return this.runRequest(
+      API_ENDPOINTS.tags.updateColor(tagID),
+      'PATCH',
+      { color },
+      'Error updating tag color'
+    ).finally(() => {
+      const tag = { ...this.tags[tagID as unknown as number], color };
+      this.tags = { ...this.tags, [tagID]: tag };
+    });
   };
   onChangeTagPinned = async (tagID: string, pinned: boolean) => {
-    return this.runRequest(API_ENDPOINTS.tags.updatePinned(tagID), 'PATCH', { pinned }, 'Error updating tag pinned').finally(
-      () => {
-        const tag = { ...this.tags[tagID as unknown as number], pinned };
-        this.tags = { ...this.tags, [tagID]: tag };
-      }
-    );
+    return this.runRequest(
+      API_ENDPOINTS.tags.updatePinned(tagID),
+      'PATCH',
+      { pinned },
+      'Error updating tag pinned'
+    ).finally(() => {
+      const tag = { ...this.tags[tagID as unknown as number], pinned };
+      this.tags = { ...this.tags, [tagID]: tag };
+    });
   };
 
   setItems = (val: ItemType[]) => {

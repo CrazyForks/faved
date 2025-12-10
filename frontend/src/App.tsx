@@ -48,7 +48,6 @@ const SetupMiddleware = observer(() => {
   }
 
   // If we are not on the setup page while DB is not initialized, redirect to setup
-
   const isSetupPage = currentRouteId === 'setup';
 
   if (!isSetupPage && store.showInitializeDatabasePage) {
