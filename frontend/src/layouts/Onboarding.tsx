@@ -13,7 +13,7 @@ const steps = [
   { id: 3, title: 'Import Bookmarks', description: 'Import your existing bookmarks', url: '/setup/import' },
 ];
 
-export const SetupWrapper = ({ currentStep, children }: SetupWrapperProps) => {
+export const Onboarding = ({ currentStep, children }: SetupWrapperProps) => {
   const navigate = useNavigate();
 
   return (

@@ -3,16 +3,16 @@ import { observer } from 'mobx-react-lite';
 import { useContext, useEffect, useState } from 'react';
 import { StoreContext } from './store/storeContext';
 import { Login } from './pages/Login.tsx';
-import { Setup } from './components/Setup/Setup';
-import { SetupAuth } from './components/Setup/SetupAuth';
-import { SetupImport } from './components/Setup/SetupImport';
-import { SetupBookmarklet } from './components/Setup/SetupBookmarklet';
+import { Setup } from './pages/Setup.tsx';
+import { SetupAuth } from './pages/SetupAuth.tsx';
+import { SetupImport } from './pages/SetupImport.tsx';
+import { SetupBookmarklet } from './pages/SetupBookmarklet.tsx';
 import { Toaster } from './components/ui/sonner';
-import { Page } from './components/dashboard/page';
-import EditItemForm from './components/EditForm/EditItemForm';
-import { NotFound } from './components/NotFound';
-import Loading from '@/components/Loading';
+import EditItemForm from './components/EditItem/EditItemForm';
+import { NotFound } from './layouts/NotFound.tsx';
 import { RouterProvider } from 'react-router';
+import { Spinner } from '@/components/ui/spinner.tsx';
+import { ItemList } from '@/pages/ItemList.tsx';
 
 const SetupMiddleware = observer(() => {
   const location = useLocation();
@@ -43,7 +43,11 @@ const SetupMiddleware = observer(() => {
   }, [store]);
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div className="bg-background flex h-full min-h-screen w-full flex-col items-center justify-center">
+        <Spinner className="h-10 w-10" />
+      </div>
+    );
   }
 
   // If we are not on the setup page while DB is not initialized, redirect to setup
@@ -67,7 +71,7 @@ const router = createBrowserRouter([
   {
     element: <SetupMiddleware />,
     children: [
-      { path: '/', element: <Page />, id: 'dashboard' },
+      { path: '/', element: <ItemList />, id: 'dashboard' },
       { path: '/login', element: <Login />, id: 'auth-login' },
       { path: '/setup', element: <Setup />, id: 'setup' },
       { path: '/setup/auth', element: <SetupAuth /> },

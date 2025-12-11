@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button.tsx';
 import { observer } from 'mobx-react-lite';
 import { useContext } from 'react';
-import { StoreContext } from '@/store/storeContext';
+import { StoreContext } from '@/store/storeContext.ts';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { UserCreate } from '@/components/Settings/UserCreate';
-import { SetupWrapper } from '@/components/Setup/SetupWrapper';
+import { UserCreate } from '@/components/Settings/UserCreate.tsx';
+import { Onboarding } from '@/layouts/Onboarding.tsx';
 
 export const SetupAuth = observer(() => {
   const store = useContext(StoreContext);
@@ -17,12 +17,12 @@ export const SetupAuth = observer(() => {
   }
 
   return (
-    <SetupWrapper currentStep={1}>
+    <Onboarding currentStep={1}>
       <UserCreate onSuccess={() => navigate(nextStep)} />
 
       <Button variant="link" onClick={() => navigate(nextStep)}>
         Skip for now
       </Button>
-    </SetupWrapper>
+    </Onboarding>
   );
 });

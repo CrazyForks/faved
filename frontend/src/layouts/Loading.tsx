@@ -1,5 +1,5 @@
-import { Skeleton } from '@/components/ui/skeleton';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { Skeleton } from '@/components/ui/skeleton.tsx';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar.tsx';
 
 export default function Loading() {
   return (

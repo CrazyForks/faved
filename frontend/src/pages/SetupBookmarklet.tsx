@@ -1,15 +1,15 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button.tsx';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SettingsBookmarklet } from '@/components/Settings/SettingsBookmarklet';
-import { SetupWrapper } from '@/components/Setup/SetupWrapper';
+import { SettingsBookmarklet } from '@/components/Settings/SettingsBookmarklet.tsx';
+import { Onboarding } from '@/layouts/Onboarding.tsx';
 
 export const SetupBookmarklet = () => {
   const navigate = useNavigate();
   const [isInstalled, setIsInstalled] = useState(false);
 
   return (
-    <SetupWrapper currentStep={2}>
+    <Onboarding currentStep={2}>
       <SettingsBookmarklet
         onSuccess={() => {
           setIsInstalled(true);
@@ -27,6 +27,6 @@ export const SetupBookmarklet = () => {
           </Button>
         )}
       </>
-    </SetupWrapper>
+    </Onboarding>
   );
 };

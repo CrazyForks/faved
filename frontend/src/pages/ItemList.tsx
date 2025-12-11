@@ -13,12 +13,12 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { StoreContext } from '@/store/storeContext';
-import { Search } from './Controls/Search.tsx';
+import { StoreContext } from '@/store/storeContext.ts';
+import { Search } from '../components/Table/Controls/Search.tsx';
 import { observer } from 'mobx-react-lite';
-import { Sorter } from './Controls/Sorter.tsx';
-import { Pagination } from './Controls/Pagination.tsx';
-import { CardsLayout } from './Layouts/CardsLayout.tsx';
+import { Sorter } from '../components/Table/Controls/Sorter.tsx';
+import { Pagination } from '../components/Table/Controls/Pagination.tsx';
+import { CardsLayout } from '../components/Table/Layouts/CardsLayout.tsx';
 import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
 import { ActionType, ItemType, LayoutType } from '@/lib/types.ts';
 import { ItemsActions } from '@/components/Table/Fields/ItemActions.tsx';
@@ -46,6 +46,7 @@ import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 import { SidebarTrigger } from '@/components/ui/sidebar.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
+import { Dashboard } from '@/layouts/Dashboard.tsx';
 
 const columns: ColumnDef<ItemType>[] = [
   {
@@ -158,7 +159,7 @@ const columns: ColumnDef<ItemType>[] = [
   },
 ];
 
-export const DataTable: React.FC = observer(() => {
+export const ItemList: React.FC = observer(() => {
   const store = React.useContext(StoreContext);
   const data = store.items;
   const [globalFilter, setGlobalFilter] = React.useState<any>([]);
@@ -271,7 +272,7 @@ export const DataTable: React.FC = observer(() => {
   };
 
   return (
-    <>
+    <Dashboard>
       <header className="bg-background sticky top-0 z-50 flex h-(--header-height) w-full items-center gap-1.5 border-b px-4 backdrop-blur-sm group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mx-1 data-[orientation=vertical]:h-8" />
@@ -327,6 +328,6 @@ export const DataTable: React.FC = observer(() => {
       </div>
 
       <Pagination table={table} />
-    </>
+    </Dashboard>
   );
 });

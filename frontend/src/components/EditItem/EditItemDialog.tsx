@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog.tsx';
-import EditItemForm from '@/components/EditForm/EditItemForm.tsx';
+import EditItemForm from '@/components/EditItem/EditItemForm.tsx';
 import { observer } from 'mobx-react-lite';
 import { useContext } from 'react';
 import { StoreContext } from '@/store/storeContext.ts';

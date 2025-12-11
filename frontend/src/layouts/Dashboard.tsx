@@ -1,15 +1,14 @@
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar.tsx';
 import { useContext, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { StoreContext } from '@/store/storeContext';
-import { AppSidebar } from '@/components/Sidebar/AppSidebar';
-import { DataTable } from '../Table/DataTable';
-import { SettingsDialog } from '../Settings/SettingsDialog.tsx';
+import { StoreContext } from '@/store/storeContext.ts';
+import { AppSidebar } from '@/components/Sidebar/AppSidebar.tsx';
+import { SettingsDialog } from '../components/Settings/SettingsDialog.tsx';
 import { TagType } from '@/lib/types.ts';
-import Loading from '@/components/Loading';
-import { EditItemDialog } from '@/components/EditForm/EditItemDialog.tsx';
+import Loading from '@/layouts/Loading.tsx';
+import { EditItemDialog } from '@/components/EditItem/EditItemDialog.tsx';
 
-export const Page = observer(() => {
+export const Dashboard = observer(({ children }: { children: React.ReactNode }) => {
   const store = useContext(StoreContext);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -35,9 +34,7 @@ export const Page = observer(() => {
         }
       >
         <AppSidebar allTags={store.tags as unknown as Record<string, TagType>} />
-        <main className="bg-background @container/main relative flex w-full flex-1 flex-col">
-          <DataTable />
-        </main>
+        <main className="bg-background @container/main relative flex w-full flex-1 flex-col">{children}</main>
       </SidebarProvider>
       {store.isShowEditModal && <EditItemDialog />}
       {store.isOpenSettingsModal && <SettingsDialog />}

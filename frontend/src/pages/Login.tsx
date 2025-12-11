@@ -9,7 +9,7 @@ import { StoreContext } from '@/store/storeContext';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../components/ui/form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import { AuthLayout } from '@/layouts/AuthLayout.tsx';
+import { Auth } from '@/layouts/Auth.tsx';
 import { Spinner } from '@/components/ui/spinner.tsx';
 
 const formSchema = z.object({
@@ -46,7 +46,7 @@ export const Login = observer(() => {
   }
 
   return (
-    <AuthLayout>
+    <Auth>
       <div className="w-full max-w-sm min-w-xs">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -95,6 +95,6 @@ export const Login = observer(() => {
           </form>
         </Form>
       </div>
-    </AuthLayout>
+    </Auth>
   );
 });

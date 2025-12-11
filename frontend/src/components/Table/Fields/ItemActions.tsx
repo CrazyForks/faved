@@ -21,7 +21,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog.tsx';
 
-import {ActionType} from "@/lib/types.ts";
+import { ActionType } from '@/lib/types.ts';
 
 export const ItemsActions = ({ row }) => {
   const itemId = row.original.id;

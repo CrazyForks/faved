@@ -22,7 +22,7 @@ import {
 } from '../ui/alert-dialog';
 import { IconCloudDownload, IconProgress } from '@tabler/icons-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
-import { ImagePreview } from '@/components/EditForm/ImagePreview.tsx';
+import { ImagePreview } from '@/components/EditItem/ImagePreview.tsx';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner.tsx';
 import { Separator } from '@/components/ui/separator.tsx';

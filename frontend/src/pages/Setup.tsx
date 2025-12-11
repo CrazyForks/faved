@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx';
 import { observer } from 'mobx-react-lite';
 import { useContext, useState } from 'react';
-import { StoreContext } from '@/store/storeContext';
+import { StoreContext } from '@/store/storeContext.ts';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 export const Setup = observer(() => {
