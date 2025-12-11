@@ -203,7 +203,7 @@ a:hover {
       @apply relative h-fit w-fit;
     }
     .item__image {
-      @apply h-auto max-h-[250px] w-auto min-w-[200px] rounded-sm;
+      @apply h-auto max-h-[250px] w-auto rounded-sm;
     }
   }
 

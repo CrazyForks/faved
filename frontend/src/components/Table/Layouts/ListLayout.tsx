@@ -18,7 +18,7 @@ export const ListLayout = ({ rows }) => {
         return (
           <Card key={row.original.id} className="@container/card relative">
             <CardContent className="hover-action-container flex h-full flex-row flex-nowrap gap-3 md:gap-6 lg:gap-10">
-              {imageOutput && <div className="flex flex-2/5 items-start justify-end">{imageOutput}</div>}
+              {imageOutput && <div className="flex flex-2/5 items-start lg:justify-end">{imageOutput}</div>}
               <div className="flex h-full flex-3/5 flex-col items-start gap-3 text-left">
                 {row
                   .getVisibleCells()
