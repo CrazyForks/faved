@@ -1,5 +1,5 @@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group.tsx';
-import { LayoutType } from '@/types/types.ts';
+import { LayoutType } from '@/lib/types.ts';
 import { LayoutGrid as CardsIcon, LayoutList, Table as TableIcon } from 'lucide-react';
 import * as React from 'react';
 

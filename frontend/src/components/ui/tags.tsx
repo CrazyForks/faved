@@ -11,7 +11,7 @@ import { observer } from 'mobx-react-lite';
 import { useContext, useEffect } from 'react';
 import { StoreContext } from '@/store/storeContext.ts';
 import { toJS } from 'mobx';
-import { TagsObjectType } from '@/types/types';
+import { TagsObjectType } from '@/lib/types.ts';
 import { getColorClass, TagBadgeMini } from '@/components/Table/Fields/TagBadge.tsx';
 
 const TagEdit = observer(

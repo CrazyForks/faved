@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu.tsx';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { JSX } from 'react';
-import { ItemType } from '@/types/types.ts';
+import { ItemType } from '@/lib/types.ts';
 
 export const Sorter: ({
   selectedSortColumn,

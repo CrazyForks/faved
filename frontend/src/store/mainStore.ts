@@ -11,7 +11,7 @@ import {
   UpdatePasswordType,
   UpdateUsernameType,
   UserType,
-} from '@/types/types';
+} from '@/lib/types.ts';
 
 const getCookie = (name: string) => {
   // Add a semicolon to the beginning of the cookie string to handle the first cookie

@@ -7,7 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { StoreContext } from '@/store/storeContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
-import { ActionType, ItemSchema, ItemType, UrlSchema } from '@/types/types';
+import { ActionType, ItemSchema, ItemType, UrlSchema } from '@/lib/types.ts';
 import { useLocation } from 'react-router-dom';
 import {
   AlertDialog,

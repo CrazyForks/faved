@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { ItemType, LayoutType } from '@/types/types.ts';
+import { ItemType, LayoutType } from '@/lib/types.ts';
 import { VisibilityState } from '@tanstack/react-table';
 
 export function cn(...inputs: ClassValue[]) {

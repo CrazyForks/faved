@@ -20,7 +20,7 @@ import { Sorter } from './Controls/Sorter.tsx';
 import { Pagination } from './Controls/Pagination.tsx';
 import { CardsLayout } from './Layouts/CardsLayout.tsx';
 import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
-import { ActionType, ItemType, LayoutType } from '@/types/types.ts';
+import { ActionType, ItemType, LayoutType } from '@/lib/types.ts';
 import { ItemsActions } from '@/components/Table/Fields/ItemActions.tsx';
 import {
   getSavedLayoutColumnVisibilityPreference,

@@ -5,7 +5,7 @@ import { StoreContext } from '@/store/storeContext';
 import { AppSidebar } from '@/components/Sidebar/AppSidebar';
 import { DataTable } from '../Table/DataTable';
 import { SettingsDialog } from '../Settings/SettingsDialog.tsx';
-import { TagType } from '@/types/types';
+import { TagType } from '@/lib/types.ts';
 import Loading from '@/components/Loading';
 import { EditItemDialog } from '@/components/EditForm/EditItemDialog.tsx';
 
