@@ -41,8 +41,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { Settings2 } from 'lucide-react';
+import { PlusIcon, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
+import { ActionType } from '@/components/dashboard/types.ts';
+import { SidebarTrigger } from '@/components/ui/sidebar.tsx';
+import { Separator } from '@/components/ui/separator.tsx';
 
 const columns: ColumnDef<ItemType>[] = [
   {
@@ -249,8 +253,10 @@ export const DataTable: React.FC = observer(() => {
       ...table.getState().columnVisibility,
       [columnId]: isVisible,
     };
-    if (Object.values(newVisibility).filter((val) => true === val).length === 0) {
-      toast.error("The only visible field can't be hidden", {
+    const remainingVisibleColumns = visibilityToggleColumns.filter((column) => newVisibility[column.id] !== false);
+
+    if (remainingVisibleColumns.length === 0) {
+      toast.error("The last remaining visible field can't be hidden", {
         position: 'top-center',
       });
       return;
@@ -266,24 +272,18 @@ export const DataTable: React.FC = observer(() => {
   };
 
   return (
-    <div className="w-full">
-      <div className="m-4 flex items-center justify-between gap-2 py-4">
-        <Search table={table} globalFilter={globalFilter} />
-
-        <Sorter
-          selectedSortColumn={sorting[0]?.id}
-          isDesc={sorting[0]?.desc}
-          onChange={updateSorting}
-          columns={sortableColumns}
-        />
+    <>
+      <header className="bg-background sticky top-0 z-50 flex h-(--header-height) w-full items-center gap-1.5 border-b px-4 backdrop-blur-sm group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+        <SidebarTrigger />
+        <Separator orientation="vertical" className="mx-1 data-[orientation=vertical]:h-8" />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" size="icon">
               <Settings2 className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-40">
+          <DropdownMenuContent align="start" className="min-w-40">
             <DropdownMenuLabel>Layout</DropdownMenuLabel>
             <div className="mx-1 mb-3">
               <LayoutSelector layout={layout} onChange={updateLayout} />
@@ -293,7 +293,32 @@ export const DataTable: React.FC = observer(() => {
             <FieldToggler columns={visibilityToggleColumns} onChange={updateColumnVisibility} />
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+        <Search table={table} globalFilter={globalFilter} />
+
+        <Sorter
+          selectedSortColumn={sorting[0]?.id}
+          isDesc={sorting[0]?.desc}
+          onChange={updateSorting}
+          columns={sortableColumns}
+        />
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="default"
+              size="icon"
+              onClick={() => {
+                store.setIsShowEditModal(true);
+                store.setType(ActionType.CREATE);
+              }}
+            >
+              <PlusIcon />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Add Bookmark</TooltipContent>
+        </Tooltip>
+      </header>
+
       <div className={`m-4 overflow-hidden item-list--${layout}`}>
         {currentRows.length > 0 ? (
           layouts[layout]
@@ -301,7 +326,8 @@ export const DataTable: React.FC = observer(() => {
           <div className="text-muted-foreground col-span-full py-8 text-center">No results found.</div>
         )}
       </div>
+
       <Pagination table={table} />
-    </div>
+    </>
   );
 });

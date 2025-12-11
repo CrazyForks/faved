@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import { SlidersHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { StoreContext } from '@/store/storeContext';
+import { Button } from '@/components/ui/button.tsx';
+import { StoreContext } from '@/store/storeContext.ts';
 import { observer } from 'mobx-react-lite';
 import { useSidebar } from '@/components/ui/sidebar.tsx';
 
@@ -13,7 +13,7 @@ export const PresetActions = observer(() => {
 
   return (
     <Button
-      variant="secondary"
+      variant="ghost"
       size="icon"
       className="relative"
       onClick={() => {

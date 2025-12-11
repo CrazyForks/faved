@@ -5,7 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
+} from '@/components/ui/sidebar.tsx';
 import { StoreContext } from '@/store/storeContext.ts';
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';

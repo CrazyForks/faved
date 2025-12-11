@@ -49,7 +49,6 @@ export const getSavedLayoutColumnVisibilityPreference = (
 };
 
 export const saveLayoutColumnVisibilityPreference = (layout: LayoutType, columnVisibility: VisibilityState): void => {
-  console.log(columnVisibility);
   try {
     localStorage.setItem(`column-visibility-${layout}`, JSON.stringify(columnVisibility));
   } catch {

@@ -1,5 +1,4 @@
-import { SiteHeader } from '@/components/Header/SiteHeader';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { useContext, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@/store/storeContext';
@@ -31,21 +30,14 @@ export const Page = observer(() => {
         style={
           {
             '--sidebar-width': 'calc(var(--spacing) * 72)',
-            '--header-height': 'calc(var(--spacing) * 12)',
+            '--header-height': 'calc(var(--spacing) * 14)',
           } as React.CSSProperties
         }
       >
-        <AppSidebar variant="inset" allTags={store.tags as unknown as Record<string, TagType>} />
-        <SidebarInset>
-          <SiteHeader setType={store.setType} />
-          <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-              <div className="flex flex-col gap-4 md:gap-6">
-                <DataTable />
-              </div>
-            </div>
-          </div>
-        </SidebarInset>
+        <AppSidebar allTags={store.tags as unknown as Record<string, TagType>} />
+        <main className="bg-background @container/main relative flex w-full flex-1 flex-col">
+          <DataTable />
+        </main>
       </SidebarProvider>
       {store.isShowEditModal && <EditItemDialog />}
       {store.isOpenSettingsModal && <SettingsDialog />}

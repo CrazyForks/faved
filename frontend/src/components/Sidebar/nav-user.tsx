@@ -1,5 +1,5 @@
 import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,10 +7,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
+} from '@/components/ui/dropdown-menu.tsx';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar.tsx';
 import { User } from 'lucide-react';
-import { StoreContext } from '@/store/storeContext';
+import { StoreContext } from '@/store/storeContext.ts';
 import { useContext } from 'react';
 
 export const NavUser = ({ username }: { username: string }) => {

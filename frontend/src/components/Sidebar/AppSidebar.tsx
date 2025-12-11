@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
+import { NavMain } from '@/components/Sidebar/nav-main.tsx';
+import { NavUser } from '@/components/Sidebar/nav-user.tsx';
 import {
   Sidebar,
   SidebarContent,
@@ -14,9 +14,10 @@ import {
 import { StoreContext } from '@/store/storeContext.ts';
 import { observer } from 'mobx-react-lite';
 import { SidebarTag } from '@/components/Sidebar/SidebarTag.tsx';
-import { PresetActions } from '../dashboard/PresetActions';
+import { PresetActions } from './PresetActions.tsx';
 import { TagType } from '@/types/types';
 import { Logo } from '@/layouts/Logo.tsx';
+import { ModeToggle } from '@/components/Sidebar/mode-toggle.tsx';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   allTags: Record<string, TagType>;
@@ -65,7 +66,10 @@ export const AppSidebar = observer(({ allTags, ...props }: AppSidebarProps) => {
         <SidebarMenu>
           <SidebarMenuItem className="flex w-full justify-between">
             <Logo />
-            <PresetActions />
+            <div className="ml-auto flex items-center gap-0.5">
+              <ModeToggle />
+              <PresetActions />
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
