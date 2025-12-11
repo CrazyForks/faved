@@ -62,3 +62,8 @@ export type TagsObjectType = {
 };
 
 export type LayoutType = 'table' | 'cards' | 'list';
+
+export enum ActionType {
+  CREATE = 'CREATE',
+  EDIT = 'EDIT',
+}

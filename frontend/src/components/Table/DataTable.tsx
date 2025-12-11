@@ -20,7 +20,7 @@ import { Sorter } from './Controls/Sorter.tsx';
 import { Pagination } from './Controls/Pagination.tsx';
 import { CardsLayout } from './Layouts/CardsLayout.tsx';
 import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
-import { ItemType, LayoutType } from '@/types/types.ts';
+import { ActionType, ItemType, LayoutType } from '@/types/types.ts';
 import { ItemsActions } from '@/components/Table/Fields/ItemActions.tsx';
 import {
   getSavedLayoutColumnVisibilityPreference,
@@ -44,7 +44,6 @@ import { Button } from '@/components/ui/button.tsx';
 import { PlusIcon, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
-import { ActionType } from '@/components/dashboard/types.ts';
 import { SidebarTrigger } from '@/components/ui/sidebar.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 

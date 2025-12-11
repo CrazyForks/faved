@@ -1,8 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 import { toast } from 'sonner';
 import { API_ENDPOINTS } from './api';
-import { ActionType } from '@/components/dashboard/types';
 import {
+  ActionType,
   CreateUserType,
   ItemType,
   LoginType,

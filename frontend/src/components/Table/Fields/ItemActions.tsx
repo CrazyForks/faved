@@ -1,6 +1,5 @@
 import React from 'react';
 import { StoreContext } from '@/store/storeContext.ts';
-import { ActionType } from '@/components/dashboard/types.ts';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +20,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog.tsx';
+
+import {ActionType} from "@/types/types.ts";
 
 export const ItemsActions = ({ row }) => {
   const itemId = row.original.id;
