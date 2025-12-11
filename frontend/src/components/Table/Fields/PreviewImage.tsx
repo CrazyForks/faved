@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog.tsx';
 import { IconX } from '@tabler/icons-react';
-import { ImageOff, ZoomIn } from 'lucide-react';
-import { Button } from '@/components/ui/button.tsx';
+import { ImageOff } from 'lucide-react';
 
 export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; className: string }) => {
   const [isImageError, setIsImageError] = React.useState(false);
@@ -26,17 +25,9 @@ export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; classN
 
   return (
     <div className="group item__image-container relative">
-      <img className={className + ' item__image'} src={imageUrl} onError={() => setIsImageError(true)} />
       <Dialog>
         <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="absolute right-2 bottom-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100 active:opacity-100 any-pointer-coarse:opacity-100"
-            size="icon"
-          >
-            <ZoomIn />
-            <span className="sr-only">Enlarge image</span>
-          </Button>
+          <img className={className + ' item__image'} src={imageUrl} onError={() => setIsImageError(true)} />
         </DialogTrigger>
         <DialogContent
           aria-describedby={undefined}

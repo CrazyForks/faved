@@ -318,7 +318,7 @@ export const ItemList: React.FC = observer(() => {
         {currentRows.length > 0 ? (
           layouts[layout]
         ) : (
-          <div className="text-muted-foreground col-span-full py-8 text-center">No results found.</div>
+          <div className="text-muted-foreground col-span-full py-8 text-center">No items.</div>
         )}
       </div>
 

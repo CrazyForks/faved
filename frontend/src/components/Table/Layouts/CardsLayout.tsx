@@ -9,7 +9,7 @@ export const CardsLayout = ({ rows }) => {
         return (
           <Card key={row.original.id} className="@container/card relative">
             <CardContent className="hover-action-container flex h-full flex-col gap-3 text-left">
-              {row.getVisibleCells().map((cell) => renderField({ cell, row }))}
+              {row.getVisibleCells().map((cell) => renderField({ cell }))}
             </CardContent>
           </Card>
         );

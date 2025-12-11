@@ -1,23 +1,24 @@
-import { CardAction } from '@/components/ui/card.tsx';
-import { ItemsActions } from '@/components/Table/Fields/ItemActions.tsx';
 import * as React from 'react';
 import { flexRender } from '@tanstack/react-table';
 
 export const TitleFormatter = ({ output }) => {
   return (
-    <h4 className="line-clamp-3 scroll-m-20 font-semibold tracking-tight sm:text-lg md:text-xl" title={output}>
+    <h4
+      className="line-clamp-3 scroll-m-20 font-semibold tracking-tight @xl/item:text-lg @3xl/item:text-xl"
+      title={output}
+    >
       {output}
     </h4>
   );
 };
 
 export const URLFormatter = ({ output }) => {
-  return <div className="line-clamp-3 text-sm break-all sm:text-base">{output}</div>;
+  return <div className="line-clamp-3 text-sm break-all @xl/item:text-base">{output}</div>;
 };
 
 export const DescriptionFormatter = ({ output }) => {
   return (
-    <div className="text-muted-foreground line-clamp-3 text-sm leading-6 whitespace-pre-line md:line-clamp-none">
+    <div className="text-muted-foreground line-clamp-3 text-sm leading-6 whitespace-pre-line @3xl/item:line-clamp-none">
       {output}
     </div>
   );
@@ -25,29 +26,21 @@ export const DescriptionFormatter = ({ output }) => {
 
 export const NotesFormatter = ({ output }) => {
   return (
-    <blockquote className="text-muted-foreground line-clamp-3 border-l-2 pl-6 text-sm whitespace-pre-line italic md:line-clamp-none">
+    <blockquote className="text-muted-foreground line-clamp-3 border-l-2 pl-6 text-sm whitespace-pre-line italic @3xl/item:line-clamp-none">
       {output}
     </blockquote>
   );
 };
 
-export const ActionsFormatter = ({ row }) => {
-  return (
-    <CardAction className="absolute top-2 right-2">
-      <ItemsActions row={row} />
-    </CardAction>
-  );
-};
-
 export const DateFormatter = ({ output, cell }) => {
   return (
-    <div className="text-muted-foreground text-sm">
-      <span className="text-sm leading-none font-medium">{cell.column.columnDef.header}:</span> {output}
+    <div className="text-muted-foreground text-xs @xl/item:text-sm">
+      <span className="leading-none font-medium">{cell.column.columnDef.header}:</span> {output}
     </div>
   );
 };
 
-export const renderField = ({ cell, row }) => {
+export const renderField = ({ cell }) => {
   const isActionColumn = cell.column.columnDef.meta?.isAction ?? false;
   const value = cell.getValue();
 
@@ -61,7 +54,6 @@ export const renderField = ({ cell, row }) => {
     description: <DescriptionFormatter output={output} />,
     url: <URLFormatter output={output} />,
     title: <TitleFormatter output={output} />,
-    actions: <ActionsFormatter row={row} />,
     created_at: <DateFormatter output={output} cell={cell} />,
     updated_at: <DateFormatter output={output} cell={cell} />,
     default: output,

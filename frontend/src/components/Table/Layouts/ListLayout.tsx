@@ -1,37 +1,29 @@
 import * as React from 'react';
-import { Card, CardContent } from '../../ui/card.tsx';
 import { renderField } from '@/components/Table/FieldFormatters.tsx';
 
 export const ListLayout = ({ rows }) => {
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="flex flex-col divide-y">
       {rows.map((row) => {
         const imageOutput = row
           .getVisibleCells()
           .filter((cell) => cell.column.id === 'image')
-          .map((cell) =>
-            renderField({
-              cell: cell,
-              row: row,
-            })
-          );
+          .map((cell) => renderField({ cell }))
+          .filter((r) => r !== null);
         return (
-          <Card key={row.original.id} className="@container/card relative">
-            <CardContent className="hover-action-container flex h-full flex-row flex-nowrap gap-3 md:gap-6 lg:gap-10">
-              {imageOutput.length > 0 && <div className="flex flex-2/5 items-start lg:justify-end">{imageOutput}</div>}
-              <div className="flex h-full flex-3/5 flex-col items-start gap-3 text-left">
+          <div key={row.original.id} className="@container/item relative">
+            <div className="hover-action-container flex h-full flex-row flex-nowrap gap-4 px-0 py-6 @xl/item:gap-6 @xl/item:px-4 @3xl/item:gap-12 @3xl/item:py-12">
+              {imageOutput.length > 0 && imageOutput && (
+                <div className="max-w-md flex-1 pt-1.5 @6xl/item:pt-0">{imageOutput}</div>
+              )}
+              <div className="flex h-full flex-2 flex-col items-start gap-1.5 text-left @xl/item:gap-3">
                 {row
                   .getVisibleCells()
                   .filter((cell) => cell.column.id !== 'image')
-                  .map((cell) =>
-                    renderField({
-                      cell: cell,
-                      row: row,
-                    })
-                  )}
+                  .map((cell) => renderField({ cell }))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         );
       })}
     </div>

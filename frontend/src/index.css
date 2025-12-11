@@ -196,14 +196,25 @@ a:hover {
     .item__image {
       @apply aspect-[1.91/1] w-full rounded-tl-[13px] rounded-tr-[13px] object-cover;
     }
+
+    .actions-container {
+      @apply absolute top-2 right-2;
+    }
   }
 
   .item-list--list {
+    @apply mt-0!;
+
     .item__image-container {
       @apply relative h-fit w-fit;
     }
+
     .item__image {
       @apply h-auto max-h-[250px] w-auto rounded-sm;
+    }
+
+    .actions-container {
+      @apply absolute top-3 right-0 @2xl/main:top-6;
     }
   }
 
@@ -211,6 +222,7 @@ a:hover {
     .item__image-container {
       @apply flex items-center justify-center;
     }
+
     .item__image {
       @apply h-auto max-h-[200px] w-auto min-w-[200px] rounded-sm;
     }
