@@ -12,7 +12,7 @@ import { useContext, useEffect } from 'react';
 import { StoreContext } from '@/store/storeContext.ts';
 import { toJS } from 'mobx';
 import { TagsObjectType } from '@/types/types';
-import { getColorClass, TagBadgeMini } from '@/components/Table/TagBadge.tsx';
+import { getColorClass, TagBadgeMini } from '@/components/Table/Fields/TagBadge.tsx';
 
 const TagEdit = observer(
   ({

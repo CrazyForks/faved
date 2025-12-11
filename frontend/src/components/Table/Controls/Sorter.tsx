@@ -1,32 +1,32 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button.tsx';
 import { ArrowDown, ArrowDownUp, ArrowUp } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu.tsx';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { JSX } from 'react';
+import { ItemType } from '@/types/types.ts';
 
 export const Sorter: ({
   selectedSortColumn,
   isDesc,
-  handleSortChange,
-  sortableColumns,
+  onChange,
+  columns,
 }: {
   selectedSortColumn: string | null;
   isDesc: boolean;
-  handleSortChange: any;
-  sortableColumns: Array<any>;
-}) => JSX.Element = ({ selectedSortColumn, isDesc, handleSortChange, sortableColumns }) => {
-  const handle = (colAccessorKey) => {
+  onChange: any;
+  columns: Array<any>;
+}) => JSX.Element = ({ selectedSortColumn, isDesc, onChange, columns }) => {
+  const handle = (columnId: keyof ItemType) => {
     let newIsDesc = isDesc;
-    if (selectedSortColumn === colAccessorKey) {
+    if (selectedSortColumn === columnId) {
       newIsDesc = !isDesc;
     }
-    handleSortChange(colAccessorKey, newIsDesc);
+    onChange(columnId, newIsDesc);
   };
 
   return (
@@ -38,20 +38,19 @@ export const Sorter: ({
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end" className="min-w-40">
         <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {sortableColumns.map((column) => (
+        {columns.map((column) => (
           <DropdownMenuItem
-            key={column.accessorKey}
+            key={column.id}
             onSelect={(event: any) => {
               // prevent the dropdown from closing on selection
               event.preventDefault();
-              handle(column.accessorKey);
+              handle(column.id);
             }}
-            className={'flex justify-between ' + (column.accessorKey === selectedSortColumn ? ' bg-accent' : '')}
+            className={'flex justify-between ' + (column.id === selectedSortColumn ? ' bg-accent' : '')}
           >
-            <span>{column.header}</span>
+            <span>{column.columnDef.header}</span>
             <span>
-              {column.accessorKey === selectedSortColumn &&
+              {column.id === selectedSortColumn &&
                 (isDesc ? <ArrowDown className="text-primary" /> : <ArrowUp className="text-primary" />)}
             </span>
           </DropdownMenuItem>

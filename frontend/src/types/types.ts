@@ -60,3 +60,5 @@ export type TagType = {
 export type TagsObjectType = {
   [tagId: number | string]: TagType; // Use number if tagId is a number, otherwise use string
 };
+
+export type LayoutType = 'table' | 'cards' | 'list';

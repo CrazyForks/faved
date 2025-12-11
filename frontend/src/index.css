@@ -187,35 +187,62 @@ a:hover {
       visibility: visible !important;
     }
   }
+
+  .item-list--cards {
+    .item__image-container {
+      @apply -mt-6 -mr-6 -ml-6;
+    }
+
+    .item__image {
+      @apply aspect-[1.91/1] w-full rounded-tl-[13px] rounded-tr-[13px] object-cover;
+    }
+  }
+
+  .item-list--list {
+    .item__image-container {
+      @apply relative h-fit w-fit;
+    }
+    .item__image {
+      @apply h-auto max-h-[250px] w-auto min-w-[200px] rounded-sm;
+    }
+  }
+
+  .item-list--table {
+    .item__image-container {
+      @apply flex items-center justify-center;
+    }
+    .item__image {
+      @apply h-auto max-h-[200px] w-auto min-w-[200px] rounded-sm;
+    }
+  }
 }
 
 @layer utilities {
+  .hover-action {
+    visibility: hidden;
+  }
+
+  .hover-action-container:hover .hover-action,
+  .hover-action:hover,
+  .hover-action[data-state='open'] {
+    visibility: visible;
+  }
+
+  @media (any-pointer: coarse) {
     .hover-action {
-        visibility: hidden;
+      visibility: visible !important;
     }
+  }
 
-    .hover-action-container:hover .hover-action,
-    .hover-action:hover,
-    .hover-action[data-state='open'] {
-        visibility: visible;
-    }
+  .no-scrollbar {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* Internet Explorer 10+ */
+  }
 
-    @media (any-pointer: coarse) {
-        .hover-action {
-            visibility: visible !important;
-        }
-    }
-
-    .no-scrollbar {
-        scrollbar-width: none;
-        /* Firefox */
-        -ms-overflow-style: none;
-        /* Internet Explorer 10+ */
-    }
-
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-        /* WebKit (Chrome, Safari) */
-    }
-
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+    /* WebKit (Chrome, Safari) */
+  }
 }

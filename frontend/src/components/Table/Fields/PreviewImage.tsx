@@ -13,18 +13,20 @@ export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; classN
 
   if (isImageError) {
     return (
-      <div
-        className={`${className} text-muted-foreground flex min-h-16 min-w-16 items-center justify-center bg-gray-200`}
-        title={`Image link is broken: ${imageUrl}`}
-      >
-        <ImageOff />
+      <div className="item__image-container">
+        <div
+          className={`${className} text-muted-foreground item__image flex min-h-16 min-w-16 items-center justify-center bg-gray-200`}
+          title={`Image link is broken: ${imageUrl}`}
+        >
+          <ImageOff />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="group relative w-fit">
-      <img className={className} src={imageUrl} onError={() => setIsImageError(true)} />
+    <div className="group item__image-container relative">
+      <img className={className + ' item__image'} src={imageUrl} onError={() => setIsImageError(true)} />
       <Dialog>
         <DialogTrigger asChild>
           <Button
