@@ -215,6 +215,15 @@ a:hover {
       @apply h-auto max-h-[200px] w-auto min-w-[200px] rounded-sm;
     }
   }
+
+  .created_at-container,
+  .updated_at-container {
+    @apply mt-auto;
+  }
+
+  .created_at-container + .updated_at-container {
+    @apply -mt-1;
+  }
 }
 
 @layer utilities {

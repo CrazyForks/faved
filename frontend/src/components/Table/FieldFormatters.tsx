@@ -41,10 +41,9 @@ export const ActionsFormatter = ({ row }) => {
 
 export const DateFormatter = ({ output, cell }) => {
   return (
-    // If last item, stick to bottom
-    <p className="text-muted-foreground text-sm [&:first-of-type]:mt-auto [&:nth-of-type(2)]:-mt-1">
-      <small className="text-sm leading-none font-medium">{cell.column.columnDef.header}:</small> {output}
-    </p>
+    <div className="text-muted-foreground text-sm">
+      <span className="text-sm leading-none font-medium">{cell.column.columnDef.header}:</span> {output}
+    </div>
   );
 };
 
@@ -67,5 +66,9 @@ export const renderField = ({ cell, row }) => {
     updated_at: <DateFormatter output={output} cell={cell} />,
     default: output,
   };
-  return <>{componentMap[cell.column.id] || componentMap.default}</>;
+  return (
+    <div className={`${cell.column.id}-container`} key={cell.id}>
+      {componentMap[cell.column.id] || componentMap.default}
+    </div>
+  );
 };
