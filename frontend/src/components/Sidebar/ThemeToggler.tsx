@@ -1,9 +1,9 @@
 import { Moon, Sun, SunMoon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button.tsx';
-import { Theme, useTheme } from '@/components/theme-provider.tsx';
+import { Theme, useTheme } from '@/components/ThemeProvider.tsx';
 
-export function ModeToggle() {
+export function ThemeToggler() {
   const { theme, setTheme } = useTheme();
   const switchTheme = () => {
     const themes: Theme[] = ['light', 'dark', 'system'];

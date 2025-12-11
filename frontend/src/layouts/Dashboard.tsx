@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@/store/storeContext.ts';
 import { AppSidebar } from '@/components/Sidebar/AppSidebar.tsx';
 import { SettingsDialog } from '../components/Settings/SettingsDialog.tsx';
-import { TagType } from '@/lib/types.ts';
 import Loading from '@/layouts/Loading.tsx';
 import { EditItemDialog } from '@/components/EditItem/EditItemDialog.tsx';
 
@@ -33,7 +32,7 @@ export const Dashboard = observer(({ children }: { children: React.ReactNode }) 
           } as React.CSSProperties
         }
       >
-        <AppSidebar allTags={store.tags as unknown as Record<string, TagType>} />
+        <AppSidebar />
         <main className="bg-background @container/main relative flex w-full flex-1 flex-col">{children}</main>
       </SidebarProvider>
       {store.isShowEditModal && <EditItemDialog />}

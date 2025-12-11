@@ -92,40 +92,35 @@ export function SidebarTag({
 
   const tagContent = (className = '') => {
     return (
-      <>
-        <div
-          onClick={setTag}
-          className={`${className} flex w-full items-center justify-start gap-2 py-2 pe-6.5 text-left`}
-        >
-          <span className={`h-2.5 w-2.5 flex-none rounded-full ${getColorClass(tag.color)}`}></span>
-          <input
-            ref={inputRef}
-            className={[
-              'tag-title-edit-input w-[85%] rounded-sm',
-              isRenaming ? '' : 'hidden',
-              isMobile ? 'border-1' : 'border-none',
-            ].join(' ')}
-            value={newTagTitle as string}
-            onChange={(e) => setNewTagTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                revert();
-              } else if (e.key === 'Enter') {
-                submit();
-              }
-            }}
-            onBlur={() => {
-              if (!isMobile) revert();
-            }}
-          />
-          {!isRenaming && (
-            <span title={tag.title} className="line-clamp-1 break-all">
-              {tag.title}
-            </span>
-          )}
-          <IconPinned className={`ms-auto h-4 w-4 ` + (tag.pinned ? 'visible' : 'invisible')} />
-        </div>
-      </>
+      <div onClick={setTag} className={`${className} flex w-full items-center justify-start gap-2 py-2 pe-0 text-left`}>
+        <span className={`h-2.5 w-2.5 flex-none rounded-full ${getColorClass(tag.color)}`}></span>
+        <input
+          ref={inputRef}
+          className={[
+            'tag-title-edit-input w-[85%] rounded-sm',
+            isRenaming ? '' : 'hidden',
+            isMobile ? 'border-1' : 'border-none',
+          ].join(' ')}
+          value={newTagTitle as string}
+          onChange={(e) => setNewTagTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              revert();
+            } else if (e.key === 'Enter') {
+              submit();
+            }
+          }}
+          onBlur={() => {
+            if (!isMobile) revert();
+          }}
+        />
+        {!isRenaming && (
+          <span title={tag.title} className="line-clamp-1 break-all">
+            {tag.title}
+          </span>
+        )}
+        <IconPinned className={`ms-auto h-4 w-4 ` + (tag.pinned ? 'visible' : 'invisible')} />
+      </div>
     );
   };
 
@@ -193,7 +188,7 @@ export function SidebarTag({
           </SidebarMenuButton>
 
           <CollapsibleContent>
-            <SidebarMenuSub>{innerItems}</SidebarMenuSub>
+            <SidebarMenuSub className="mr-[1px] pr-0">{innerItems}</SidebarMenuSub>
           </CollapsibleContent>
           {actionButtons}
         </SidebarMenuItem>

@@ -7,7 +7,7 @@ import { StoreContext } from '@/store/storeContext.ts';
 import { observer } from 'mobx-react-lite';
 import { useSidebar } from '@/components/ui/sidebar.tsx';
 
-export const PresetActions = observer(() => {
+export const SettingsButton = observer(() => {
   const store = React.useContext(StoreContext);
   const { isMobile, toggleSidebar } = useSidebar();
 

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { TagEdit } from '@/components/ui/tags';
+import { TagEdit } from '@/components/EditItem/TagSelect.tsx';
 import { Textarea } from '../ui/textarea';
 import { StoreContext } from '@/store/storeContext';
 import { zodResolver } from '@hookform/resolvers/zod';

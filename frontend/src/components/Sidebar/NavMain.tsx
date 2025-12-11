@@ -33,14 +33,12 @@ export const NavMain = observer(() => {
       title: 'All items',
       onClick: setAllTags,
       isSelected: store.selectedTagId === '0',
-      url: '#',
       icon: null,
     },
     {
       title: 'Untagged',
       onClick: setNoTags,
       isSelected: store.selectedTagId === null,
-      url: '#',
       icon: null,
     },
   ];

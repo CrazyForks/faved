@@ -162,12 +162,6 @@ a:hover {
 }
 
 @layer components {
-  .border-sidebar-border {
-    margin-right: 0 !important;
-    padding-right: 0;
-    padding-left: 5px;
-  }
-
   .sidebar-menu-action {
     visibility: hidden;
   }
@@ -178,8 +172,9 @@ a:hover {
     visibility: visible;
   }
 
+  /*Show dots on selected menu*/
   [data-selected='true'] > .sidebar-menu-action:not([data-state='open']):not(:hover) {
-    color: var(--color-accent);
+    color: var(--color-accent) !important;
   }
 
   @media (any-pointer: coarse) {
