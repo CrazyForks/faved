@@ -1,5 +1,5 @@
 import React from 'react';
-import { Logo } from '@/layouts/Logo.tsx';
+import { Logo } from '@/components/Logo.tsx';
 
 export const AuthLayout = ({ children }) => {
   return (

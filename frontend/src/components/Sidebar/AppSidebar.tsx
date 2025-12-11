@@ -16,7 +16,7 @@ import { observer } from 'mobx-react-lite';
 import { SidebarTag } from '@/components/Sidebar/SidebarTag.tsx';
 import { PresetActions } from './PresetActions.tsx';
 import { TagType } from '@/lib/types.ts';
-import { Logo } from '@/layouts/Logo.tsx';
+import { Logo } from '@/components/Logo.tsx';
 import { ModeToggle } from '@/components/Sidebar/mode-toggle.tsx';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {

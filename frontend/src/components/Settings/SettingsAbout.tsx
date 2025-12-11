@@ -1,4 +1,4 @@
-import { Logo } from '@/layouts/Logo.tsx';
+import { Logo } from '@/components/Logo.tsx';
 import { BookOpen, Bug, ExternalLink, FileText, Lightbulb, Mail, Newspaper, Server } from 'lucide-react';
 import { IconBrandGithub, IconBrandX } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
