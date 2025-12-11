@@ -9,6 +9,7 @@ import {
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { JSX } from 'react';
 import { ItemType } from '@/lib/types.ts';
+import * as React from 'react';
 
 export const Sorter: ({
   selectedSortColumn,
@@ -32,8 +33,9 @@ export const Sorter: ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline">
           <ArrowDownUp />
+          <span className="hidden @xl/main:inline-block">Sort</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" align="end" className="min-w-40">

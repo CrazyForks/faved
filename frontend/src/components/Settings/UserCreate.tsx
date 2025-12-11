@@ -53,7 +53,7 @@ export const UserCreate = ({ onSuccess }: { onSuccess?: () => void }) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <CardHeader>
-            <CardTitle className="text-lg">Create user account</CardTitle>
+            <CardTitle className="text-lg">Create User Account</CardTitle>
             <CardDescription>
               Create a user account to enable authentication for your Faved instance. Without a user account,
               authentication will be disabled and anyone with access to the instance can use it.
@@ -109,7 +109,7 @@ export const UserCreate = ({ onSuccess }: { onSuccess?: () => void }) => {
           <CardFooter>
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting && <Spinner />}
-              Create user
+              Create User
             </Button>
           </CardFooter>
         </form>

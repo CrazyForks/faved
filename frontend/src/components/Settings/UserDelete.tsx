@@ -10,14 +10,14 @@ export function UserDelete() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Disable authentication</CardTitle>
+        <CardTitle className="text-lg">Disable Authentication</CardTitle>
         <CardDescription>
           Disabling authentication will remove your user account and disable login functionality.
         </CardDescription>
       </CardHeader>
       <CardFooter>
         <Button onClick={store.deleteUser} variant="destructive" className="w-full">
-          Disable authentication
+          Disable Authentication
         </Button>
       </CardFooter>
     </Card>

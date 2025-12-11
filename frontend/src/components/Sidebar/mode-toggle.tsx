@@ -1,31 +1,32 @@
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, SunMoon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button.tsx';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu.tsx';
-import { useTheme } from '@/components/theme-provider.tsx';
+import { Theme, useTheme } from '@/components/theme-provider.tsx';
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const switchTheme = () => {
+    const themes: Theme[] = ['light', 'dark', 'system'];
+    const currentIndex = themes.indexOf(theme);
+    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % themes.length;
+    setTheme(themes[nextIndex]);
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button type="button" variant="ghost" size="icon" onClick={switchTheme}>
+      <Sun
+        className="absolute scale-0 rotate-90 transition-all data-[active=true]:scale-100 data-[active=true]:rotate-0"
+        data-active={theme === 'light'}
+      />
+      <Moon
+        className="absolute scale-0 rotate-90 transition-all data-[active=true]:scale-100 data-[active=true]:rotate-0"
+        data-active={theme === 'dark'}
+      />
+      <SunMoon
+        className="absolute scale-0 rotate-90 transition-all data-[active=true]:scale-100 data-[active=true]:rotate-0"
+        data-active={theme === 'system'}
+      />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
   );
 }

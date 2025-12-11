@@ -255,7 +255,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
           className={'h-[100dvh] overflow-y-auto p-6' + (!isCloseWindowOnSubmit ? ' md:h-auto md:max-h-[95dvh]' : '')}
         >
           <h2 className="mb-3 text-left text-xl font-semibold tracking-tight">
-            {store.type === ActionType.EDIT ? 'Edit item' : 'Create item'}
+            {store.type === ActionType.EDIT ? 'Edit Bookmark' : 'Create Bookmark'}
           </h2>
           <div className="space-y-4 py-4">
             <div className="grid gap-3">
@@ -376,7 +376,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting && <Spinner />}
-              {store.type === ActionType.EDIT ? 'Save changes' : 'Create item'}
+              {store.type === ActionType.EDIT ? 'Save changes' : 'Save'}
             </Button>
           </div>
         </div>

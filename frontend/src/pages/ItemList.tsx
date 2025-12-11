@@ -43,7 +43,6 @@ import {
 import { Button } from '@/components/ui/button.tsx';
 import { PlusIcon, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 import { SidebarTrigger } from '@/components/ui/sidebar.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import { Dashboard } from '@/layouts/Dashboard.tsx';
@@ -138,14 +137,14 @@ const columns: ColumnDef<ItemType>[] = [
   },
   {
     accessorKey: 'created_at',
-    header: 'Created at',
+    header: 'Created date',
     enableSorting: true,
     enableHiding: true,
     meta: { class: 'min-w-[170px]' },
   },
   {
     accessorKey: 'updated_at',
-    header: 'Updated at',
+    header: 'Updated date',
     enableSorting: true,
     enableHiding: true,
     meta: { class: 'min-w-[170px]' },
@@ -279,8 +278,9 @@ export const ItemList: React.FC = observer(() => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
+            <Button variant="outline">
               <Settings2 className="h-4 w-4" />
+              <span className="hidden @xl/main:inline-block">View</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="min-w-40">
@@ -302,21 +302,16 @@ export const ItemList: React.FC = observer(() => {
           columns={sortableColumns}
         />
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="default"
-              size="icon"
-              onClick={() => {
-                store.setIsShowEditModal(true);
-                store.setType(ActionType.CREATE);
-              }}
-            >
-              <PlusIcon />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Add Bookmark</TooltipContent>
-        </Tooltip>
+        <Button
+          variant="default"
+          onClick={() => {
+            store.setIsShowEditModal(true);
+            store.setType(ActionType.CREATE);
+          }}
+        >
+          <PlusIcon />
+          <span className="hidden @xl/main:inline-block">Add</span>
+        </Button>
       </header>
 
       <div className={`m-4 overflow-hidden item-list--${layout}`}>
