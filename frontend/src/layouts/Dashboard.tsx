@@ -1,5 +1,5 @@
 import { SidebarProvider } from '@/components/ui/sidebar.tsx';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@/store/storeContext.ts';
 import { AppSidebar } from '@/components/Sidebar/AppSidebar.tsx';

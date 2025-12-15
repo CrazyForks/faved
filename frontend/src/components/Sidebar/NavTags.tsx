@@ -25,7 +25,6 @@ export const NavTags = observer(() => {
     for (const tag of tags) {
       const innerItems = renderTag(tag.id, level);
       const isTagSelected = store.selectedTagId === tag.id;
-      console.log(isTagSelected, tag.id, store.selectedTagId);
       const isChildTagSelected = !isTagSelected && selectedTag && selectedTag.fullPath.indexOf(tag.fullPath) === 0;
 
       const code = (

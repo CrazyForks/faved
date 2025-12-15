@@ -1,5 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton.tsx';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar.tsx';
+import React from 'react';
 
 export default function Loading() {
   return (
