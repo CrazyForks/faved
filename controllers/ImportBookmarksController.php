@@ -16,9 +16,6 @@ class ImportBookmarksController implements ControllerInterface
 {
 	public function __invoke(array $input): ResponseInterface
 	{
-		// Increase memory limit for large imports
-		ini_set('memory_limit', '256M');
-
 		try {
 			if (!isset($_FILES['browser-html']) || $_FILES['browser-html']['error'] !== UPLOAD_ERR_OK) {
 				throw new ValidationException('No file uploaded or upload error');
