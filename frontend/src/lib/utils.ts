@@ -55,3 +55,19 @@ export const saveLayoutColumnVisibilityPreference = (layout: LayoutType, columnV
     // Ignore storage errors - failing silently is acceptable for preferences
   }
 };
+
+export const getCookie = (name: string) => {
+  // Add a semicolon to the beginning of the cookie string to handle the first cookie
+  const cookieString = '; ' + document.cookie;
+
+  // Split the string at the specified cookie name
+  const parts = cookieString.split('; ' + name + '=');
+
+  // If the cookie was found (the array has more than one part)
+  if (parts.length === 2) {
+    // Return the value, which is everything after the '=' and before the next ';'
+    return parts.pop().split(';').shift();
+  }
+  // If the cookie was not found
+  return null;
+};
