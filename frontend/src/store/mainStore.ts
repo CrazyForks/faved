@@ -14,7 +14,6 @@ import {
 } from '@/lib/types.ts';
 import { getCookie } from '@/lib/utils.ts';
 
-
 class mainStore {
   items: ItemType[] = [];
   tags: TagsObjectType[] = [];
@@ -27,7 +26,6 @@ class mainStore {
   isOpenSettingsModal: boolean = false;
   preSelectedItemSettingsModal: string | null = null;
   selectedTagId: string | null = '0'; // Default to '0' for no tag selected
-  itemsOriginal: ItemType[] = [];
   isShowEditModal: boolean = false;
   appInfo: {
     installed_version: string | null;
@@ -109,9 +107,6 @@ class mainStore {
   };
   setIsShowEditModal = (val: boolean) => {
     this.isShowEditModal = val;
-  };
-  setItemsOriginal = (val: ItemType[]) => {
-    this.itemsOriginal = val;
   };
   setTags = (tags: TagsObjectType) => {
     const renderTagSegment = (tag: TagType) => {
@@ -227,14 +222,17 @@ class mainStore {
         return;
       }
       this.setItems(data);
-      this.setItemsOriginal(data);
     });
   };
-  onDeleteItem = async (id: number) => {
-    return this.runRequest(API_ENDPOINTS.items.deleteItem(id), 'DELETE', {}, 'Failed to delete item').finally(() => {
-      this.fetchItems();
-      this.fetchTags();
-    });
+  deleteItems = async (itemIds: number[]) => {
+    return await this.runRequest(
+      '/api/items/delete',
+      'POST',
+      {
+        'item-ids': itemIds,
+      },
+      'Failed to delete item'
+    );
   };
   onCreateItem = async (val: ItemType) => {
     return this.sendItemRequest(API_ENDPOINTS.items.createItem, 'POST', val);

@@ -114,7 +114,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
   };
 
   const handleDelete = async () => {
-    const result = await store.onDeleteItem(store.idItem as number);
+    const result = await store.deleteItems([store.idItem as number]);
     if (!result) {
       return;
     }
@@ -128,7 +128,6 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
       }, 1000);
     } else {
       store.fetchItems();
-      store.fetchTags();
       store.setIsShowEditModal(false);
       form.reset();
     }

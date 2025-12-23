@@ -40,8 +40,12 @@ export const ItemsActions = ({ row }) => {
     store.fetchItems();
   };
 
-  const handleDelete = () => {
-    store.onDeleteItem(itemId);
+  const handleDelete = async () => {
+    const result = await store.deleteItems([itemId]);
+    if (!result) {
+      return;
+    }
+    store.fetchItems();
   };
 
   return (

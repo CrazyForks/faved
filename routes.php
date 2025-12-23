@@ -26,10 +26,14 @@ use Controllers\UserUsernameUpdateController;
 return [
 	'api' => [
 		'items' => [
-			'GET' => ItemsGetController::class,
-			'POST' => ItemsCreateController::class,
-			'PATCH' => ItemsUpdateController::class,
-			'DELETE' => ItemsDeleteController::class,
+			'/' => [
+				'GET' => ItemsGetController::class,
+				'POST' => ItemsCreateController::class,
+				'PATCH' => ItemsUpdateController::class,
+			],
+			'delete' =>  [
+				'POST' => ItemsDeleteController::class,
+			],
 		],
 		'tags' => [
 			'/' => [

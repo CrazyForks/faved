@@ -3,56 +3,42 @@
 namespace Controllers;
 
 use Framework\ControllerInterface;
+use Framework\Exceptions\DataWriteException;
+use Framework\Exceptions\ValidationException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
-use function Framework\data;
+use function Framework\success;
 
 class ItemsDeleteController implements ControllerInterface
 {
-	public function __invoke(array $input) : ResponseInterface
+	public function __invoke(array $input): ResponseInterface
 	{
-		if (empty($_GET['item-id'])) {
-			return data([
-				'success' => false,
-				'message' => 'Item ID is required',
-			], 400);
-		}
+		$item_ids = $input['item-ids'] ?? null;
 
-		$item_id = $_GET['item-id'];
+		if (empty($item_ids) || !is_array($item_ids)) {
+			throw new ValidationException('Item IDs not provided or invalid');
+		}
 
 		$repository = ServiceContainer::get(Repository::class);;
 
-		$result = $repository->deleteItemTags($item_id);
+		$result = $repository->deleteItemsTags($item_ids);
 
 		if (false === $result) {
-			return data([
-				'success' => false,
-				'message' => 'Error deleting item tags',
-				'data' => [
-					'item_id' => $item_id,
-				]
-			], 500);
+			throw new DataWriteException('Failed to delete item tags');
 		}
 
-		$result = $repository->deleteItem($item_id);
+		$result = $repository->deleteItems($item_ids);
 
 		if (false === $result) {
-			return data([
-				'success' => false,
-				'message' => 'Error deleting item',
-				'data' => [
-					'item_id' => $item_id,
-				]
-			], 500);
+			throw new DataWriteException('Failed to delete items');
 		}
 
-		return data([
-			'success' => true,
-			'message' => 'Item deleted successfully',
-			'data' => [
-				'item_id' => $item_id,
-			]
-		]);
+		$items_count = count($item_ids);
+
+		return success(
+			($items_count == 1 ? 'Item' : "$items_count items") . ' deleted successfully',
+			['item-ids' => $item_ids]
+		);
 	}
 }

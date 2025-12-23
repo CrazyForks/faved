@@ -3,7 +3,6 @@ const API_BASE = '/api';
 export const API_ENDPOINTS = {
   items: {
     list: `${API_BASE}/items`,
-    deleteItem: (id: any) => `${API_BASE}/items?item-id=${id}`,
     createItem: `${API_BASE}/items`,
     updateItem: (id: any) => `${API_BASE}/items?item-id=${id}`,
   },
