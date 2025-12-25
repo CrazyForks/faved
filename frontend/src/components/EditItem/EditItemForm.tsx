@@ -9,23 +9,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { ActionType, ItemSchema, ItemType, UrlSchema } from '@/lib/types.ts';
 import { useLocation } from 'react-router-dom';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '../ui/alert-dialog';
 import { IconCloudDownload, IconProgress } from '@tabler/icons-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 import { ImagePreview } from '@/components/EditItem/ImagePreview.tsx';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
+import { DeleteDialog } from '@/components/Table/Controls/DeleteDialog.tsx';
 
 interface EditItemFormProps {
   isCloseWindowOnSubmit: boolean;
@@ -323,30 +313,11 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
           <div className="bg-background mt-4 flex flex-col justify-end gap-2 border-t pt-5 sm:flex-row">
             {store.type === ActionType.EDIT && (
               <div className="order-last mt-10 sm:order-none sm:mt-0 sm:mr-auto">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="w-full">
-                      Delete
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your item.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="flex flex-col-reverse sm:flex-row">
-                      <AlertDialogCancel className="mt-2 sm:mt-0">Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDelete}
-                        className="bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white shadow-xs"
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <DeleteDialog onConfirm={handleDelete} itemsCount={1}>
+                  <Button variant="destructive" className="w-full">
+                    Delete
+                  </Button>
+                </DeleteDialog>
               </div>
             )}
 
