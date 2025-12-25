@@ -9,9 +9,11 @@ class DOMParser
 	public function __construct(string $html_content)
 	{
 		// Create DOMDocument and suppress warnings for malformed HTML
-		$dom = new \DOMDocument();
+		$dom = new \DOMDocument('1.0', 'UTF-8');
 		libxml_use_internal_errors(true);
-		$dom->loadHTML($html_content);
+		$dom->loadHTML('<?xml encoding="UTF-8">' . $html_content,
+			LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+		);
 		libxml_clear_errors();
 
 		// Create XPath object for efficient querying

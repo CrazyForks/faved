@@ -5,8 +5,11 @@ namespace Utils;
 use Exception;
 use Framework\ServiceContainer;
 use GuzzleHttp\Client;
+use GuzzleHttp\Pool;
+use GuzzleHttp\Psr7\Response;
 use Models\Repository;
 use Models\TagCreator;
+use Psr\Http\Client\ClientExceptionInterface;
 
 function groupTagsByParent($tags)
 {
@@ -145,7 +148,7 @@ function fetchPageHTML(string $url): string
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	curl_close($ch);
 
-	if ($http_code < 200 || $http_code > 300) {
+	if ($http_code < 200 || $http_code >= 300) {
 		throw new Exception("Page returned HTTP error: {$http_code}", 400);
 	}
 
@@ -304,4 +307,58 @@ function fetchAppUpdateInfo(): ?array
 	}
 
 	return json_decode($response->getBody(), true);
+}
+
+function fetchMultiplePageHTML(array $urls): array
+{
+	$unique_urls = array_values(array_unique($urls));
+
+	$client = new Client([
+		'timeout' => 10,
+		'connect_timeout' => 5,
+	]);
+
+	// Create requests generator
+	$requests = function () use ($unique_urls, $client) {
+		foreach ($unique_urls as $url) {
+			yield function () use ($client, $url) {
+				return $client->getAsync($url);
+			};
+		}
+	};
+
+	$pages = [];
+	$failed_reasons = [];
+
+	// Execute parallel requests
+	$pool = new Pool($client, $requests(), [
+		'concurrency' => 10,
+		'fulfilled' => function (Response $response, $index) use (&$pages, &$failed_reasons, $unique_urls) {
+			$url = $unique_urls[$index];
+
+			$http_code = $response->getStatusCode();
+			if ($http_code < 200 || $http_code >= 300) {
+				$failed_reasons[$url] = "HTTP error code: $http_code";
+				return;
+			}
+
+			$body = (string)$response->getBody();
+			if ($body === '') {
+				$failed_reasons[$url] = 'Page content is empty';
+				return;
+			}
+
+			$pages[$url] = $body;
+		},
+		'rejected' => function (ClientExceptionInterface $reason, $index) use (&$failed_reasons, $unique_urls) {
+			$url = $unique_urls[$index];
+			$failed_reasons[$url] = $reason->getMessage();
+		},
+	]);
+
+	// Wait for all requests to complete
+	$promise = $pool->promise();
+	$promise->wait();
+
+	return [$pages, $failed_reasons];
 }

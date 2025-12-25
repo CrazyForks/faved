@@ -7,6 +7,7 @@ use Controllers\ImportBookmarksController;
 use Controllers\ImportPocketController;
 use Controllers\ItemsCreateController;
 use Controllers\ItemsDeleteController;
+use Controllers\ItemsFetchMetadataController;
 use Controllers\ItemsGetController;
 use Controllers\ItemsUpdateController;
 use Controllers\SetupDatabaseController;
@@ -31,8 +32,11 @@ return [
 				'POST' => ItemsCreateController::class,
 				'PATCH' => ItemsUpdateController::class,
 			],
-			'delete' =>  [
+			'delete' => [
 				'POST' => ItemsDeleteController::class,
+			],
+			'fetch-metadata' => [
+				'POST' => ItemsFetchMetadataController::class,
 			],
 		],
 		'tags' => [

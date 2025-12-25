@@ -51,6 +51,22 @@ class Repository
 		return $items_tags;
 	}
 
+	public function getItemsUrls(array $item_ids)
+	{
+		if (empty($item_ids)) {
+			return [];
+		}
+		$sql_in = implode(',', array_fill(0, count($item_ids), '?'));
+		$stmt = $this->pdo->prepare("SELECT id, url FROM items WHERE id IN ($sql_in)");
+		$stmt->execute($item_ids);
+
+		$items = [];
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$items[(int)$row['id']] = $row['url'];
+		}
+		return $items;
+	}
+
 	public function getUser(int $user_id)
 	{
 		$stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = :user_id');
@@ -139,10 +155,10 @@ class Repository
 		return $stmt->execute($item_ids);
 	}
 
-	public function attachItemTags(array $item_tags, int $item_id)
+	public function attachItemTags(array $item_tags, int $item_id) : bool
 	{
 		if (empty($item_tags)) {
-			return;
+			return true;
 		}
 
 		$sql_data = [];
@@ -187,6 +203,29 @@ class Repository
 			':image' => $image,
 			':updated_at' => date('Y-m-d H:i:s'),
 			':id' => $item_id,
+		]);
+	}
+
+	public function updateItemsMetadata($title, $description, $image, $item_ids)
+	{
+		if (empty($item_ids)) {
+			return false;
+		}
+		$sql_in = implode(',', array_fill(0, count($item_ids), '?'));
+		$stmt = $this->pdo->prepare(
+			"UPDATE items 
+			SET title = ?, 
+				description = ?, 
+				image = ?, 
+				updated_at = ?
+    		WHERE id IN ($sql_in)"
+		);
+		return $stmt->execute([
+			$title,
+			$description,
+			$image,
+			date('Y-m-d H:i:s'),
+			...$item_ids,
 		]);
 	}
 
