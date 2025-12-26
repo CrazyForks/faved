@@ -23,6 +23,7 @@ import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
 import { ActionType, ItemType, LayoutType } from '@/lib/types.ts';
 import { ItemsActions } from '@/components/Table/Fields/ItemActions.tsx';
 import {
+  cn,
   getSavedLayoutColumnVisibilityPreference,
   getSavedLayoutPreference,
   saveLayoutColumnVisibilityPreference,
@@ -46,8 +47,38 @@ import { toast } from 'sonner';
 import { SidebarTrigger } from '@/components/ui/sidebar.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import { Dashboard } from '@/layouts/Dashboard.tsx';
+import { Checkbox } from '@/components/ui/checkbox.tsx';
+import { BulkActionControls } from '@/components/Table/Controls/BulkActionControls.tsx';
 
 const columns: ColumnDef<ItemType>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className={cn(
+          'onhover-visible bg-primary-foreground',
+          table.getIsAllPageRowsSelected() || table.getIsSomePageRowsSelected() ? 'opacity-100!' : ''
+        )}
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className={cn(
+          'onhover-visible bg-primary-foreground dark:bg-primary-foreground',
+          row.getIsSelected() ? 'opacity-100!' : ''
+        )}
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+    meta: { isAction: true },
+  },
   {
     accessorKey: 'image',
     header: 'Image',
@@ -179,6 +210,7 @@ export const ItemList: React.FC = observer(() => {
     },
   ]);
   const [columnOrder, setColumnOrder] = useState<string[]>([
+    'select',
     'image',
     'title',
     'url',
@@ -314,7 +346,7 @@ export const ItemList: React.FC = observer(() => {
         </Button>
       </header>
 
-      <div className={`m-4 overflow-hidden item-list--${layout}`}>
+      <div className={`overflow-hidden item-list--${layout}`}>
         {currentRows.length > 0 ? (
           layouts[layout]
         ) : (
@@ -323,6 +355,8 @@ export const ItemList: React.FC = observer(() => {
       </div>
 
       <Pagination table={table} />
+
+      <BulkActionControls table={table} />
     </Dashboard>
   );
 });

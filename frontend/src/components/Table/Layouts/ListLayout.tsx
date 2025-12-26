@@ -11,8 +11,15 @@ export const ListLayout = ({ rows }) => {
           .map((cell) => renderField({ cell }))
           .filter((r) => r !== null);
         return (
-          <div key={row.original.id} className="@container/item relative">
-            <div className="hover-action-container flex h-full flex-row flex-nowrap gap-4 px-0 py-6 @xl/item:gap-6 @xl/item:px-4 @3xl/item:gap-12 @3xl/item:py-12">
+          <div
+            key={row.original.id}
+            data-state={row.getIsSelected() && 'selected'}
+            className="onhover-container @container/item relative mx-2 transition-colors"
+          >
+            <div
+              data-state={row.getIsSelected() && 'selected'}
+              className="data-[state=selected]:bg-muted -mx-2 flex h-full flex-row flex-nowrap gap-4 px-8 py-6 @xl/item:gap-6 @xl/item:px-10 @3xl/item:gap-12 @3xl/item:py-12"
+            >
               {imageOutput.length > 0 && imageOutput && (
                 <div className="max-w-md flex-1 pt-1.5 @6xl/item:pt-0">{imageOutput}</div>
               )}

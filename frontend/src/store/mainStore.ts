@@ -234,6 +234,16 @@ class mainStore {
       'Failed to delete item'
     );
   };
+  refetchItems = async (itemIds: number[]) => {
+    return await this.runRequest(
+      '/api/items/fetch-metadata',
+      'POST',
+      {
+        'item-ids': itemIds,
+      },
+      'Failed to fetch metadata'
+    );
+  };
   onCreateItem = async (val: ItemType) => {
     return this.sendItemRequest(API_ENDPOINTS.items.createItem, 'POST', val);
   };

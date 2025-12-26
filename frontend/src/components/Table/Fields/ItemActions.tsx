@@ -30,6 +30,14 @@ export const ItemsActions = ({ row }) => {
     store.fetchItems();
   };
 
+  const handleRefetch = async () => {
+    const result = await store.refetchItems([row.original.id]);
+    if (!result) {
+      return;
+    }
+    store.fetchItems();
+  };
+
   const handleDelete = async () => {
     const result = await store.deleteItems([itemId]);
     if (!result) {
@@ -41,13 +49,14 @@ export const ItemsActions = ({ row }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="hover-action" size="icon">
+        <Button variant="outline" className="onhover-visible" size="icon">
           <IconDotsVertical />
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-32">
+      <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleRefetch}>Refetch metadata</DropdownMenuItem>
         <DropdownMenuItem onClick={handleMakeCopy}>Make a copy</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DeleteDialog onConfirm={handleDelete} itemsCount={1}>

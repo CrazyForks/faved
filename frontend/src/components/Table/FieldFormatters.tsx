@@ -3,10 +3,7 @@ import { flexRender } from '@tanstack/react-table';
 
 export const TitleFormatter = ({ output }) => {
   return (
-    <h4
-      className="line-clamp-3 scroll-m-20 font-semibold tracking-tight @xl/item:text-lg @3xl/item:text-xl"
-      title={output}
-    >
+    <h4 className="line-clamp-3 scroll-m-20 font-semibold tracking-tight @xl/item:text-lg @3xl/item:text-xl">
       {output}
     </h4>
   );
