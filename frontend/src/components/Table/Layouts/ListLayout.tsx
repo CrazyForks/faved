@@ -18,7 +18,7 @@ export const ListLayout = ({ rows }) => {
           >
             <div
               data-state={row.getIsSelected() && 'selected'}
-              className="data-[state=selected]:bg-muted -mx-2 flex h-full flex-row flex-nowrap gap-4 px-8 py-6 @xl/item:gap-6 @xl/item:px-10 @3xl/item:gap-12 @3xl/item:py-12"
+              className="data-[state=selected]:bg-muted/50 -mx-2 flex h-full flex-row flex-nowrap gap-4 px-8 py-6 @xl/item:gap-6 @xl/item:px-10 @3xl/item:gap-12 @3xl/item:py-12"
             >
               {imageOutput.length > 0 && imageOutput && (
                 <div className="max-w-md flex-1 pt-1.5 @6xl/item:pt-0">{imageOutput}</div>

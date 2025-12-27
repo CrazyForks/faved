@@ -127,7 +127,7 @@ class BookmarkImporter
 				$tag_map,
 				array_flip($item['folder_paths'])
 			);
-			$this->repository->attachItemTags($tag_ids, $item_id);
+			$this->repository->attachItemsTags([$item_id], $tag_ids);
 		});
 	}
 }

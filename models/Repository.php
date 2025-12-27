@@ -133,41 +133,56 @@ class Repository
 		]);
 	}
 
-	public function updateItemTags(array $item_tags, int $item_id): bool
+	public function setItemTags(array $tag_ids, int $item_id): bool
 	{
 		// 1. delete all tags relations
-		$result = $this->deleteItemsTags([$item_id]);
+		$result = $this->deleteItemsTags([$item_id], []);
 		if (false === $result) {
 			return false;
 		}
 
 		// 2. insert new tags relations
-		return $this->attachItemTags($item_tags, $item_id);
+		return $this->attachItemsTags([$item_id], $tag_ids);
 	}
 
-	public function deleteItemsTags(array $item_ids): bool
+	public function deleteItemsTags(array $item_ids, array $except_tag_ids): bool
 	{
 		if (empty($item_ids)) {
 			return false;
 		}
-		$sql_in = implode(',', array_fill(0, count($item_ids), '?'));
-		$stmt = $this->pdo->prepare("DELETE FROM items_tags WHERE item_id IN ($sql_in)");
-		return $stmt->execute($item_ids);
+		$sql_in_item_ids = implode(',', array_fill(0, count($item_ids), '?'));
+		$sql_data = $item_ids;
+
+		if (!empty($except_tag_ids)) {
+			$sql_not_in_tag_ids = implode(',', array_fill(0, count($except_tag_ids), '?'));
+			$sql_not_in_tag_ids = " AND tag_id NOT IN ($sql_not_in_tag_ids)";
+			$sql_data = array_merge($sql_data, $except_tag_ids);
+		} else {
+			$sql_not_in_tag_ids = '';
+		}
+		$stmt = $this->pdo->prepare("DELETE FROM items_tags 
+		WHERE item_id IN ($sql_in_item_ids)
+		$sql_not_in_tag_ids");
+		return $stmt->execute($sql_data);
 	}
 
-	public function attachItemTags(array $item_tags, int $item_id) : bool
+	public function attachItemsTags(array $item_ids, array $tag_ids): bool
 	{
-		if (empty($item_tags)) {
+		if (empty($tag_ids)) {
 			return true;
 		}
 
 		$sql_data = [];
 
-		foreach ($item_tags as $tag_id) {
-			array_push($sql_data, $item_id, (int)$tag_id);
+		foreach ($item_ids as $item_id) {
+			foreach ($tag_ids as $tag_id) {
+				array_push($sql_data, $item_id, (int)$tag_id);
+			}
 		}
 
-		$sql = 'INSERT INTO items_tags (item_id, tag_id) VALUES ' . implode(',', array_fill(0, count($sql_data) / 2, '(?, ?)'));
+		$sql = 'INSERT  
+		INTO items_tags (item_id, tag_id) 
+		VALUES ' . implode(',', array_fill(0, count($sql_data) / 2, '(?, ?)'));
 		$stmt = $this->pdo->prepare($sql);
 		return $stmt->execute($sql_data);
 	}

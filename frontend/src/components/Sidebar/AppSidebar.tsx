@@ -40,7 +40,11 @@ export const AppSidebar = observer(({ ...props }: AppSidebarProps) => {
         <NavMain />
         <NavTags />
       </SidebarContent>
-      <SidebarFooter>{store.user && <NavUser username={store.user.username} />}</SidebarFooter>
+      {store.user && (
+        <SidebarFooter>
+          <NavUser username={store.user.username} />
+        </SidebarFooter>
+      )}
     </Sidebar>
   );
 });

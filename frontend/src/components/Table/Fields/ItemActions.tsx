@@ -31,7 +31,7 @@ export const ItemsActions = ({ row }) => {
   };
 
   const handleRefetch = async () => {
-    const result = await store.refetchItems([row.original.id]);
+    const result = await store.refetchItemsMetadata([row.original.id]);
     if (!result) {
       return;
     }

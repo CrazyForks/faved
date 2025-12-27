@@ -10,7 +10,7 @@ export const CardsLayout = ({ rows }) => {
           <Card
             key={row.original.id}
             data-state={row.getIsSelected() && 'selected'}
-            className="onhover-container data-[state=selected]:bg-muted @container/item relative transition-colors"
+            className="onhover-container data-[state=selected]:bg-muted/50 @container/item relative transition-colors"
           >
             <CardContent className="flex h-full flex-col gap-3 text-left">
               {row.getVisibleCells().map((cell) => renderField({ cell }))}

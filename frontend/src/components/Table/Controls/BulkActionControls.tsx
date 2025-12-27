@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button.tsx';
-import { RefreshCw, Trash, X } from 'lucide-react';
+import { RefreshCw, Square, SquareCheckBig, SquareMinus, TagsIcon, Trash, X } from 'lucide-react';
 import { StoreContext } from '@/store/storeContext.ts';
 import { Spinner } from '@/components/ui/spinner.tsx';
 import { DeleteDialog } from '@/components/Table/Controls/DeleteDialog.tsx';
 import { useSidebar } from '@/components/ui/sidebar.tsx';
 import { cn } from '@/lib/utils.ts';
-import { Checkbox } from '@/components/ui/checkbox.tsx';
+import { TagSelect } from '@/components/Table/Controls/TagSelect.tsx';
 
 export const BulkActionControls = ({ table }) => {
   const { isMobile, state } = useSidebar();
@@ -29,16 +29,38 @@ export const BulkActionControls = ({ table }) => {
 
   const refetchSelected = async () => {
     setFetchInProgress(true);
-    const result = await store.refetchItems(filteredSelectedRows.map((row) => row.original.id));
+    const result = await store.refetchItemsMetadata(filteredSelectedRows.map((row) => row.original.id));
     if (result) {
       store.fetchItems();
     }
     setFetchInProgress(false);
   };
 
+  const updateTagsSelected = async ({ newSelectedTagsAll, newSelectedTagsSome }) => {
+    await store.updateItemsTags({
+      itemIds: filteredSelectedRows.map((row) => row.original.id),
+      newSelectedTagsAll,
+      newSelectedTagsSome,
+    });
+    await store.fetchItems();
+  };
+
   if (table.getFilteredSelectedRowModel().rows.length === 0) {
     return null;
   }
+  const selectedRowsCount = table.getFilteredSelectedRowModel().rows.length;
+  const selectedTags = table
+    .getFilteredSelectedRowModel()
+    .rows.map((row) => row.original.tags)
+    .flat();
+
+  // Count occurrences of each tag
+  const selectedTagsCount = selectedTags.reduce(
+    (count, tagID) => ((count[tagID] = (count[tagID] || 0) + 1), count),
+    {}
+  );
+  const selectedTagsAll = Object.keys(selectedTagsCount).filter((tag) => selectedTagsCount[tag] === selectedRowsCount);
+  const selectedTagsSome = Object.keys(selectedTagsCount).filter((tag) => selectedTagsCount[tag] < selectedRowsCount);
 
   return (
     <div
@@ -49,40 +71,42 @@ export const BulkActionControls = ({ table }) => {
     >
       <Button
         variant="outline"
-        className="bg-primary-foreground/80 rounded-full backdrop-blur-sm"
-        onClick={() => table.toggleAllPageRowsSelected(true)}
+        className="bg-primary-foreground rounded-full"
+        onClick={() => table.toggleAllPageRowsSelected(!table.getIsAllPageRowsSelected())}
       >
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-          aria-label="Select all"
-          className="bg-primary-foreground"
-        />
+        {(table.getIsAllPageRowsSelected() && <SquareCheckBig />) ||
+          (table.getIsSomePageRowsSelected() && <SquareMinus />) || <Square />}
         <span className="whitespace-nowrap">{table.getFilteredSelectedRowModel().rows.length} selected</span>
       </Button>
+
+      <TagSelect selectedTagsAll={selectedTagsAll} selectedTagsSome={selectedTagsSome} onSubmit={updateTagsSelected}>
+        <Button variant="outline" className="bg-primary-foreground rounded-full">
+          <TagsIcon />
+          <span className="hidden @md/main:block">Tags</span>
+        </Button>
+      </TagSelect>
+
       <Button
         variant="outline"
         onClick={refetchSelected}
         disabled={fetchInProgress}
-        className="bg-primary-foreground/80 rounded-full backdrop-blur-sm"
+        className="bg-primary-foreground rounded-full"
       >
         {fetchInProgress ? <RefreshCw className="animate-spin" /> : <RefreshCw />}
-        Refetch
+        <span className="hidden @md/main:block">Refetch</span>
       </Button>
+
       <DeleteDialog onConfirm={deleteSelected} itemsCount={table.getFilteredSelectedRowModel().rows.length}>
-        <Button
-          variant="outline"
-          disabled={deleteInProgress}
-          className="bg-primary-foreground/80 rounded-full backdrop-blur-sm"
-        >
+        <Button variant="outline" disabled={deleteInProgress} className="bg-primary-foreground rounded-full">
           {deleteInProgress ? <Spinner /> : <Trash />}
-          Delete
+          <span className="hidden @md/main:block">Delete</span>
         </Button>
       </DeleteDialog>
       <Button
         variant="outline"
         size="icon"
         onClick={() => table.resetRowSelection()}
-        className="bg-primary-foreground/80 rounded-full backdrop-blur-sm"
+        className="bg-primary-foreground rounded-full"
       >
         <X />
       </Button>

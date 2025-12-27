@@ -44,7 +44,7 @@ class ItemsUpdateController implements ControllerInterface
 
 		$repository->updateItem($title, $description, $url, $comments, $image, $item_id);
 
-		$repository->updateItemTags($new_tag_ids, $item_id);
+		$repository->setItemTags($new_tag_ids, $item_id);
 
 		return data([
 			'success' => true,

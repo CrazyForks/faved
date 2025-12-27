@@ -22,7 +22,7 @@ class ItemsDeleteController implements ControllerInterface
 
 		$repository = ServiceContainer::get(Repository::class);;
 
-		$result = $repository->deleteItemsTags($item_ids);
+		$result = $repository->deleteItemsTags($item_ids, []);
 
 		if (false === $result) {
 			throw new DataWriteException('Failed to delete item tags');

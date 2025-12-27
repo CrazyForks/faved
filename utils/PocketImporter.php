@@ -200,7 +200,7 @@ class PocketImporter
 				array_intersect_key($collection_map, array_flip($item['collections'])),
 				array_intersect_key($status_map, array_flip([$item['status']])),
 			);
-			$this->repository->attachItemTags($tag_ids, $item_id);
+			$this->repository->attachItemsTags([$item_id], $tag_ids);
 		});
 	}
 }

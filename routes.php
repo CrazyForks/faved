@@ -9,6 +9,7 @@ use Controllers\ItemsCreateController;
 use Controllers\ItemsDeleteController;
 use Controllers\ItemsFetchMetadataController;
 use Controllers\ItemsGetController;
+use Controllers\ItemsTagsUpdateController;
 use Controllers\ItemsUpdateController;
 use Controllers\SetupDatabaseController;
 use Controllers\TagsController;
@@ -37,6 +38,9 @@ return [
 			],
 			'fetch-metadata' => [
 				'POST' => ItemsFetchMetadataController::class,
+			],
+			'tags' => [
+				'PATCH' => ItemsTagsUpdateController::class,
 			],
 		],
 		'tags' => [

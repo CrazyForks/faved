@@ -43,7 +43,7 @@ class ItemsCreateController implements ControllerInterface
 
 		$item_id = $repository->createItem($title, $description, $url, $comments, $image);
 
-		$repository->updateItemTags($new_tag_ids, $item_id);
+		$repository->setItemTags($new_tag_ids, $item_id);
 
 		return success('Item created successfully', [
 			'item_id' => $item_id,

@@ -144,7 +144,7 @@ class mainStore {
       this.setTags(data);
     });
   };
-  onCreateTag = async (title: string) => {
+  createTag = async (title: string) => {
     let tagID = null;
 
     await this.runRequest(API_ENDPOINTS.tags.create, 'POST', { title }, 'Error creating tag')
@@ -153,7 +153,6 @@ class mainStore {
       })
       .finally(() => {
         this.fetchTags();
-        this.fetchItems();
       });
 
     return tagID;
@@ -234,7 +233,7 @@ class mainStore {
       'Failed to delete item'
     );
   };
-  refetchItems = async (itemIds: number[]) => {
+  refetchItemsMetadata = async (itemIds: number[]) => {
     return await this.runRequest(
       '/api/items/fetch-metadata',
       'POST',
@@ -242,6 +241,26 @@ class mainStore {
         'item-ids': itemIds,
       },
       'Failed to fetch metadata'
+    );
+  };
+  updateItemsTags = async ({
+    itemIds,
+    newSelectedTagsAll,
+    newSelectedTagsSome,
+  }: {
+    itemIds: number[];
+    newSelectedTagsAll: string[];
+    newSelectedTagsSome: string[];
+  }) => {
+    return await this.runRequest(
+      '/api/items/tags',
+      'PATCH',
+      {
+        'item-ids': itemIds,
+        'tag-ids-all': newSelectedTagsAll.map((id) => parseInt(id, 10)),
+        'tag-ids-some': newSelectedTagsSome.map((id) => parseInt(id, 10)),
+      },
+      'Failed to update items tags'
     );
   };
   onCreateItem = async (val: ItemType) => {

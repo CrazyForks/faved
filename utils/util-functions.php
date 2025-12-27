@@ -163,10 +163,11 @@ function fetchPageHTML(string $url): string
 function createWelcomeContent($repository)
 {
 	$tag_creator = ServiceContainer::get(TagCreator::class);
-	$faved_tag_id = $tag_creator->createTag('Faved', 'This is a tag for Faved links. Feel free to delete it after getting familiar with those resources.', 0, 'gray', true);
-	$welcome_tag_id = $tag_creator->createTag('Welcome', "Familiarize yourself with the functionality of Faved by exploring the articles under this tag.\n\nℹ️ This is a nested tag. Nested tags are perfect for grouping several projects, e.g. for Work, School, or Personal use. \n\n💡 To create a nested tag, simply separate words with a forward slash.", $faved_tag_id, 'green', false);
 
-	$item_id = $repository->createItem(
+	$faved_tag_item_ids = [];
+	$welcome_tag_item_ids = [];
+
+	$faved_tag_item_ids[] = $repository->createItem(
 		'Faved - Organize Your Bookmarks',
 		'Free, open-source bookmark manager: superfast, lightweight, and secure. Organize with customisable nested tags, save web pages from any browser via a bookmarklet.',
 		'https://faved.dev/',
@@ -174,9 +175,8 @@ function createWelcomeContent($repository)
 		'https://faved.dev/static/images/og-image.png',
 		null
 	);
-	$repository->attachItemTags([$faved_tag_id], $item_id);
 
-	$item_id = $repository->createItem(
+	$faved_tag_item_ids[] = $repository->createItem(
 		'Faved Demo',
 		'Try out Faved online before installing it on your machine. Demo sites are provided for testing and are deleted after one month.',
 		'https://demo.faved.dev/',
@@ -184,10 +184,8 @@ function createWelcomeContent($repository)
 		'',
 		null
 	);
-	$repository->attachItemTags([$faved_tag_id]
-		, $item_id);
 
-	$item_id = $repository->createItem(
+	$faved_tag_item_ids[] = $repository->createItem(
 		'Blog | Faved - Organize Your Bookmarks',
 		'Faved updates, tutorials and product announcements',
 		'https://faved.dev/blog',
@@ -195,9 +193,8 @@ function createWelcomeContent($repository)
 		'',
 		null
 	);
-	$repository->attachItemTags([$faved_tag_id], $item_id);
 
-	$item_id = $repository->createItem(
+	$faved_tag_item_ids[] = $repository->createItem(
 		'GitHub - denho/faved: Free open-source bookmark manager with customisable nested tags. Super fast and lightweight. All data is stored locally.',
 		'Free open-source bookmark manager with customisable nested tags. Super fast and lightweight. All data is stored locally. - denho/faved',
 		'https://github.com/denho/faved',
@@ -205,10 +202,8 @@ function createWelcomeContent($repository)
 		'https://repository-images.githubusercontent.com/995300772/895299f8-4360-4b17-a87e-4be5fb8f7e94',
 		null
 	);
-	$repository->attachItemTags([$faved_tag_id]
-		, $item_id);
 
-	$item_id = $repository->createItem(
+	$faved_tag_item_ids[] = $repository->createItem(
 		'Faved on Twitter / X (@FavedTool)',
 		'Lightning fast free open source bookmark manager with accent on privacy and data ownership.',
 		'https://x.com/FavedTool',
@@ -216,9 +211,8 @@ function createWelcomeContent($repository)
 		'',
 		null
 	);
-	$repository->attachItemTags([$faved_tag_id], $item_id);
 
-	$item_id = $repository->createItem(
+	$welcome_tag_item_ids[] = $repository->createItem(
 		'Meet Faved: An Open-Source Privacy-First Bookmark Manager | Faved - Organize Your Bookmarks',
 		'In a world where every digital service wants to control your data, I believe it’s important to have an option to keep your data secure from trackers and advertising networks. That’s why I built Faved: an open-source, self-hosted bookmark manager that gives you complete control over your saved web content and links.',
 		'https://faved.dev/blog/meet-faved-open-source-privacy-first-bookmark-manager',
@@ -226,9 +220,8 @@ function createWelcomeContent($repository)
 		'',
 		null
 	);
-	$repository->attachItemTags([$welcome_tag_id], $item_id);
 
-	$item_id = $repository->createItem(
+	$welcome_tag_item_ids[] = $repository->createItem(
 		'How to Migrate Your Data from Pocket to Faved | Faved - Organize Your Bookmarks',
 		'Pocket is shutting down on July 8, 2025. As a privacy-first alternative, Faved lets you organize and manage your bookmarks while keeping full ownership of your data. Learn how to migrate your data from Pocket to Faved in a few simple steps.',
 		'https://faved.dev/blog/migrate-pocket-to-faved',
@@ -236,7 +229,12 @@ function createWelcomeContent($repository)
 		'https://faved.dev/static/images/posts/migrate-pocket-to-faved/migrate-from-pocket-to-faved-ogimage.png',
 		null
 	);
-	$repository->attachItemTags([$welcome_tag_id], $item_id);
+
+	$faved_tag_id = $tag_creator->createTag('Faved', 'This is a tag for Faved links. Feel free to delete it after getting familiar with those resources.', 0, 'gray', true);
+	$welcome_tag_id = $tag_creator->createTag('Welcome', "Familiarize yourself with the functionality of Faved by exploring the articles under this tag.\n\nℹ️ This is a nested tag. Nested tags are perfect for grouping several projects, e.g. for Work, School, or Personal use. \n\n💡 To create a nested tag, simply separate words with a forward slash.", $faved_tag_id, 'green', false);
+
+	$repository->attachItemsTags($faved_tag_item_ids, [$faved_tag_id]);
+	$repository->attachItemsTags($welcome_tag_item_ids, [$welcome_tag_id]);
 }
 
 function buildPublicUserObject(array $user): array
