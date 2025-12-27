@@ -13,14 +13,19 @@ interface DataTableToolbarProps<TData> {
 export function Search<TData>({ table, globalFilter }: DataTableToolbarProps<TData>) {
   const isFiltered = globalFilter.length > 0;
 
+  const updateSearch = (value: string) => {
+    table.setGlobalFilter(value);
+    table.firstPage();
+  };
+
   return (
     <InputGroup>
       <InputGroupInput
         value={globalFilter ?? ''}
-        onChange={(e) => table.setGlobalFilter(String(e.target.value))}
+        onChange={(e) => updateSearch(String(e.target.value))}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
-            table.setGlobalFilter('');
+            updateSearch('');
           }
         }}
         name="search"
@@ -31,9 +36,9 @@ export function Search<TData>({ table, globalFilter }: DataTableToolbarProps<TDa
         <SearchIcon />
       </InputGroupAddon>
       {isFiltered && (
-        <InputGroupAddon align="inline-end" onClick={() => table.setGlobalFilter('')}>
+        <InputGroupAddon align="inline-end" onClick={() => updateSearch('')}>
           <InputGroupButton>
-            <X className="mt-[1px]" /> <Kbd>Esc</Kbd>
+            <X className="mt-[1px]" /> <Kbd className="pointer-coarse:hidden">Esc</Kbd>
           </InputGroupButton>
         </InputGroupAddon>
       )}

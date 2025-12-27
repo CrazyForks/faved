@@ -65,7 +65,7 @@ export const BulkActionControls = ({ table }) => {
   return (
     <div
       className={cn(
-        'fixed bottom-[1dvh] z-50 flex translate-x-1/2 items-center gap-1 md:bottom-[3dvh]',
+        'fixed bottom-[5dvh] z-50 flex translate-x-1/2 items-center gap-1',
         enableSidebarIndent ? 'right-[calc((100%-287px)/2)]' : 'right-1/2'
       )}
     >

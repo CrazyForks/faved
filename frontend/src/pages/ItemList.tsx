@@ -229,12 +229,21 @@ export const ItemList: React.FC = observer(() => {
         value: store.selectedTagId,
       },
     ]);
+    table.firstPage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store.selectedTagId]);
 
   useEffect(() => {
     const savedColumnVisibility = getSavedLayoutColumnVisibilityPreference(layout);
     setColumnVisibility(savedColumnVisibility);
   }, [layout]);
+
+  useEffect(() => {
+    if (table.getState().pagination.pageIndex >= table.getPageCount()) {
+      table.lastPage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const table = useReactTable({
     data,
@@ -251,6 +260,7 @@ export const ItemList: React.FC = observer(() => {
     onColumnOrderChange: setColumnOrder,
     onPaginationChange: setPagination,
     globalFilterFn: 'includesString',
+    autoResetPageIndex: false,
     state: {
       sorting,
       columnFilters,
@@ -272,6 +282,7 @@ export const ItemList: React.FC = observer(() => {
         desc: isDesc,
       },
     ]);
+    table.firstPage();
   };
 
   const updateLayout = (newValue) => {
@@ -346,17 +357,17 @@ export const ItemList: React.FC = observer(() => {
         </Button>
       </header>
 
-      <div className={`overflow-hidden item-list--${layout}`}>
+      <div className="flex-1 overflow-hidden">
         {currentRows.length > 0 ? (
-          layouts[layout]
+          <div className={`flex h-full flex-col justify-between gap-5 item-list--${layout}`}>
+            {layouts[layout]}
+            <Pagination table={table} />
+          </div>
         ) : (
-          <div className="text-muted-foreground col-span-full py-8 text-center">No items.</div>
+          <div className="text-muted-foreground flex h-full items-center justify-center text-lg">No items.</div>
         )}
+        <BulkActionControls table={table} />
       </div>
-
-      <Pagination table={table} />
-
-      <BulkActionControls table={table} />
     </Dashboard>
   );
 });

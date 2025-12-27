@@ -202,12 +202,6 @@ a:hover {
   }
 
   .item-list--list {
-    @apply mx-0 my-0 p-0;
-
-    .onhover-container .onhover-slide:hover {
-      /*@apply translate-x-5;*/
-    }
-
     .item__image-container {
       @apply relative h-fit w-fit;
     }

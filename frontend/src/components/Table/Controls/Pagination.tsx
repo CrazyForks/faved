@@ -17,14 +17,13 @@ export function Pagination<TData>({ table }: DataTablePaginationProps<TData>) {
   }, [pageIndex]);
 
   return (
-    <div className="my-5 flex flex-col items-center justify-between gap-2 px-2 sm:flex-row sm:gap-0">
-      <div className="text-muted-foreground w-full flex-1 pr-10 text-center text-sm sm:w-auto sm:text-right">
+    <div className="flex flex-col gap-5 p-4">
+      <div className="text-muted-foreground flex-1/5 text-center text-sm">
         {table.getFilteredRowModel().rows.length} item{table.getFilteredRowModel().rows.length !== 1 ? 's' : ''} total
       </div>
-      <div className="flex w-full flex-wrap items-center justify-center gap-4 sm:w-auto sm:justify-end">
-        <div className="flex items-center space-x-2">
-          <p className="hidden text-sm font-medium sm:block">Items per page</p>
-          <p className="text-sm font-medium sm:hidden">Items:</p>
+      <div className="flex flex-col items-center justify-between gap-4 @lg/main:flex-row">
+        <div className="flex items-center gap-2">
+          <div className="text-sm font-medium">Items per page</div>
           <Select
             value={table.getState().pagination.pageSize.toString()}
             onValueChange={(value) => {
@@ -44,15 +43,13 @@ export function Pagination<TData>({ table }: DataTablePaginationProps<TData>) {
             </SelectContent>
           </Select>
         </div>
-
-        <div className="flex min-w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-        </div>
-
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
+          <div className="text-sm font-medium">
+            Page {pageIndex + 1} of {table.getPageCount()}
+          </div>
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            className="@lg:flex"
             onClick={() => table.firstPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -61,25 +58,20 @@ export function Pagination<TData>({ table }: DataTablePaginationProps<TData>) {
           </Button>
           <Button
             variant="outline"
-            className="h-8 w-8 p-0"
+            className=""
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeft />
           </Button>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <Button variant="outline" className="" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             <span className="sr-only">Go to next page</span>
             <ChevronRight />
           </Button>
           <Button
             variant="outline"
-            className="hidden h-8 w-8 p-0 lg:flex"
+            className="lg:flex"
             onClick={() => table.lastPage()}
             disabled={!table.getCanNextPage()}
           >
