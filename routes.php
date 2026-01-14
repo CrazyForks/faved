@@ -93,8 +93,10 @@ return [
 				'POST' => ImportBookmarksController::class,
 			],
 		],
-		'url-metadata' => [
-			'GET' => UrlMetadataController::class,
+		'url' => [
+			'fetch-metadata' => [
+				'POST' => UrlMetadataController::class,
+			],
 		],
 		'app-info' => [
 			'GET' => AppInfoController::class,

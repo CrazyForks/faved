@@ -263,26 +263,17 @@ class mainStore {
       'Failed to update items tags'
     );
   };
-  onCreateItem = async (val: ItemType) => {
-    return this.sendItemRequest(API_ENDPOINTS.items.createItem, 'POST', val);
+  onCreateItem = async (data: ItemType) => {
+    return this.sendItemRequest(API_ENDPOINTS.items.createItem, 'POST', data);
   };
-  onUpdateItem = async (val: ItemType, itemId) => {
-    return this.sendItemRequest(API_ENDPOINTS.items.updateItem(itemId), 'PATCH', val);
+  updateItem = async (data: ItemType, itemId) => {
+    return this.sendItemRequest(API_ENDPOINTS.items.updateItem(itemId), 'PATCH', data);
   };
-  sendItemRequest = async (endpoint, method, val: ItemType) => {
-    return this.runRequest(
-      endpoint,
-      method,
-      {
-        title: val.title || '',
-        description: val.description || '',
-        url: val.url || '',
-        comments: val.comments || '',
-        image: val.image || '',
-        tags: val.tags,
-      },
-      'Failed to create item'
-    );
+  sendItemRequest = async (endpoint, method, data: ItemType) => {
+    data.url = encodeURI(decodeURI(data.url));
+    data.image = encodeURI(decodeURI(data.image));
+
+    return this.runRequest(endpoint, method, data, 'Failed to create item');
   };
   getUser = async (noErrorEmit: boolean = false) => {
     const response = await this.runRequest(
@@ -410,7 +401,12 @@ class mainStore {
   };
 
   fetchUrlMetadata = async (url: string) => {
-    return this.runRequest(API_ENDPOINTS.urlMetdata.fetch(url), 'GET', {}, 'Error fetching metadata from URL');
+    return this.runRequest(
+      '/api/url/fetch-metadata',
+      'POST',
+      { url: encodeURI(decodeURI(url)) },
+      'Error fetching metadata from URL'
+    );
   };
 
   getAppInfo = async () => {

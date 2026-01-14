@@ -32,8 +32,5 @@ export const API_ENDPOINTS = {
     pocket: `${API_BASE}/import/pocket`,
     browser: `${API_BASE}/import/bookmarks`,
   },
-  urlMetdata: {
-    fetch: (url: string) => `${API_BASE}/url-metadata?url=${url}`,
-  },
   appInfo: `${API_BASE}/app-info`,
 };
