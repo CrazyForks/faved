@@ -3,11 +3,31 @@ import { useEffect } from 'react';
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog.tsx';
 import { IconX } from '@tabler/icons-react';
 import { ImageOff } from 'lucide-react';
+import { cn } from '@/lib/utils.ts';
+import { Spinner } from '@/components/ui/spinner.tsx';
 
-export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; className: string }) => {
+export const PreviewImage = ({
+  imageUrl,
+  itemId,
+  className,
+}: {
+  imageUrl: string;
+  itemId: number | null;
+  className: string;
+}) => {
   const [isImageError, setIsImageError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const urlObject = new URL('/content/fetch-image', window.location.origin);
+  urlObject.searchParams.set('image-url', encodeURI(imageUrl));
+
+  if (itemId) {
+    urlObject.searchParams.set('item-id', String(itemId));
+  }
+  const imageLocalURL = urlObject.toString();
+
   useEffect(() => {
     setIsImageError(false);
+    setIsLoading(true);
   }, [imageUrl]);
 
   if (isImageError) {
@@ -26,8 +46,20 @@ export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; classN
   return (
     <div className="group item__image-container relative">
       <Dialog>
+        {isLoading && (
+          <div
+            className={`${className} item__image flex min-h-16 min-w-16 animate-pulse items-center justify-center bg-gray-100`}
+          >
+            <Spinner className="text-muted-foreground size-6" />
+          </div>
+        )}
         <DialogTrigger asChild>
-          <img className={className + ' item__image'} src={imageUrl} onError={() => setIsImageError(true)} />
+          <img
+            className={cn(className, 'item__image', isLoading ? 'hidden' : '')}
+            src={imageLocalURL}
+            onLoad={() => setIsLoading(false)}
+            onError={() => setIsImageError(true)}
+          />
         </DialogTrigger>
         <DialogContent
           aria-describedby={undefined}
@@ -45,8 +77,8 @@ export const PreviewImage = ({ imageUrl, className }: { imageUrl: string; classN
             </button>
           </DialogClose>
           <img
-            className="h-auto max-h-[90vh] w-auto object-contain"
-            src={imageUrl}
+            className={cn('h-auto max-h-[90vh] object-contain', imageUrl.endsWith('.svg') ? 'w-[500px]' : 'w-auto')}
+            src={imageLocalURL}
             title={imageUrl}
             alt={'Preview of image: ' + imageUrl}
           />

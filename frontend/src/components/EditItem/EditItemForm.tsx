@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,11 +11,12 @@ import { ActionType, ItemSchema, ItemType, UrlSchema } from '@/lib/types.ts';
 import { useLocation } from 'react-router-dom';
 import { IconCloudDownload, IconProgress } from '@tabler/icons-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
-import { ImagePreview } from '@/components/EditItem/ImagePreview.tsx';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import { DeleteDialog } from '@/components/Table/Controls/DeleteDialog.tsx';
+import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
+import { Image as ImageIcon } from 'lucide-react';
 
 interface EditItemFormProps {
   isCloseWindowOnSubmit: boolean;
@@ -58,6 +59,23 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
     defaultValues: currentItem,
   });
 
+  let imageUrl = form.watch('image');
+  try {
+    imageUrl = UrlSchema.parse(imageUrl);
+  } catch {
+    /* empty */
+  }
+  const [forceImageRefetch, setForceImageRefetch] = React.useState(false);
+  const initialImageUrl = useRef(imageUrl);
+
+  // Force image refetch if the image URL has changed
+  useEffect(() => {
+    if (imageUrl === initialImageUrl.current || forceImageRefetch) {
+      return;
+    }
+    setForceImageRefetch(true);
+  }, [imageUrl, forceImageRefetch]);
+
   const urlParams = useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
     return {
@@ -85,7 +103,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
     let result;
 
     if (store.type === ActionType.EDIT && values.id) {
-      result = await store.onUpdateItem(values, values.id);
+      result = await store.updateItem(values, values.id, forceImageRefetch);
     } else {
       result = await store.onCreateItem(values);
     }
@@ -154,7 +172,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
 
     setIsMetadataLoading(true);
 
-    const data: { data: { title: string; description: string; image_url: string } } =
+    const data: { data: { title: string; description: string; image: string } } =
       await store.fetchUrlMetadata(processedUrl);
 
     setIsMetadataLoading(false);
@@ -165,7 +183,10 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
 
     form.setValue('title', data.data.title || '');
     form.setValue('description', data.data.description || '');
-    form.setValue('image', data.data.image_url || '');
+    form.setValue('image', decodeURI(data.data.image || ''));
+
+    // Force image refetch after metadata update to update the preview
+    setForceImageRefetch(true);
   };
 
   const renderTextField = (name: keyof ItemType, label: string, isDisabled = false) => (
@@ -230,13 +251,6 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
     />
   );
 
-  let imageUrl = form.watch('image');
-  try {
-    imageUrl = UrlSchema.parse(imageUrl);
-  } catch {
-    /* empty */
-  }
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSaveClose)}>
@@ -293,7 +307,20 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="grow"> {renderTextField('image', 'Image URL')}</div>
               <div className="min-h-16 min-w-16 sm:max-w-[40%]">
-                <ImagePreview imageUrl={imageUrl} />
+                {imageUrl === '' ? (
+                  <div
+                    className="text-muted-foreground flex h-16 w-16 items-center justify-center rounded-full bg-gray-200"
+                    title="No image"
+                  >
+                    <ImageIcon />
+                  </div>
+                ) : (
+                  <PreviewImage
+                    imageUrl={imageUrl}
+                    itemId={!forceImageRefetch && store.type === ActionType.EDIT && store.idItem ? store.idItem : null}
+                    className="max-h-[100px] w-auto rounded-sm object-contain shadow-sm"
+                  />
+                )}
               </div>
             </div>
 

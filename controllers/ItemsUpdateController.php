@@ -10,6 +10,8 @@ use Framework\ServiceContainer;
 use Models\Repository;
 use Respect\Validation\Validator;
 use function Framework\success;
+use function Utils\clearDirectory;
+use function Utils\getImageLocalPath;
 
 class ItemsUpdateController implements ControllerInterface
 {
@@ -21,7 +23,8 @@ class ItemsUpdateController implements ControllerInterface
 			->key('description', Validator::stringType()->setName('Description'))
 			->key('comments', Validator::stringType()->setName('Notes'))
 			->key('image', Validator::optional(Validator::url())->setName('Image URL'))
-			->key('tags', Validator::arrayType()->setName('Tags'));
+			->key('tags', Validator::arrayType()->setName('Tags'))
+			->key('force-image-refetch', Validator::boolType(), false);
 	}
 
 	public function __invoke(array $input): ResponseInterface
@@ -53,6 +56,15 @@ class ItemsUpdateController implements ControllerInterface
 
 		if (!$result) {
 			throw new DataWriteException('Item tags update failed');
+		}
+
+		// Clear local image if needed
+		if (empty($image) || !empty($input['force-image-refetch'])) {
+			$image_local_path = getImageLocalPath($image, $item_id);
+			$directory_path = dirname($image_local_path);
+			if (is_dir($directory_path)) {
+				clearDirectory($directory_path);
+			}
 		}
 
 		return success('Item updated successfully', [

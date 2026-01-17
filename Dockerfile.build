@@ -60,6 +60,8 @@ COPY views views
 COPY --from=composer /app/vendor vendor
 
 RUN mkdir /var/www/html/storage && \
-    chown www-data:www-data /var/www/html/storage
+    chown www-data:www-data /var/www/html/storage && \
+    mkdir /var/www/html/storage/img && \
+    chown www-data:www-data /var/www/html/storage/img
 
 RUN find . \( -name ".DS_Store" -o -name ".gitignore" \) -type f -delete

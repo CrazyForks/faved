@@ -101,5 +101,10 @@ return [
 		'app-info' => [
 			'GET' => AppInfoController::class,
 		],
+	],
+	'content' => [
+		'fetch-image' => [
+			'GET' => Controllers\ImageFetchController::class,
+		]
 	]
 ];

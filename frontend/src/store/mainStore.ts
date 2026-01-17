@@ -266,8 +266,11 @@ class mainStore {
   onCreateItem = async (data: ItemType) => {
     return this.sendItemRequest(API_ENDPOINTS.items.createItem, 'POST', data);
   };
-  updateItem = async (data: ItemType, itemId) => {
-    return this.sendItemRequest(API_ENDPOINTS.items.updateItem(itemId), 'PATCH', data);
+  updateItem = async (data: ItemType, itemId, forceImageRefetch: boolean) => {
+    return this.sendItemRequest(API_ENDPOINTS.items.updateItem(itemId), 'PATCH', {
+      ...data,
+      ...{ 'force-image-refetch': forceImageRefetch },
+    } as ItemType & { 'force-image-refetch': boolean });
   };
   sendItemRequest = async (endpoint, method, data: ItemType) => {
     data.url = encodeURI(decodeURI(data.url));
