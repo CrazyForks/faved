@@ -185,7 +185,7 @@ const columns: ColumnDef<ItemType>[] = [
     cell: ({ row }) => <ItemsActions row={row} />,
     enableSorting: false,
     enableHiding: false,
-    meta: { isAction: true },
+    meta: { isAction: true, isPinned: true },
   },
 ];
 
