@@ -225,7 +225,7 @@ class mainStore {
   };
   deleteItems = async (itemIds: number[]) => {
     return await this.runRequest(
-      '/api/items/delete',
+      API_ENDPOINTS.items.deleteItems,
       'POST',
       {
         'item-ids': itemIds,
@@ -235,7 +235,7 @@ class mainStore {
   };
   refetchItemsMetadata = async (itemIds: number[]) => {
     return await this.runRequest(
-      '/api/items/fetch-metadata',
+      API_ENDPOINTS.items.refetchItemsMetadata,
       'POST',
       {
         'item-ids': itemIds,
@@ -253,7 +253,7 @@ class mainStore {
     newSelectedTagsSome: string[];
   }) => {
     return await this.runRequest(
-      '/api/items/tags',
+      API_ENDPOINTS.items.updateItemsTags,
       'PATCH',
       {
         'item-ids': itemIds,

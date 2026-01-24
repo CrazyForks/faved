@@ -4,6 +4,9 @@ export const API_ENDPOINTS = {
   items: {
     list: `${API_BASE}/items`,
     createItem: `${API_BASE}/items`,
+    deleteItems: `${API_BASE}/items/delete`,
+    refetchItemsMetadata: `${API_BASE}/items/fetch-metadata`,
+    updateItemsTags: `${API_BASE}/items/tags`,
     updateItem: (id: any) => `${API_BASE}/items?item-id=${id}`,
   },
   settings: {
