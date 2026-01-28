@@ -15,14 +15,14 @@ export const NavMain = observer(() => {
   const { isMobile, toggleSidebar } = useSidebar();
 
   const setAllTags = () => {
-    store.setCurrentTagId(0);
+    store.setSelectedTagId(null);
     if (isMobile) {
       toggleSidebar();
     }
   };
 
-  const setNoTags = () => {
-    store.setCurrentTagId(null);
+  const setWithoutTags = () => {
+    store.setSelectedTagId('none');
     if (isMobile) {
       toggleSidebar();
     }
@@ -32,13 +32,13 @@ export const NavMain = observer(() => {
     {
       title: 'All items',
       onClick: setAllTags,
-      isSelected: store.selectedTagId === '0',
+      isSelected: store.selectedTagId === null,
       icon: null,
     },
     {
       title: 'Untagged',
-      onClick: setNoTags,
-      isSelected: store.selectedTagId === null,
+      onClick: setWithoutTags,
+      isSelected: store.selectedTagId === 'none',
       icon: null,
     },
   ];

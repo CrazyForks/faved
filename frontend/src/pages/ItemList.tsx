@@ -128,11 +128,11 @@ const columns: ColumnDef<ItemType>[] = [
     meta: { class: 'min-w-xs' },
 
     filterFn: (row, columnId, filterValue) => {
-      if (filterValue === '0') {
+      if (filterValue === null) {
         return true;
       }
       const tags = row.getValue('tags') as number[];
-      if (filterValue === null && tags.length === 0) {
+      if (filterValue === 'none' && tags.length === 0) {
         return true;
       }
 

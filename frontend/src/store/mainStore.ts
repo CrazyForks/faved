@@ -25,7 +25,7 @@ class mainStore {
   error: string | null = null;
   isOpenSettingsModal: boolean = false;
   preSelectedItemSettingsModal: string | null = null;
-  selectedTagId: string | null = '0'; // Default to '0' for no tag selected
+  selectedTagId: string | null = null; // Default to null for no tag selected. 'none' for without any tags
   isShowEditModal: boolean = false;
   appInfo: {
     installed_version: string | null;
@@ -95,8 +95,8 @@ class mainStore {
   setIsshowInitializeDatabasePage = (val: boolean) => {
     this.showInitializeDatabasePage = val;
   };
-  setCurrentTagId = (val: string | null | number) => {
-    this.selectedTagId = val === null ? null : val.toString();
+  setSelectedTagId = (val: string | null | number) => {
+    this.selectedTagId = typeof val === 'number' ? val.toString() : val;
   };
   setUser = (user: UserType) => {
     this.user = user;
