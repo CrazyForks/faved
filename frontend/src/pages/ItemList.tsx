@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -49,6 +49,8 @@ import { Separator } from '@/components/ui/separator.tsx';
 import { Dashboard } from '@/layouts/Dashboard.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { BulkActionControls } from '@/components/Table/Controls/BulkActionControls.tsx';
+import { useSearchParams } from 'react-router-dom';
+import { useEffectEvent } from '@radix-ui/react-use-effect-event';
 
 const columns: ColumnDef<ItemType>[] = [
   {
@@ -191,22 +193,36 @@ const columns: ColumnDef<ItemType>[] = [
 
 export const ItemList: React.FC = observer(() => {
   const store = React.useContext(StoreContext);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageIndex = useMemo(() => Number(searchParams.get('page') ?? 1) - 1, [searchParams]);
+  const pageSize = useMemo(() => Number(searchParams.get('per_page') ?? 25), [searchParams]);
+  const sortBy = useMemo(() => searchParams.get('sort') ?? 'created_at', [searchParams]);
+  const isSortOrderDesc = useMemo(() => searchParams.get('order') !== 'asc', [searchParams]);
+  const search = useMemo(() => searchParams.get('search') ?? '', [searchParams]);
+  const tags = useMemo(() => searchParams.get('tag') ?? null, [searchParams]);
+
   const data = store.items;
-  const [globalFilter, setGlobalFilter] = React.useState<any>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState<string>(search);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
+    {
+      id: 'tags',
+      value: tags,
+    },
+  ]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [layout, setLayout] = useState<LayoutType>(getSavedLayoutPreference());
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(
     getSavedLayoutColumnVisibilityPreference(layout)
   );
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 25,
+    pageIndex: pageIndex,
+    pageSize: pageSize,
   });
   const [sorting, setSorting] = React.useState<SortingState>([
     {
-      id: 'created_at',
-      desc: true,
+      id: sortBy,
+      desc: isSortOrderDesc,
     },
   ]);
   const [columnOrder, setColumnOrder] = useState<string[]>([
@@ -222,16 +238,178 @@ export const ItemList: React.FC = observer(() => {
     'actions',
   ]);
 
+  /**
+   * State and URL syncing
+   */
+  const setUrlState = useCallback(
+    (updates) => {
+      setSearchParams(
+        (prev) => {
+          const params = new URLSearchParams(prev);
+
+          Object.entries(updates).forEach(([key, value]) => {
+            if (value === null || value === '') {
+              params.delete(key);
+            } else {
+              params.set(key, `${value}`);
+            }
+          });
+
+          return params;
+        },
+        { replace: false }
+      );
+    },
+    [setSearchParams]
+  );
+
+  // Search >
+  const updateGlobalFilterState = useEffectEvent((globalFilterState) => {
+    if (globalFilter === globalFilterState) {
+      return;
+    }
+    setGlobalFilter(globalFilterState);
+  });
+
   useEffect(() => {
+    updateGlobalFilterState(search);
+  }, [search]);
+
+  const updateSearchURLParams = useEffectEvent((searchParam) => {
+    if (searchParam === search) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setUrlState({
+        search: searchParam,
+        // Preventing race conditions
+        page: 1,
+      });
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  });
+
+  useEffect(() => {
+    return updateSearchURLParams(globalFilter);
+  }, [globalFilter]);
+  // ^ Search
+
+  // Pagination >
+  const updatePaginationState = useEffectEvent((pageIndexState, pageSizeState) => {
+    if (pagination.pageIndex === pageIndexState && pagination.pageSize === pageSizeState) {
+      return;
+    }
+
+    setPagination({
+      pageIndex: pageIndexState,
+      pageSize: pageSizeState,
+    });
+  });
+
+  useEffect(() => {
+    updatePaginationState(pageIndex, pageSize);
+  }, [pageIndex, pageSize]);
+
+  const updatePaginationURLParams = useEffectEvent((page, per_page) => {
+    if (page === pageIndex + 1 && per_page === pageSize) {
+      return;
+    }
+
+    setUrlState({
+      page: page,
+      per_page: per_page,
+    });
+  });
+
+  useEffect(() => {
+    updatePaginationURLParams(pagination.pageIndex + 1, pagination.pageSize);
+  }, [pagination.pageIndex, pagination.pageSize]);
+  // ^ Pagination
+
+  // Sorting >
+  const updateSortingState = useEffectEvent((sortByState, isSortOrderDescState) => {
+    if (sorting[0].id === sortByState && sorting[0].desc === isSortOrderDescState) {
+      return;
+    }
+
+    setSorting([
+      {
+        id: sortByState,
+        desc: isSortOrderDescState,
+      },
+    ]);
+  });
+
+  useEffect(() => {
+    updateSortingState(sortBy, isSortOrderDesc);
+  }, [sortBy, isSortOrderDesc]);
+
+  const updateSortingURLParams = useEffectEvent((sortByParam, isSortOrderDescParam) => {
+    if (sortByParam === sortBy && isSortOrderDescParam === isSortOrderDesc) {
+      return;
+    }
+
+    setUrlState({
+      sort: sortByParam,
+      order: isSortOrderDescParam ? 'desc' : 'asc',
+    });
+  });
+
+  useEffect(() => {
+    updateSortingURLParams(sorting[0]?.id, sorting[0]?.desc);
+  }, [sorting]);
+  // ^ Sorting
+
+  // Tag >
+  const updateTagFilterFromURLParams = useEffectEvent((tagsParam) => {
+    if (store.selectedTagId === tagsParam) {
+      return;
+    }
+    store.setSelectedTagId(tagsParam);
+  });
+
+  useEffect(() => {
+    updateTagFilterFromURLParams(tags);
+  }, [tags]);
+
+  const updateTableTagFilter = useEffectEvent((selectedTagId) => {
+    if (selectedTagId === columnFilters[0].value) {
+      return;
+    }
     setColumnFilters([
       {
         id: 'tags',
-        value: store.selectedTagId,
+        value: selectedTagId,
       },
     ]);
     table.firstPage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  useEffect(() => {
+    updateTableTagFilter(store.selectedTagId);
   }, [store.selectedTagId]);
+
+  const updateTagFilterURLParams = useEffectEvent((selectedTagId) => {
+    if (selectedTagId === tags) {
+      return;
+    }
+
+    setUrlState({
+      tag: selectedTagId,
+      // Preventing race conditions
+      page: 1,
+    });
+  });
+
+  useEffect(() => {
+    updateTagFilterURLParams(store.selectedTagId);
+  }, [store.selectedTagId]);
+  // ^ Tag
+  /**
+   * End of state and URL syncing
+   */
 
   useEffect(() => {
     const savedColumnVisibility = getSavedLayoutColumnVisibilityPreference(layout);
@@ -285,7 +463,7 @@ export const ItemList: React.FC = observer(() => {
     table.firstPage();
   };
 
-  const updateLayout = (newValue) => {
+  const updateLayout = (newValue: LayoutType) => {
     setLayout(newValue);
     saveLayoutPreference(newValue);
   };

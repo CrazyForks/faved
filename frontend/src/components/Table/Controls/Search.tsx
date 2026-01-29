@@ -7,7 +7,7 @@ import { Kbd } from '@/components/ui/kbd.tsx';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  globalFilter: any;
+  globalFilter: string;
 }
 
 export function Search<TData>({ table, globalFilter }: DataTableToolbarProps<TData>) {
