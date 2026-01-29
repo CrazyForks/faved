@@ -15,8 +15,7 @@ export const PreviewImage = ({
   itemId: number | null;
   className: string;
 }) => {
-  const [isImageError, setIsImageError] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoaded, setIsLoaded] = React.useState<boolean | null>(null); // null for loading in progress, true for success, false for failure
   const urlObject = new URL('/content/fetch-image', window.location.origin);
   urlObject.searchParams.set('image-url', encodeURI(imageUrl));
 
@@ -26,39 +25,38 @@ export const PreviewImage = ({
   const imageLocalURL = urlObject.toString();
 
   useEffect(() => {
-    setIsImageError(false);
-    setIsLoading(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsLoaded(null);
   }, [imageUrl]);
 
-  if (isImageError) {
-    return (
-      <div className="item__image-container">
+  return (
+    <div className="group item__image-container relative">
+      {isLoaded === null && (
+        <div
+          className={`${className} item__image flex min-h-16 min-w-16 animate-pulse items-center justify-center bg-gray-100`}
+        >
+          <Spinner className="text-muted-foreground size-6" />
+        </div>
+      )}
+      {isLoaded === false && (
         <div
           className={`${className} text-muted-foreground item__image flex min-h-16 min-w-16 items-center justify-center bg-gray-200`}
           title={`Image link is broken: ${imageUrl}`}
         >
           <ImageOff />
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="group item__image-container relative">
+      )}
       <Dialog>
-        {isLoading && (
-          <div
-            className={`${className} item__image flex min-h-16 min-w-16 animate-pulse items-center justify-center bg-gray-100`}
-          >
-            <Spinner className="text-muted-foreground size-6" />
-          </div>
-        )}
         <DialogTrigger asChild>
           <img
-            className={cn(className, 'item__image', isLoading ? 'hidden' : '')}
+            className={cn(className, 'item__image', isLoaded ? '' : 'hidden')}
             src={imageLocalURL}
-            onLoad={() => setIsLoading(false)}
-            onError={() => setIsImageError(true)}
+            onLoad={() => {
+              setIsLoaded(true);
+            }}
+            onError={() => {
+              setIsLoaded(false);
+            }}
           />
         </DialogTrigger>
         <DialogContent
