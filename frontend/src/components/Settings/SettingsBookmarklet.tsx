@@ -11,13 +11,6 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
   const bookmarkletRef = React.useRef(null);
   const isMobile = useIsMobile();
 
-  React.useEffect(() => {
-    const bookmarkletElement = bookmarkletRef.current;
-    if (bookmarkletElement) {
-      bookmarkletElement.setAttribute('href', generateBookmarkletCode());
-    }
-  });
-
   const bookmarkletFunction = () => {
     const urlParams = new URLSearchParams();
     urlParams.append('url', window.location.href);
@@ -114,6 +107,13 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  React.useEffect(() => {
+    const bookmarkletElement = bookmarkletRef.current;
+    if (bookmarkletElement) {
+      bookmarkletElement.setAttribute('href', generateBookmarkletCode());
+    }
+  });
 
   return (
     <div className="flex flex-col gap-4">
