@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator.tsx';
 import { DeleteDialog } from '@/components/Table/Controls/DeleteDialog.tsx';
 import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
 import { Image as ImageIcon } from 'lucide-react';
+import { safeDecodeURIComponent, safeDecodeURI } from '@/lib/utils.ts';
 
 interface EditItemFormProps {
   isCloseWindowOnSubmit: boolean;
@@ -32,14 +33,6 @@ const INITIAL_ITEM_DATA: ItemType = {
   tags: [],
   created_at: undefined,
   updated_at: undefined,
-};
-
-const safeDecodeURIComponent = (encodedURI: string): string => {
-  try {
-    return encodedURI ? decodeURIComponent(encodedURI) : '';
-  } catch {
-    return encodedURI || '';
-  }
 };
 
 const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
@@ -199,7 +192,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
 
     form.setValue('title', data.data.title || '');
     form.setValue('description', data.data.description || '');
-    form.setValue('image', decodeURI(data.data.image || ''));
+    form.setValue('image', safeDecodeURI(data.data.image || ''));
 
     // Force image refetch after metadata update to update the preview
     setForceImageRefetch(true);
