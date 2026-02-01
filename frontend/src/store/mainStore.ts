@@ -200,9 +200,6 @@ class mainStore {
   setItems = (val: ItemType[]) => {
     this.items = val;
   };
-  createItem = (val: ItemType) => {
-    this.items = this.items.concat(val);
-  };
   setType = (val: ActionType) => {
     this.type = val;
   };
@@ -263,20 +260,25 @@ class mainStore {
       'Failed to update items tags'
     );
   };
-  onCreateItem = async (data: ItemType) => {
-    return this.sendItemRequest(API_ENDPOINTS.items.createItem, 'POST', data);
-  };
-  updateItem = async (data: ItemType, itemId, forceImageRefetch: boolean) => {
-    return this.sendItemRequest(API_ENDPOINTS.items.updateItem(itemId), 'PATCH', {
-      ...data,
-      ...{ 'force-image-refetch': forceImageRefetch },
-    } as ItemType & { 'force-image-refetch': boolean });
-  };
-  sendItemRequest = async (endpoint, method, data: ItemType) => {
+  createItem = async (data: ItemType, skipSuccessMessage: boolean = false) => {
     data.url = encodeURI(decodeURI(data.url));
     data.image = encodeURI(decodeURI(data.image));
 
-    return this.runRequest(endpoint, method, data, 'Failed to create item');
+    return this.runRequest(API_ENDPOINTS.items.createItem, 'POST', data, 'Failed to create item', skipSuccessMessage);
+  };
+  updateItem = async (data: ItemType, itemId, forceImageRefetch: boolean) => {
+    data.url = encodeURI(decodeURI(data.url));
+    data.image = encodeURI(decodeURI(data.image));
+
+    return this.runRequest(
+      API_ENDPOINTS.items.updateItem(itemId),
+      'PATCH',
+      {
+        ...data,
+        ...{ 'force-image-refetch': forceImageRefetch },
+      } as ItemType & { 'force-image-refetch': boolean },
+      'Failed to update item'
+    );
   };
   getUser = async (noErrorEmit: boolean = false) => {
     const response = await this.runRequest(

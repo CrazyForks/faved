@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { Maximize, EllipsisVertical } from 'lucide-react';
+import { EllipsisVertical, Maximize } from 'lucide-react';
 import { ActionType } from '@/lib/types.ts';
 import { DeleteDialog } from '@/components/Table/Controls/DeleteDialog.tsx';
 
@@ -22,7 +22,7 @@ export const ItemsActions = ({ row }) => {
   };
 
   const handleMakeCopy = async () => {
-    const result = await store.onCreateItem(row.original);
+    const result = await store.createItem(row.original);
     if (!result) {
       return;
     }
