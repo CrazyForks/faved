@@ -3,7 +3,7 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle }
 import { ChevronDownIcon, ChevronRightIcon, Image as ImageIcon } from 'lucide-react';
 import React, { useContext, useEffect, useMemo } from 'react';
 import { StoreContext } from '@/store/storeContext.ts';
-import { cn } from '@/lib/utils.ts';
+import { cn, safeDecodeURI } from '@/lib/utils.ts';
 import { ActionType, UrlSchema } from '@/lib/types.ts';
 import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -46,7 +46,9 @@ export const DuplicatesList = ({ url }: { url: string }) => {
       return [];
     }
     const normalizedUrl = normalizeUrl(validUrl);
-
+    if (normalizedUrl === '') {
+      return [];
+    }
     return store.items.filter((item) => normalizeUrl(item.url) === normalizedUrl);
   }, [store.items, validUrl]);
 
@@ -55,6 +57,9 @@ export const DuplicatesList = ({ url }: { url: string }) => {
       return [];
     }
     const urlDomain = extractDomain(validUrl);
+    if (urlDomain === '') {
+      return [];
+    }
     return store.items.filter((item) => extractDomain(item.url) === urlDomain && !exactMatches.includes(item));
   }, [store.items, validUrl, exactMatches]);
 
@@ -72,10 +77,11 @@ export const DuplicatesList = ({ url }: { url: string }) => {
   }
 
   const ItemCard = (item, highlightedText) => {
-    const [before, after] = item.url.split(highlightedText);
+    const decodedHightlightedText = safeDecodeURI(highlightedText);
+    const [before, after] = item.url.split(decodedHightlightedText);
 
     return (
-      <Item variant="outline" size="sm" className="flex-nowrap" asChild key={item.id}>
+      <Item variant="outline" size="sm" className="bookmark_item flex-nowrap" asChild key={item.id}>
         <a href="#" onClick={() => openItem(item.id)}>
           <ItemMedia>
             {item.image === '' ? (
@@ -97,7 +103,7 @@ export const DuplicatesList = ({ url }: { url: string }) => {
             <ItemTitle className="line-clamp-1 wrap-anywhere">{item.title}</ItemTitle>
             <ItemDescription className="line-clamp-1 wrap-anywhere">
               {before}
-              <span className="bg-red-50 text-red-400">{highlightedText}</span>
+              <span className="bg-red-50 text-red-400">{decodedHightlightedText}</span>
               {after}
             </ItemDescription>
           </ItemContent>

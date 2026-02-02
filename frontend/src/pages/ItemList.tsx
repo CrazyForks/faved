@@ -88,7 +88,7 @@ const columns: ColumnDef<ItemType>[] = [
     enableHiding: true,
     cell: ({ row }) => {
       const imageURL = row.getValue('image') as string;
-      return imageURL && <PreviewImage imageUrl={imageURL} itemId={row.original.id} className="" />;
+      return imageURL && <PreviewImage imageUrl={imageURL} itemId={row.original.id} />;
     },
   },
   {

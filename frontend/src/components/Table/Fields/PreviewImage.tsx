@@ -13,7 +13,7 @@ export const PreviewImage = ({
 }: {
   imageUrl: string;
   itemId: number | null;
-  className: string;
+  className?: string;
 }) => {
   const [isLoaded, setIsLoaded] = React.useState<boolean | null>(null); // null for loading in progress, true for success, false for failure
   const urlObject = new URL('/content/fetch-image', window.location.origin);
@@ -33,14 +33,20 @@ export const PreviewImage = ({
     <div className="group item__image-container relative">
       {isLoaded === null && (
         <div
-          className={`${className} item__image flex min-h-16 min-w-16 animate-pulse items-center justify-center bg-gray-100`}
+          className={cn(
+            className,
+            'item__image flex min-h-16 min-w-16 animate-pulse items-center justify-center bg-gray-100'
+          )}
         >
           <Spinner className="text-muted-foreground size-6" />
         </div>
       )}
       {isLoaded === false && (
         <div
-          className={`${className} text-muted-foreground item__image flex min-h-16 min-w-16 items-center justify-center bg-gray-200`}
+          className={cn(
+            className,
+            'text-muted-foreground item__image flex min-h-16 min-w-16 items-center justify-center bg-gray-200'
+          )}
           title={`Image link is broken: ${imageUrl}`}
         >
           <ImageOff />
@@ -51,6 +57,7 @@ export const PreviewImage = ({
           <img
             className={cn(className, 'item__image', isLoaded ? '' : 'hidden')}
             src={imageLocalURL}
+            title={imageUrl}
             onLoad={() => {
               setIsLoaded(true);
             }}

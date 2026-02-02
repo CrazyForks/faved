@@ -239,6 +239,12 @@ a:hover {
   }
 }
 
+.bookmark_item {
+  .item__image {
+    @apply min-w-[50px];
+  }
+}
+
 @layer utilities {
   .onhover-visible {
     @apply opacity-0 transition-opacity duration-100;

@@ -41,7 +41,7 @@ const EditItemForm = observer(({ isCloseWindowOnSubmit }: EditItemFormProps) => 
   const location = useLocation();
   const [isMetadataLoading, setIsMetadataLoading] = React.useState(false);
   const [isSubmitSuccess, setIsSubmitSuccess] = React.useState(false);
-  const [closeCountdown, setCloseCountdown] = React.useState(2);
+  const [closeCountdown, setCloseCountdown] = React.useState(1);
 
   const currentItem = useMemo(() => {
     if (store.type === ActionType.EDIT && store.items.length > 0) {

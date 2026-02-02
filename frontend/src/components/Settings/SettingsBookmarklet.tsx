@@ -54,7 +54,7 @@ export const SettingsBookmarklet = ({ onSuccess }: { onSuccess?: () => void }) =
     }
 
     const windowWidth = 700;
-    const windowHeight = 760;
+    const windowHeight = 800;
     const leftPos = Math.floor((screen.width - windowWidth) / 2);
     const topPos = Math.floor((screen.height - windowHeight) / 2);
     const windowProps = {
