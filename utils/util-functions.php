@@ -72,29 +72,6 @@ function createTagsFromSegments(array $tag_segments, $tag_description = ''): int
 	return (int)$parent_tag_id;
 }
 
-/**
- * TODO: Add URL match checks on item create
- */
-function findURLMatches($checked_url, $items, &$host_matches)
-{
-	$domain = parse_url($checked_url)['host'];
-	if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $matches)) {
-		$domain = $matches['domain'];
-	}
-
-
-	$url_matches = [];
-	$host_matches = [];
-	foreach ($items as $item) {
-		if ($item['url'] === $checked_url) {
-			$url_matches[] = $item;
-		} elseif (str_contains($item['url'], $domain)) {
-			$host_matches[] = $item;
-		}
-	}
-	return $url_matches;
-}
-
 /*
  * Resolve relative URL to absolute URL
  */

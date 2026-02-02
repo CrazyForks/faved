@@ -9,15 +9,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { ActionType, ItemSchema, ItemType, UrlSchema } from '@/lib/types.ts';
 import { useLocation } from 'react-router-dom';
-import { Download, Loader2, CheckCircle } from 'lucide-react';
+import { CheckCircle, Download, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/ui/spinner.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import { DeleteDialog } from '@/components/Table/Controls/DeleteDialog.tsx';
 import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
-import { Image as ImageIcon } from 'lucide-react';
-import { safeDecodeURIComponent, safeDecodeURI } from '@/lib/utils.ts';
+import { safeDecodeURI, safeDecodeURIComponent } from '@/lib/utils.ts';
+import { DuplicatesList } from '@/components/EditItem/DuplicatesList.tsx';
+import { observer } from 'mobx-react-lite';
 
 interface EditItemFormProps {
   isCloseWindowOnSubmit: boolean;
@@ -35,7 +36,7 @@ const INITIAL_ITEM_DATA: ItemType = {
   updated_at: undefined,
 };
 
-const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
+const EditItemForm = observer(({ isCloseWindowOnSubmit }: EditItemFormProps) => {
   const store = useContext(StoreContext);
   const location = useLocation();
   const [isMetadataLoading, setIsMetadataLoading] = React.useState(false);
@@ -281,6 +282,7 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
           <h2 className="mb-3 text-left text-xl font-semibold tracking-tight">
             {store.type === ActionType.EDIT ? 'Edit Bookmark' : 'Create Bookmark'}
           </h2>
+          {store.type !== ActionType.EDIT && <DuplicatesList url={form.watch('url')} />}
           <div className="space-y-4 py-4">
             <div className="grid gap-3">
               <FormField
@@ -401,6 +403,6 @@ const EditItemForm = ({ isCloseWindowOnSubmit }: EditItemFormProps) => {
       </form>
     </Form>
   );
-};
+});
 
 export default EditItemForm;

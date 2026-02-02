@@ -9,6 +9,7 @@ use Respect\Validation\Validator;
 use function Utils\getImageLocalPath;
 use function Utils\getLocalFileContents;
 use function Utils\getRemoteImageContents;
+use function Utils\saveImageToLocalPath;
 
 class ImageFetchController implements ControllerInterface
 {
@@ -42,7 +43,7 @@ class ImageFetchController implements ControllerInterface
 		// Save contents to file if item id is provided
 		if ($item_id) {
 			$image_local_path = getImageLocalPath($image_url, $item_id);
-			$contents = saveImageToLocalPath($image_local_path, $contents);
+			saveImageToLocalPath($image_local_path, $contents);
 			return new MediaResponse($contents, 60 * 24 * 7 /*7 days*/);
 		}
 

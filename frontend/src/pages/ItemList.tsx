@@ -387,10 +387,6 @@ export const ItemList: React.FC = observer(() => {
     table.firstPage();
   });
 
-  useEffect(() => {
-    updateTableTagFilter(store.selectedTagId);
-  }, [store.selectedTagId]);
-
   const updateTagFilterURLParams = useEffectEvent((selectedTagId) => {
     if (selectedTagId === tags) {
       return;
@@ -404,6 +400,7 @@ export const ItemList: React.FC = observer(() => {
   });
 
   useEffect(() => {
+    updateTableTagFilter(store.selectedTagId);
     updateTagFilterURLParams(store.selectedTagId);
   }, [store.selectedTagId]);
   // ^ Tag

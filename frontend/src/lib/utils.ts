@@ -87,4 +87,3 @@ export const safeDecodeURI = (encodedURI: string): string => {
     return encodedURI || '';
   }
 };
-
