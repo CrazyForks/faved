@@ -20,8 +20,8 @@ class mainStore {
   type: ActionType = '' as ActionType;
   user: UserType | null = null;
   idItem: number | undefined = undefined;
-  isAuthRequired = false;
-  showInitializeDatabasePage = false;
+  isAuthRequired = null;
+  isSetupRequired = null;
   error: string | null = null;
   isOpenSettingsModal: boolean = false;
   preSelectedItemSettingsModal: string | null = null;
@@ -62,16 +62,14 @@ class mainStore {
 
     return fetch(endpoint, options)
       .then((response) => {
+        this.setIsAuthRequired(response.status === 401);
+
+        this.setIsSetupRequired(response.status === 424);
+
         if (response.ok) {
           return response.json();
         }
 
-        if (response.status === 401) {
-          this.setIsAuthRequired(true);
-        }
-        if (response.status === 424) {
-          this.setIsshowInitializeDatabasePage(true);
-        }
         return response.json().then((data) => {
           throw new Error(data.message || `HTTP error! status: ${response.status}`);
         });
@@ -92,8 +90,8 @@ class mainStore {
         return null;
       });
   };
-  setIsshowInitializeDatabasePage = (val: boolean) => {
-    this.showInitializeDatabasePage = val;
+  setIsSetupRequired = (val: boolean) => {
+    this.isSetupRequired = val;
   };
   setSelectedTagId = (val: string | null | number) => {
     this.selectedTagId = typeof val === 'number' ? val.toString() : val;
@@ -213,7 +211,7 @@ class mainStore {
     this.preSelectedItemSettingsModal = val;
   };
   fetchItems = async () => {
-    return this.runRequest(API_ENDPOINTS.items.list, 'GET', {}, 'Failed to fetch items').then((data) => {
+    return await this.runRequest(API_ENDPOINTS.items.list, 'GET', {}, 'Failed to fetch items').then((data) => {
       if (data === null) {
         return;
       }
@@ -370,7 +368,7 @@ class mainStore {
         return false;
       }
       this.setIsAuthRequired(false);
-      this.setIsshowInitializeDatabasePage(false);
+      this.setIsSetupRequired(false);
       return true;
     });
   };
