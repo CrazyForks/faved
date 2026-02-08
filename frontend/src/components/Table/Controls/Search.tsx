@@ -15,7 +15,6 @@ export function Search<TData>({ table, globalFilter }: DataTableToolbarProps<TDa
 
   const updateSearch = (value: string) => {
     table.setGlobalFilter(value);
-    table.firstPage();
   };
 
   return (

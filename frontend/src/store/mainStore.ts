@@ -6,6 +6,7 @@ import {
   CreateUserType,
   ItemType,
   LoginType,
+  TagFilterType,
   TagsObjectType,
   TagType,
   UpdatePasswordType,
@@ -16,7 +17,7 @@ import { getCookie } from '@/lib/utils.ts';
 
 class mainStore {
   items: ItemType[] = [];
-  tags: TagsObjectType[] = [];
+  tags: TagsObjectType = [];
   type: ActionType = '' as ActionType;
   user: UserType | null = null;
   idItem: number | undefined = undefined;
@@ -25,7 +26,7 @@ class mainStore {
   error: string | null = null;
   isOpenSettingsModal: boolean = false;
   preSelectedItemSettingsModal: string | null = null;
-  selectedTagId: string | null = null; // Default to null for no tag selected. 'none' for without any tags
+  tagFilter: TagFilterType = null; // Default to null for no tag selected. 'none' for without any tags
   isShowEditModal: boolean = false;
   appInfo: {
     installed_version: string | null;
@@ -93,8 +94,8 @@ class mainStore {
   setIsSetupRequired = (val: boolean) => {
     this.isSetupRequired = val;
   };
-  setSelectedTagId = (val: string | null | number) => {
-    this.selectedTagId = typeof val === 'number' ? val.toString() : val;
+  setTagFilter = (val: TagFilterType) => {
+    this.tagFilter = val;
   };
   setUser = (user: UserType) => {
     this.user = user;
@@ -109,8 +110,8 @@ class mainStore {
   setTags = (tags: TagsObjectType) => {
     const renderTagSegment = (tag: TagType) => {
       let output = '';
-      if (tag.parent !== '0') {
-        const parentTag = Object.values(tags).find((t) => t.id.toString() === tag.parent.toString());
+      if (tag.parent !== 0) {
+        const parentTag = Object.values(tags).find((t) => t.id === tag.parent);
         if (parentTag) {
           output += renderTagSegment(parentTag) + '/';
         }
@@ -120,16 +121,12 @@ class mainStore {
     };
 
     for (const tagID in tags) {
-      const tagId = tagID.toString();
-      tags[tagId] = {
-        ...tags[tagId],
-        id: tags[tagId].id.toString(),
-        parent: tags[tagId].parent.toString(),
-        fullPath: renderTagSegment(tags[tagId]),
-        pinned: !!tags[tagId].pinned,
-      };
+      const tag = tags[tagID];
+      tag.fullPath = renderTagSegment(tag);
+      tag.pinned = !!tag.pinned;
     }
-    this.tags = tags as unknown as TagsObjectType[];
+
+    this.tags = tags as TagsObjectType;
   };
   setIsAuthRequired = (val: boolean) => {
     this.isAuthRequired = val;
@@ -142,12 +139,12 @@ class mainStore {
       this.setTags(data);
     });
   };
-  createTag = async (title: string) => {
+  createTag = async (title: string): Promise<number | null> => {
     let tagID = null;
 
     await this.runRequest(API_ENDPOINTS.tags.create, 'POST', { title }, 'Error creating tag')
       .then((data) => {
-        tagID = data?.data?.tag_id || null;
+        tagID = (data?.data?.tag_id as number) || null;
       })
       .finally(() => {
         this.fetchTags();
@@ -165,32 +162,32 @@ class mainStore {
       this.fetchItems();
     });
   };
-  onChangeTagTitle = async (tagID: string, title: string) => {
+  onChangeTagTitle = async (tagID: number, title: string) => {
     this.runRequest(API_ENDPOINTS.tags.updateTitle(tagID), 'PATCH', { title }, 'Error updating tag title').finally(
       () => {
         this.fetchTags();
       }
     );
   };
-  onChangeTagColor = async (tagID: string, color: string) => {
+  onChangeTagColor = async (tagID: number, color: string) => {
     return this.runRequest(
       API_ENDPOINTS.tags.updateColor(tagID),
       'PATCH',
       { color },
       'Error updating tag color'
     ).finally(() => {
-      const tag = { ...this.tags[tagID as unknown as number], color };
+      const tag = { ...this.tags[tagID], color };
       this.tags = { ...this.tags, [tagID]: tag };
     });
   };
-  onChangeTagPinned = async (tagID: string, pinned: boolean) => {
+  onChangeTagPinned = async (tagID: number, pinned: boolean) => {
     return this.runRequest(
       API_ENDPOINTS.tags.updatePinned(tagID),
       'PATCH',
       { pinned },
       'Error updating tag pinned'
     ).finally(() => {
-      const tag = { ...this.tags[tagID as unknown as number], pinned };
+      const tag = { ...this.tags[tagID], pinned };
       this.tags = { ...this.tags, [tagID]: tag };
     });
   };

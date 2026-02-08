@@ -253,7 +253,7 @@ const EditItemForm = observer(({ isCloseWindowOnSubmit }: EditItemFormProps) => 
                   : '')
               }
               onChange={field.onChange}
-              values={field.value ?? []}
+              tagIDs={field.value ?? []}
             />
           </FormControl>
         </FormItem>

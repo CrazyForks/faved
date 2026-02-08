@@ -9,20 +9,22 @@ import {
 import { StoreContext } from '@/store/storeContext.ts';
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
+import { useItemListState } from '@/hooks/useItemListState.ts';
 
 export const NavMain = observer(() => {
   const store = React.useContext(StoreContext);
   const { isMobile, toggleSidebar } = useSidebar();
+  const { setTagFilter } = useItemListState();
 
   const setAllTags = () => {
-    store.setSelectedTagId(null);
+    setTagFilter(null);
     if (isMobile) {
       toggleSidebar();
     }
   };
 
   const setWithoutTags = () => {
-    store.setSelectedTagId('none');
+    setTagFilter('none');
     if (isMobile) {
       toggleSidebar();
     }
@@ -32,13 +34,13 @@ export const NavMain = observer(() => {
     {
       title: 'All items',
       onClick: setAllTags,
-      isSelected: store.selectedTagId === null,
+      isSelected: store.tagFilter === null,
       icon: null,
     },
     {
       title: 'Untagged',
       onClick: setWithoutTags,
-      isSelected: store.selectedTagId === 'none',
+      isSelected: store.tagFilter === 'none',
       icon: null,
     },
   ];

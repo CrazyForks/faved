@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -20,8 +20,9 @@ import { Sorter } from '../components/Table/Controls/Sorter.tsx';
 import { Pagination } from '../components/Table/Controls/Pagination.tsx';
 import { CardsLayout } from '../components/Table/Layouts/CardsLayout.tsx';
 import { PreviewImage } from '@/components/Table/Fields/PreviewImage.tsx';
-import { ActionType, ItemType, LayoutType } from '@/lib/types.ts';
+import { ActionType, ItemType, LayoutType, TagFilterType } from '@/lib/types.ts';
 import { ItemsActions } from '@/components/Table/Fields/ItemActions.tsx';
+import Loading from '@/layouts/Loading.tsx';
 import {
   cn,
   getSavedLayoutColumnVisibilityPreference,
@@ -49,8 +50,8 @@ import { Separator } from '@/components/ui/separator.tsx';
 import { Dashboard } from '@/layouts/Dashboard.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { BulkActionControls } from '@/components/Table/Controls/BulkActionControls.tsx';
-import { useSearchParams } from 'react-router-dom';
-import { useEffectEvent } from '@radix-ui/react-use-effect-event';
+import { useUrlState } from '@/hooks/useUrlState.ts';
+import { useItemListState } from '@/hooks/useItemListState.ts';
 
 const columns: ColumnDef<ItemType>[] = [
   {
@@ -129,25 +130,25 @@ const columns: ColumnDef<ItemType>[] = [
     enableHiding: true,
     meta: { class: 'min-w-xs' },
 
-    filterFn: (row, columnId, filterValue) => {
+    filterFn: (row, columnId, filterValue: TagFilterType) => {
       if (filterValue === null) {
         return true;
       }
-      const tags = row.getValue('tags') as number[];
-      if (filterValue === 'none' && tags.length === 0) {
+      const tagIDs = row.getValue('tags') as number[];
+      if (filterValue === 'none' && tagIDs.length === 0) {
         return true;
       }
 
-      return tags.includes(Number(filterValue) as unknown as number);
+      return tagIDs.includes(filterValue as number);
     },
     cell: ({ row }) => {
-      const tags = row.getValue('tags') as number[];
-      if (tags.length === 0) {
+      const tagIDs = row.getValue('tags') as number[];
+      if (tagIDs.length === 0) {
         return null;
       }
       return (
         <div className="flex w-full flex-wrap gap-1 py-2 leading-6.5">
-          {tags.map((tagID) => (
+          {tagIDs.map((tagID) => (
             <TagBadge key={tagID} tagID={tagID} />
           ))}
         </div>
@@ -191,38 +192,44 @@ const columns: ColumnDef<ItemType>[] = [
   },
 ];
 
-export const ItemList: React.FC = observer(() => {
+const Table: React.FC = observer(() => {
   const store = React.useContext(StoreContext);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const pageIndex = useMemo(() => Number(searchParams.get('page') ?? 1) - 1, [searchParams]);
-  const pageSize = useMemo(() => Number(searchParams.get('per_page') ?? 25), [searchParams]);
-  const sortBy = useMemo(() => searchParams.get('sort') ?? 'created_at', [searchParams]);
-  const isSortOrderDesc = useMemo(() => searchParams.get('order') !== 'asc', [searchParams]);
-  const search = useMemo(() => searchParams.get('search') ?? '', [searchParams]);
-  const tags = useMemo(() => searchParams.get('tag') ?? null, [searchParams]);
+  const { searchParams, setUrlState } = useUrlState();
+  const pageIndexParam = useMemo(() => Number(searchParams.get('page') ?? 1) - 1, [searchParams]);
+  const pageSizeParam = useMemo(() => Number(searchParams.get('per_page') ?? 25), [searchParams]);
+  const sortByParam = useMemo(() => searchParams.get('sort') ?? 'created_at', [searchParams]);
+  const isSortOrderDescParam = useMemo(() => searchParams.get('order') !== 'asc', [searchParams]);
+  const searchKeywordParam = useMemo(() => searchParams.get('search') ?? '', [searchParams]);
+  const tagFilterParam: number | 'none' | null = useMemo(() => {
+    const value = searchParams.get('tag');
+    if (value === 'none' || value === null) {
+      return value;
+    }
+    return Number(value);
+  }, [searchParams]);
 
-  const data = store.items;
-  const [globalFilter, setGlobalFilter] = React.useState<string>(search);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
+  const [globalFilter, setGlobalFilter] = React.useState<string>(searchKeywordParam);
+  const isInitialMount = React.useRef(true);
+  const columnFilters: ColumnFiltersState = [
     {
       id: 'tags',
-      value: tags,
+      value: isInitialMount ? (store.tagFilter ?? tagFilterParam) : store.tagFilter,
     },
-  ]);
+  ];
   const [rowSelection, setRowSelection] = React.useState({});
   const [layout, setLayout] = useState<LayoutType>(getSavedLayoutPreference());
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(
     getSavedLayoutColumnVisibilityPreference(layout)
   );
   const [pagination, setPagination] = useState({
-    pageIndex: pageIndex,
-    pageSize: pageSize,
+    pageIndex: pageIndexParam,
+    pageSize: pageSizeParam,
   });
   const [sorting, setSorting] = React.useState<SortingState>([
     {
-      id: sortBy,
-      desc: isSortOrderDesc,
+      id: sortByParam,
+      desc: isSortOrderDescParam,
     },
   ]);
   const [columnOrder, setColumnOrder] = useState<string[]>([
@@ -241,168 +248,90 @@ export const ItemList: React.FC = observer(() => {
   /**
    * State and URL syncing
    */
-  const setUrlState = useCallback(
-    (updates) => {
-      setSearchParams(
-        (prev) => {
-          const params = new URLSearchParams(prev);
-
-          Object.entries(updates).forEach(([key, value]) => {
-            if (value === null || value === '') {
-              params.delete(key);
-            } else {
-              params.set(key, `${value}`);
-            }
-          });
-
-          return params;
-        },
-        { replace: false }
-      );
-    },
-    [setSearchParams]
-  );
-
   // Search >
-  const updateGlobalFilterState = useEffectEvent((globalFilterState) => {
-    if (globalFilter === globalFilterState) {
+  const setGlobalFilterFromTable = (updaterOrValue) => {
+    const newGlobalFilter = typeof updaterOrValue === 'function' ? updaterOrValue(globalFilter) : updaterOrValue;
+    setGlobalFilter(newGlobalFilter);
+    setPagination((oldValue) => {
+      return {
+        pageIndex: 0,
+        pageSize: oldValue.pageSize,
+      };
+    });
+  };
+
+  // Update state from navigation changes
+  useEffect(() => {
+    if (globalFilter === searchKeywordParam) {
       return;
     }
-    setGlobalFilter(globalFilterState);
-  });
+    setGlobalFilter(searchKeywordParam);
+  }, [searchKeywordParam]);
 
+  // Update URL from state change with delay
   useEffect(() => {
-    updateGlobalFilterState(search);
-  }, [search]);
-
-  const updateSearchURLParams = useEffectEvent((searchParam) => {
-    if (searchParam === search) {
+    if (globalFilter === searchKeywordParam) {
       return;
     }
 
     const timeoutId = setTimeout(() => {
       setUrlState({
-        search: searchParam,
+        search: globalFilter,
         // Preventing race conditions
         page: 1,
       });
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  });
-
-  useEffect(() => {
-    return updateSearchURLParams(globalFilter);
   }, [globalFilter]);
   // ^ Search
 
   // Pagination >
-  const updatePaginationState = useEffectEvent((pageIndexState, pageSizeState) => {
-    if (pagination.pageIndex === pageIndexState && pagination.pageSize === pageSizeState) {
+  const setPaginationFromTable = (updaterOrValue) => {
+    const newPagination = typeof updaterOrValue === 'function' ? updaterOrValue(pagination) : updaterOrValue;
+
+    setPagination(newPagination);
+    setUrlState({
+      page: newPagination.pageIndex + 1,
+      per_page: newPagination.pageSize,
+    });
+  };
+
+  // Update state from navigation changes
+  useEffect(() => {
+    if (pagination.pageIndex === pageIndexParam && pagination.pageSize === pageSizeParam) {
       return;
     }
 
     setPagination({
-      pageIndex: pageIndexState,
-      pageSize: pageSizeState,
+      pageIndex: pageIndexParam,
+      pageSize: pageSizeParam,
     });
-  });
-
-  useEffect(() => {
-    updatePaginationState(pageIndex, pageSize);
-  }, [pageIndex, pageSize]);
-
-  const updatePaginationURLParams = useEffectEvent((page, per_page) => {
-    if (page === pageIndex + 1 && per_page === pageSize) {
-      return;
-    }
-
-    setUrlState({
-      page: page,
-      per_page: per_page,
-    });
-  });
-
-  useEffect(() => {
-    updatePaginationURLParams(pagination.pageIndex + 1, pagination.pageSize);
-  }, [pagination.pageIndex, pagination.pageSize]);
+  }, [pageIndexParam, pageSizeParam]);
   // ^ Pagination
 
   // Sorting >
-  const updateSortingState = useEffectEvent((sortByState, isSortOrderDescState) => {
-    if (sorting[0].id === sortByState && sorting[0].desc === isSortOrderDescState) {
+  // Update state from navigation changes
+  useEffect(() => {
+    if (sorting[0].id === sortByParam && sorting[0].desc === isSortOrderDescParam) {
       return;
     }
 
-    setSorting([
-      {
-        id: sortByState,
-        desc: isSortOrderDescState,
-      },
-    ]);
-  });
-
-  useEffect(() => {
-    updateSortingState(sortBy, isSortOrderDesc);
-  }, [sortBy, isSortOrderDesc]);
-
-  const updateSortingURLParams = useEffectEvent((sortByParam, isSortOrderDescParam) => {
-    if (sortByParam === sortBy && isSortOrderDescParam === isSortOrderDesc) {
-      return;
-    }
-
-    setUrlState({
-      sort: sortByParam,
-      order: isSortOrderDescParam ? 'desc' : 'asc',
-    });
-  });
-
-  useEffect(() => {
-    updateSortingURLParams(sorting[0]?.id, sorting[0]?.desc);
-  }, [sorting]);
+    updateSorting(sortByParam, isSortOrderDescParam, true);
+  }, [sortByParam, isSortOrderDescParam]);
   // ^ Sorting
 
   // Tag >
-  const updateTagFilterFromURLParams = useEffectEvent((tagsParam) => {
-    if (store.selectedTagId === tagsParam) {
-      return;
-    }
-    store.setSelectedTagId(tagsParam);
-  });
-
+  const { setTagFilter } = useItemListState();
+  // Update state from navigation changes
   useEffect(() => {
-    updateTagFilterFromURLParams(tags);
-  }, [tags]);
-
-  const updateTableTagFilter = useEffectEvent((selectedTagId) => {
-    if (selectedTagId === columnFilters[0].value) {
-      return;
-    }
-    setColumnFilters([
-      {
-        id: 'tags',
-        value: selectedTagId,
-      },
-    ]);
-    table.firstPage();
-  });
-
-  const updateTagFilterURLParams = useEffectEvent((selectedTagId) => {
-    if (selectedTagId === tags) {
+    isInitialMount.current = false;
+    if (store.tagFilter === tagFilterParam) {
       return;
     }
 
-    setUrlState({
-      tag: selectedTagId,
-      // Preventing race conditions
-      page: 1,
-    });
-  });
-
-  useEffect(() => {
-    updateTableTagFilter(store.selectedTagId);
-    updateTagFilterURLParams(store.selectedTagId);
-  }, [store.selectedTagId]);
+    setTagFilter(tagFilterParam, true);
+  }, [tagFilterParam]);
   // ^ Tag
   /**
    * End of state and URL syncing
@@ -413,27 +342,18 @@ export const ItemList: React.FC = observer(() => {
     setColumnVisibility(savedColumnVisibility);
   }, [layout]);
 
-  useEffect(() => {
-    if (table.getState().pagination.pageIndex >= table.getPageCount()) {
-      table.lastPage();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
   const table = useReactTable({
-    data,
+    data: store.items,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
+    onGlobalFilterChange: setGlobalFilterFromTable,
     onColumnOrderChange: setColumnOrder,
-    onPaginationChange: setPagination,
+    onPaginationChange: setPaginationFromTable,
     globalFilterFn: 'includesString',
     autoResetPageIndex: false,
     state: {
@@ -450,14 +370,35 @@ export const ItemList: React.FC = observer(() => {
   const sortableColumns = table.getAllColumns().filter((column) => column.getCanSort());
   const visibilityToggleColumns = table.getAllColumns().filter((column) => column.getCanHide());
 
-  const updateSorting = (columnId: string, isDesc: boolean) => {
+  useEffect(() => {
+    if (table.getState().pagination.pageIndex >= table.getPageCount()) {
+      table.lastPage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [table.getPageCount()]);
+
+  const updateSorting = (columnId: string, isDesc: boolean, skipURLUpdate: boolean = false) => {
     setSorting([
       {
         id: columnId,
         desc: isDesc,
       },
     ]);
-    table.firstPage();
+    setPagination((oldValue) => {
+      return {
+        pageIndex: 0,
+        pageSize: oldValue.pageSize,
+      };
+    });
+    if (skipURLUpdate) {
+      return;
+    }
+
+    setUrlState({
+      sort: columnId,
+      order: isDesc ? 'desc' : 'asc',
+      page: 1,
+    });
   };
 
   const updateLayout = (newValue: LayoutType) => {
@@ -489,7 +430,7 @@ export const ItemList: React.FC = observer(() => {
   };
 
   return (
-    <Dashboard>
+    <>
       <header className="bg-background sticky top-0 z-50 flex h-(--header-height) w-full items-center gap-1.5 border-b px-4 backdrop-blur-sm group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mx-1 data-[orientation=vertical]:h-8" />
@@ -543,6 +484,30 @@ export const ItemList: React.FC = observer(() => {
         )}
         <BulkActionControls table={table} />
       </div>
-    </Dashboard>
+    </>
   );
 });
+
+export const ItemList = () => {
+  const store = useContext(StoreContext);
+
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const loadData = async () => {
+      await Promise.all([store.fetchItems(), store.fetchTags()]);
+      setIsLoading(false);
+    };
+
+    loadData();
+  }, [store]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  return (
+    <Dashboard>
+      <Table />
+    </Dashboard>
+  );
+};
