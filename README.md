@@ -7,11 +7,19 @@ Free and open source. No ads or tracking. All data is stored locally.
 
 <div align="center">
   
-  🧪 **[Try Live Demo](https://demo.faved.dev/?utm_source=github&utm_medium=readme)** | 🌐 **[Visit Website](https://faved.dev/?utm_source=github&utm_medium=readme)** |  ☁️ **[Cloud Version](https://faved.cloud/signup?utm_source=github&utm_medium=readme)** 
+  🧪 **[Try Live Demo](https://demo.faved.dev/?utm_source=github&utm_medium=readme)** | 🌐 **[Visit Website](https://faved.dev/?utm_source=github&utm_medium=readme)** | 📖 **[Read the Docs](https://faved.dev/docs/getting-started/introduction)**
 </div>
+
+
 <div align="center">
   
-  📚 **[Read Blog](https://faved.dev/blog?utm_source=github&utm_medium=readme)** | 𝕏 **[Follow on X](https://x.com/FavedTool)**
+  📚 **[Blog](https://faved.dev/blog?utm_source=github&utm_medium=readme)** | 𝕏 **[Twitter](https://x.com/FavedTool)** | 💬 **[Discord](https://discord.gg/vzYdSJWF)**
+</div>
+
+
+<div align="center">
+
+☁️ **[Start in the Cloud — No Setup Required](https://faved.cloud/signup?utm_source=github&utm_medium=readme)** 
 </div>
 
 <img width="2400" height="1400" alt="screenshot-list-desktop-mobile-safari" src="https://github.com/user-attachments/assets/9b5fb4d4-6b95-4fae-a9bd-fb1600a3d00c" />
