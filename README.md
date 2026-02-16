@@ -13,7 +13,7 @@ Free and open source. No ads or tracking. All data is stored locally.
 
 <div align="center">
   
-  📚 **[Blog](https://faved.dev/blog?utm_source=github&utm_medium=readme)** | 𝕏 **[Twitter](https://x.com/FavedTool)** | 💬 **[Discord](https://discord.gg/vzYdSJWF)**
+  📚 **[Blog](https://faved.dev/blog?utm_source=github&utm_medium=readme)** | 𝕏 **[Twitter](https://x.com/FavedTool)** | 💬 **[Discord](https://discord.gg/VZrtc8vWp7)**
 </div>
 
 
