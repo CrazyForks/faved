@@ -2,6 +2,9 @@
 
 namespace Utils;
 
+use Framework\ServiceContainer;
+use Models\Item;
+use Models\ItemCreator;
 use Models\Repository;
 use Models\TagCreator;
 
@@ -22,9 +25,10 @@ class BookmarkImporter
 		// Create tags
 		$folder_tag_map = $this->writeTags($folders);
 
-		// Create bookmark items
-		$this->writeItems($bookmarks, $folder_tag_map);
-		return count($bookmarks);
+		// Save items to DB
+		$items = $this ->saveItems($bookmarks, $folder_tag_map);
+
+		return count($items);
 	}
 
 	private function extractData(string $content): array
@@ -61,7 +65,7 @@ class BookmarkImporter
 			}
 
 			$bookmarks[] = [
-				'title' => $title ?: $url,
+				'title' => $title,
 				'url' => $url,
 				'folder_paths' => $folder_paths
 			];
@@ -109,25 +113,23 @@ class BookmarkImporter
 			[]
 		);
 	}
-
-	protected function writeItems($items, $tag_map)
+	protected function saveItems($bookmarks, $folder_tag_map)
 	{
-		array_walk($items, function ($item) use ($tag_map) {
-
-			$item_id = $this->repository->createItem(
-				$item['title'],
-				'',
-				$item['url'],
-				'',
-				'',
-				date('Y-m-d H:i:s'),
-			);
-
+		$items = array_map(function ($bookmark) use ($folder_tag_map) {
 			$tag_ids = array_intersect_key(
-				$tag_map,
-				array_flip($item['folder_paths'])
+				$folder_tag_map,
+				array_flip($bookmark['folder_paths'])
 			);
-			$this->repository->attachItemsTags([$item_id], $tag_ids);
-		});
+			return new Item(
+				$bookmark['url'],
+				$bookmark['title'] ?: $bookmark['url'],
+				'',
+				'',
+				'',
+				array_values($tag_ids)
+			);
+		}, $bookmarks);
+		$item_creator = ServiceContainer::get(ItemCreator::class);
+		return $item_creator->createItems($items);
 	}
 }
