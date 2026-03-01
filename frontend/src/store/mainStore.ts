@@ -381,35 +381,44 @@ class mainStore {
       return true;
     });
   };
-  importPocketBookmarks = async (selectedFile: File, setIsLoading: (val: boolean) => void) => {
-    return this.importBookmarks(selectedFile, setIsLoading, 'pocket-zip', API_ENDPOINTS.importBookmarks.pocket);
+  importPocketBookmarks = async (selectedFile: File) => {
+    return await this.importBookmarks(selectedFile, 'pocket-zip', API_ENDPOINTS.importBookmarks.pocket);
   };
 
-  importBrowserBookmarks = async (selectedFile: File, setIsLoading: (val: boolean) => void) => {
-    return this.importBookmarks(selectedFile, setIsLoading, 'browser-html', API_ENDPOINTS.importBookmarks.browser);
+  importBrowserBookmarks = async (selectedFile: File) => {
+    return await this.importBookmarks(
+      selectedFile,
+      'bookmark-file-html',
+      API_ENDPOINTS.importBookmarks.browser,
+      'browser'
+    );
   };
-  importBookmarks = async (
-    selectedFile: File,
-    setIsLoading: (val: boolean) => void,
-    inputName: string,
-    endpointUrl: string
-  ) => {
+
+  importRaindropIoBookmarks = async (selectedFile: File) => {
+    return await this.importBookmarks(
+      selectedFile,
+      'bookmark-file-html',
+      API_ENDPOINTS.importBookmarks.browser,
+      'Raindrop.io'
+    );
+  };
+
+  importBookmarks = async (selectedFile: File, inputName: string, endpointUrl: string, importSourceName?: string) => {
     const formData = new FormData();
     formData.append(inputName, selectedFile);
+    if (importSourceName) {
+      formData.append('import-source-name', importSourceName);
+    }
 
-    setIsLoading(true);
-
-    return this.runRequest(endpointUrl, 'POST', formData, 'Failed to import bookmarks')
-      .then((response) => {
-        if (response === null) {
-          return false;
-        }
-        this.setIsOpenSettingsModal(false);
-        this.fetchItems();
-        this.fetchTags();
-        return true;
-      })
-      .finally(() => setIsLoading(false));
+    return await this.runRequest(endpointUrl, 'POST', formData, 'Failed to import bookmarks').then((response) => {
+      if (response === null) {
+        return false;
+      }
+      this.setIsOpenSettingsModal(false);
+      this.fetchItems();
+      this.fetchTags();
+      return true;
+    });
   };
 
   fetchUrlMetadata = async (url: string) => {
