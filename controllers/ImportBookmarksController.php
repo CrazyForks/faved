@@ -35,7 +35,8 @@ class ImportBookmarksController implements ControllerInterface
 
 			$importer = new BookmarkImporter(
 				ServiceContainer::get(Repository::class),
-				ServiceContainer::get(TagCreator::class)
+				ServiceContainer::get(TagCreator::class),
+				'browser'
 			);
 
 			$skipped_count = 0;
