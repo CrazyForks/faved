@@ -20,8 +20,7 @@ class mainStore {
   user: UserType | null = null;
   isAuthRequired = null;
   isSetupRequired = null;
-  error: string | null = null;
-  isOpenSettingsModal: boolean = false;
+  isSettingsModalOpen: boolean = false;
   preSelectedItemSettingsModal: string | null = null;
   tagFilter: TagFilterType = null; // Default to null for no tag selected. 'none' for without any tags
   isItemModalOpen: boolean = false;
@@ -31,6 +30,7 @@ class mainStore {
     latest_version: string | null;
     update_available: boolean | null;
   } | null = null;
+  keepBulkActionsToolbar = false;
 
   constructor() {
     makeAutoObservable(this); // Makes state observable and actions transactional
@@ -209,8 +209,8 @@ class mainStore {
   setIsItemModalOpen = (val: boolean) => {
     this.isItemModalOpen = val;
   };
-  setIsOpenSettingsModal = (val: boolean) => {
-    this.isOpenSettingsModal = val;
+  setIsSettingsModalOpen = (val: boolean) => {
+    this.isSettingsModalOpen = val;
   };
   setPreSelectedItemSettingsModal = (val: string) => {
     this.preSelectedItemSettingsModal = val;
@@ -414,7 +414,7 @@ class mainStore {
       if (response === null) {
         return false;
       }
-      this.setIsOpenSettingsModal(false);
+      this.setIsSettingsModalOpen(false);
       this.fetchItems();
       this.fetchTags();
       return true;
@@ -439,6 +439,10 @@ class mainStore {
 
     this.appInfo = response.data;
     return response.data;
+  };
+
+  setKeepBulkActionsToolbar = (val: boolean) => {
+    this.keepBulkActionsToolbar = val;
   };
 }
 
