@@ -9,7 +9,7 @@ import { StrictMode } from 'react';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <StoreContext.Provider value={mainStore}>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="system" storageKey="faved-ui-theme">
         <App />
       </ThemeProvider>
     </StoreContext.Provider>
