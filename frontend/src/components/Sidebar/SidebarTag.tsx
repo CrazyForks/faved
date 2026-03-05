@@ -20,26 +20,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import { StoreContext } from '@/store/storeContext.ts';
-import { colorMap } from '@/lib/utils.ts';
+import { cn, colorMap } from '@/lib/utils.ts';
 import { getColorClass } from '@/components/Table/Fields/TagBadge.tsx';
 import { useItemListState } from '@/hooks/useItemListState.ts';
 import { TagType } from '@/lib/types.ts';
 
-export function SidebarTag({
-  tag,
-  innerItems = [],
-  level,
-  isTagSelected,
-  isChildTagSelected,
-}: {
-  tag: TagType;
-  innerItems?: React.ReactNode[];
-  level: number;
-  isTagSelected: boolean;
-  isChildTagSelected?: boolean;
-}) {
+const TagOutput = ({ tag, prependedNode = null, childTags = null, level, isTagSelected, className }) => {
+  const store = React.useContext(StoreContext);
+  const { setTagFilter } = useItemListState();
+  const { isMobile, toggleSidebar } = useSidebar();
   const [isRenaming, setIsRenaming] = React.useState(false);
-  const [isCollapsibleOpen, setIsCollapsibleOpen] = React.useState(isChildTagSelected);
 
   const [newTagTitle, setNewTagTitle] = React.useState(tag.fullPath);
   const inputRef = React.useRef(null);
@@ -49,27 +39,13 @@ export function SidebarTag({
   }, [tag.fullPath]);
 
   React.useEffect(() => {
-    if (isChildTagSelected !== true || isChildTagSelected === isCollapsibleOpen) {
+    if (!isRenaming || isMobile) {
       return;
     }
-    setIsCollapsibleOpen(isChildTagSelected);
-  }, [isChildTagSelected, isCollapsibleOpen]);
-
-  const store = React.useContext(StoreContext);
-  const { isMobile, toggleSidebar } = useSidebar();
-  const { setTagFilter } = useItemListState();
-
-  const deleteTag = () => {
-    store.onDeleteTag(tag.id);
-  };
-  const enableRenaming = () => {
-    setIsRenaming(true);
-    if (!isMobile) {
-      setTimeout(() => {
-        inputRef.current.focus();
-      }, 50);
-    }
-  };
+    setTimeout(() => {
+      inputRef.current.focus();
+    }, 50);
+  }, [isRenaming]);
 
   const submit = () => {
     store.onChangeTagTitle(tag.id, newTagTitle as string);
@@ -92,44 +68,70 @@ export function SidebarTag({
     }
   };
 
-  const tagContent = (className = '') => {
-    return (
-      <div onClick={setTag} className={`${className} flex w-full items-center justify-start gap-2 py-2 pe-0 text-left`}>
-        <span className={`h-2.5 w-2.5 flex-none rounded-full ${getColorClass(tag.color)}`}></span>
-        <input
-          ref={inputRef}
-          className={[
-            'tag-title-edit-input w-[85%] rounded-sm',
-            isRenaming ? '' : 'hidden',
-            isMobile ? 'border-1' : 'border-none',
-          ].join(' ')}
-          value={newTagTitle as string}
-          onChange={(e) => setNewTagTitle(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              revert();
-            } else if (e.key === 'Enter') {
-              submit();
-            }
-          }}
-          onBlur={() => {
-            if (!isMobile) revert();
-          }}
-        />
-        {!isRenaming && (
-          <span title={tag.title} className="line-clamp-1 break-all">
-            {tag.title}
-          </span>
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        onClick={setTag}
+        isActive={isTagSelected}
+        className={cn(
+          prependedNode ? `ps-0` : 'ps-8',
+          className,
+          'data-[active=true]:bg-primary/90 data-[active=true]:text-primary-foreground gap-0'
         )}
-        <IconPinned className={`ms-auto h-4 w-4 ` + (tag.pinned ? 'visible' : 'invisible')} />
-      </div>
-    );
+      >
+        {prependedNode}
+
+        <div className={cn('flex w-full items-center')}>
+          <span className={cn('mr-2 h-2.5 w-2.5 flex-none rounded-full', getColorClass(tag.color))}></span>
+
+          {isRenaming ? (
+            <input
+              ref={inputRef}
+              className={cn('tag-title-edit-input w-[85%] rounded-sm', isMobile ? 'border-1' : 'border-none')}
+              value={newTagTitle as string}
+              onChange={(e) => setNewTagTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  revert();
+                } else if (e.key === 'Enter') {
+                  submit();
+                }
+              }}
+              onBlur={() => {
+                if (!isMobile) revert();
+              }}
+            />
+          ) : (
+            <>
+              <span title={tag.title} className="line-clamp-1 break-all">
+                {tag.title}
+              </span>
+              {tag.pinned && <IconPinned className="ms-auto h-4 w-4 flex-none" />}
+            </>
+          )}
+        </div>
+      </SidebarMenuButton>
+
+      {childTags}
+
+      <TagActions tag={tag} level={level} setIsRenaming={setIsRenaming} />
+
+    </SidebarMenuItem>
+  );
+};
+
+const TagActions = ({ tag, level, setIsRenaming }) => {
+  const { isMobile } = useSidebar();
+  const store = React.useContext(StoreContext);
+
+  const deleteTag = () => {
+    store.onDeleteTag(tag.id);
   };
 
-  const actionButtons = (
+  return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <SidebarMenuAction className="data-[state=open]:bg-accent hover:bg-sidebar-accent sidebar-menu-action cursor-pointer rounded-sm">
+        <SidebarMenuAction showOnHover={true} className="cursor-pointer rounded-sm">
           <IconDotsVertical />
           <span className="sr-only">More</span>
         </SidebarMenuAction>
@@ -144,7 +146,7 @@ export function SidebarTag({
             <span>{tag.pinned ? 'Unpin' : 'Pin'} tag</span>
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem onClick={enableRenaming}>
+        <DropdownMenuItem onClick={() => setIsRenaming(true)}>
           <span>Rename</span>
         </DropdownMenuItem>
         <DropdownMenuSub>
@@ -172,42 +174,59 @@ export function SidebarTag({
       </DropdownMenuContent>
     </DropdownMenu>
   );
+};
 
-  const code =
-    innerItems.length > 0 ? (
-      <Collapsible className="group/collapsible" open={isCollapsibleOpen}>
-        <SidebarMenuItem data-selected={isTagSelected}>
-          <SidebarMenuButton
-            className={
-              'active:bg-primary/90 active:text-primary-foreground gap-0 p-0' +
-              (isTagSelected ? ' !bg-primary !text-primary-foreground' : '')
-            }
+export function SidebarTag({
+  tag,
+  renderedChildTags,
+  level,
+  isTagSelected,
+  isChildTagSelected,
+}: {
+  tag: TagType;
+  renderedChildTags: React.ReactNode[];
+  level: number;
+  isTagSelected: boolean;
+  isChildTagSelected?: boolean;
+}) {
+  const [isCollapsibleOpen, setIsCollapsibleOpen] = React.useState(isChildTagSelected);
+
+  React.useEffect(() => {
+    if (isChildTagSelected !== true || isChildTagSelected === isCollapsibleOpen) {
+      return;
+    }
+    setIsCollapsibleOpen(isChildTagSelected);
+  }, [isChildTagSelected]);
+
+  const hasChildTags = renderedChildTags.length > 0;
+
+  return hasChildTags ? (
+    <Collapsible className="group/collapsible" open={isCollapsibleOpen}>
+      <TagOutput
+        tag={tag}
+        level={level}
+        isTagSelected={isTagSelected}
+        className={cn(isChildTagSelected && !isCollapsibleOpen ? 'bg-primary/10' : '', 'gap-0')}
+        prependedNode={
+          <div
+            className="p-2 hover:cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsCollapsibleOpen(!isCollapsibleOpen);
+            }}
           >
-            <div className="p-2 hover:cursor-pointer" onClick={() => setIsCollapsibleOpen(!isCollapsibleOpen)}>
-              <IconChevronRight className={`h-4 w-4 transition-transform ` + (isCollapsibleOpen ? ` rotate-90` : '')} />
-            </div>
-            {tagContent()}
-          </SidebarMenuButton>
-
+            <IconChevronRight className={cn('h-4 w-4 transition-transform', isCollapsibleOpen ? `rotate-90` : '')} />
+          </div>
+        }
+        childTags={
           <CollapsibleContent>
-            <SidebarMenuSub className="mr-[1px] pr-0">{innerItems}</SidebarMenuSub>
+            <SidebarMenuSub className="mr-0 pr-0">{renderedChildTags}</SidebarMenuSub>
           </CollapsibleContent>
-          {actionButtons}
-        </SidebarMenuItem>
-      </Collapsible>
-    ) : (
-      <SidebarMenuItem data-selected={isTagSelected}>
-        <SidebarMenuButton
-          className={
-            `p-0` +
-            (isTagSelected ? ' bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : '')
-          }
-        >
-          {tagContent('pl-8')}
-        </SidebarMenuButton>
-        {actionButtons}
-      </SidebarMenuItem>
-    );
-
-  return code;
+        }
+      />
+    </Collapsible>
+  ) : (
+    <TagOutput tag={tag} level={level} isTagSelected={isTagSelected} />
+  );
 }

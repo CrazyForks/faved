@@ -8,37 +8,42 @@ import { observer } from 'mobx-react-lite';
 export const NavTags = observer(() => {
   const store = React.useContext(StoreContext);
   const selectedTag = store.tags[store.tagFilter] ?? null;
+  const allTags = Object.values(store.tags) as TagType[];
 
   function renderTag(parentID: number, level = 0): React.JSX.Element[] {
-    const output: React.JSX.Element[] = [];
-    const tags: TagType[] = Object.values(store.tags).filter((tag: TagType) => tag.parent === parentID) as TagType[];
+    const renderedTags: React.JSX.Element[] = [];
+    const tags: TagType[] = allTags.filter((tag: TagType) => tag.parent === parentID) as TagType[];
     tags.sort((a, b) => {
-      if (a.pinned && !b.pinned) return -1;
-      if (!a.pinned && b.pinned) return 1;
+      if (a.pinned && !b.pinned) {
+        return -1;
+      }
+      if (!a.pinned && b.pinned) {
+        return 1;
+      }
       return a.title.localeCompare(b.title);
     });
 
     level++;
 
     for (const tag of tags) {
-      const innerItems = renderTag(tag.id, level);
+      const renderedChildTags = renderTag(tag.id, level);
       const isTagSelected = store.tagFilter === tag.id;
       const isChildTagSelected = !isTagSelected && selectedTag && selectedTag.fullPath.indexOf(tag.fullPath) === 0;
 
-      const code = (
+      const renderedTag = (
         <SidebarTag
           key={tag.id}
           tag={tag}
-          innerItems={innerItems}
+          renderedChildTags={renderedChildTags}
           level={level}
           isTagSelected={isTagSelected}
           isChildTagSelected={isChildTagSelected}
         />
       );
-      output.push(code);
+      renderedTags.push(renderedTag);
     }
 
-    return output;
+    return renderedTags;
   }
 
   return (
