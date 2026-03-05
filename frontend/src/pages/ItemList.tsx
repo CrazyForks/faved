@@ -45,13 +45,12 @@ import {
 import { Button } from '@/components/ui/button.tsx';
 import { PlusIcon, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { SidebarTrigger } from '@/components/ui/sidebar.tsx';
-import { Separator } from '@/components/ui/separator.tsx';
 import { Dashboard } from '@/layouts/Dashboard.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { BulkActionControls } from '@/components/Table/Controls/BulkActionControls.tsx';
 import { useUrlState } from '@/hooks/useUrlState.ts';
 import { useItemListState } from '@/hooks/useItemListState.ts';
+import { SidebarToggler } from '@/components/Sidebar/SidebarToggler.tsx';
 
 const columns: ColumnDef<ItemType>[] = [
   {
@@ -448,10 +447,8 @@ const Table: React.FC = observer(() => {
 
   return (
     <>
-      <header className="bg-background sticky top-0 z-50 flex h-(--header-height) w-full items-center gap-1.5 border-b px-4 backdrop-blur-sm group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
-        <SidebarTrigger />
-        <Separator orientation="vertical" className="mx-1 data-[orientation=vertical]:h-8" />
-
+      <header className="bg-background sticky top-0 z-50 flex h-14 w-full items-center gap-1.5 border-b px-4 backdrop-blur-sm group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+        <SidebarToggler />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
@@ -470,14 +467,12 @@ const Table: React.FC = observer(() => {
           </DropdownMenuContent>
         </DropdownMenu>
         <Search table={table} globalFilter={globalFilter} />
-
         <Sorter
           selectedSortColumn={sorting[0]?.id}
           isDesc={sorting[0]?.desc}
           onChange={updateSorting}
           columns={sortableColumns}
         />
-
         <Button
           variant="default"
           onClick={() => {

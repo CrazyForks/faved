@@ -5,25 +5,59 @@ import { StoreContext } from '@/store/storeContext.ts';
 import { AppSidebar } from '@/components/Sidebar/AppSidebar.tsx';
 import { SettingsDialog } from '../components/Settings/SettingsDialog.tsx';
 import { EditItemDialog } from '@/components/EditItem/EditItemDialog.tsx';
+import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { useDefaultLayout, usePanelCallbackRef } from 'react-resizable-panels';
+import { useIsMobile } from '@/hooks/use-mobile.ts';
+import { SidebarPanelContext } from '@/contexts/SidebarPanelContext.ts';
 
 export const Dashboard = observer(({ children }: { children: React.ReactNode }) => {
   const store = useContext(StoreContext);
 
+  const isMobile = useIsMobile();
+  const { defaultLayout, onLayoutChanged } = useDefaultLayout({
+    id: 'dashboard-layout',
+  });
+  const [panelRef, setPanelRef] = usePanelCallbackRef();
+
+  const contextValue = React.useMemo(() => ({ panelRef }), [panelRef]);
+
   return (
     <>
-      <SidebarProvider
-        style={
-          {
-            '--sidebar-width': 'calc(var(--spacing) * 72)',
-            '--header-height': 'calc(var(--spacing) * 14)',
-          } as React.CSSProperties
-        }
-      >
-        <AppSidebar />
-        <main className="bg-background @container/main relative flex w-full flex-1 flex-col">{children}</main>
-      </SidebarProvider>
-      {store.isItemModalOpen && <EditItemDialog />}
-      {store.isSettingsModalOpen && <SettingsDialog />}
+      <SidebarPanelContext.Provider value={contextValue}>
+        <SidebarProvider
+          style={
+            {
+              '--sidebar-width': '100%',
+            } as React.CSSProperties
+          }
+        >
+          <ResizablePanelGroup
+            orientation="horizontal"
+            className="fixed w-full"
+            defaultLayout={defaultLayout}
+            onLayoutChanged={onLayoutChanged}
+          >
+            {isMobile ? (
+              <AppSidebar />
+            ) : (
+              <ResizablePanel
+                minSize="280px"
+                maxSize="40%"
+                collapsible={true}
+                groupResizeBehavior="preserve-pixel-size"
+                panelRef={setPanelRef}
+              >
+                <AppSidebar />
+              </ResizablePanel>
+            )}
+            <ResizablePanel className="">
+              <main className="bg-background @container/main relative flex w-full flex-1 flex-col">{children}</main>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </SidebarProvider>
+        {store.isItemModalOpen && <EditItemDialog />}
+        {store.isSettingsModalOpen && <SettingsDialog />}
+      </SidebarPanelContext.Provider>
     </>
   );
 });
