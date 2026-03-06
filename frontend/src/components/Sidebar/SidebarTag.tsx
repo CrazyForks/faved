@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -25,7 +26,7 @@ import { getColorClass } from '@/components/Table/Fields/TagBadge.tsx';
 import { useItemListState } from '@/hooks/useItemListState.ts';
 import { TagType } from '@/lib/types.ts';
 
-const TagOutput = ({ tag, prependedNode = null, childTags = null, level, isTagSelected, className }) => {
+const TagOutput = ({ tag, prependedNode = null, childTags = null, itemCount, isTagSelected, className }) => {
   const store = React.useContext(StoreContext);
   const { setTagFilter } = useItemListState();
   const { isMobile, toggleSidebar } = useSidebar();
@@ -73,11 +74,7 @@ const TagOutput = ({ tag, prependedNode = null, childTags = null, level, isTagSe
       <SidebarMenuButton
         onClick={setTag}
         isActive={isTagSelected}
-        className={cn(
-          prependedNode ? `ps-0` : 'ps-8',
-          className,
-          'data-[active=true]:bg-primary/90 data-[active=true]:text-primary-foreground gap-0'
-        )}
+        className={cn(prependedNode ? `ps-0` : 'ps-8', className)}
       >
         {prependedNode}
 
@@ -114,13 +111,14 @@ const TagOutput = ({ tag, prependedNode = null, childTags = null, level, isTagSe
 
       {childTags}
 
-      <TagActions tag={tag} level={level} setIsRenaming={setIsRenaming} />
+      <TagActions tag={tag} setIsRenaming={setIsRenaming} />
 
+      <SidebarMenuBadge className="pointer-coarse:right-6">{itemCount}</SidebarMenuBadge>
     </SidebarMenuItem>
   );
 };
 
-const TagActions = ({ tag, level, setIsRenaming }) => {
+const TagActions = ({ tag, setIsRenaming }) => {
   const { isMobile } = useSidebar();
   const store = React.useContext(StoreContext);
 
@@ -141,7 +139,7 @@ const TagActions = ({ tag, level, setIsRenaming }) => {
         side={isMobile ? 'bottom' : 'right'}
         align={isMobile ? 'end' : 'start'}
       >
-        {level === 1 && (
+        {tag.parent === 0 && (
           <DropdownMenuItem onClick={() => store.onChangeTagPinned(tag.id, !tag.pinned)}>
             <span>{tag.pinned ? 'Unpin' : 'Pin'} tag</span>
           </DropdownMenuItem>
@@ -179,13 +177,13 @@ const TagActions = ({ tag, level, setIsRenaming }) => {
 export function SidebarTag({
   tag,
   renderedChildTags,
-  level,
+  itemCount,
   isTagSelected,
   isChildTagSelected,
 }: {
   tag: TagType;
   renderedChildTags: React.ReactNode[];
-  level: number;
+  itemCount: number;
   isTagSelected: boolean;
   isChildTagSelected?: boolean;
 }) {
@@ -204,7 +202,7 @@ export function SidebarTag({
     <Collapsible className="group/collapsible" open={isCollapsibleOpen}>
       <TagOutput
         tag={tag}
-        level={level}
+        itemCount={itemCount}
         isTagSelected={isTagSelected}
         className={cn(isChildTagSelected && !isCollapsibleOpen ? 'bg-primary/10' : '', 'gap-0')}
         prependedNode={
@@ -227,6 +225,6 @@ export function SidebarTag({
       />
     </Collapsible>
   ) : (
-    <TagOutput tag={tag} level={level} isTagSelected={isTagSelected} />
+    <TagOutput tag={tag} itemCount={itemCount} isTagSelected={isTagSelected} />
   );
 }

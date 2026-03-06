@@ -23,6 +23,19 @@ type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
 export const AppSidebar = observer(({ ...props }: AppSidebarProps) => {
   const store = React.useContext(StoreContext);
 
+  const itemIDsByTagID = store.items.reduce((acc: Record<number, number>, item) => {
+    if (item.tags && item.tags.length > 0) {
+      for (const tagID of item.tags) {
+        acc[tagID] = acc[tagID] || [];
+        acc[tagID].push(item.id);
+      }
+    } else {
+      acc[0] = acc[0] || [];
+      acc[0].push(item.id); // Count items without tags under key '0'
+    }
+    return acc;
+  }, {});
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -37,8 +50,8 @@ export const AppSidebar = observer(({ ...props }: AppSidebarProps) => {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="no-scrollbar gap-0">
-        <NavMain />
-        <NavTags />
+        <NavMain allItemCount={store.items.length} untaggedItemCount={itemIDsByTagID[0]?.length ?? 0} />
+        <NavTags itemIDsByTagID={itemIDsByTagID} />
       </SidebarContent>
       {store.user && (
         <SidebarFooter>
