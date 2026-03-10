@@ -446,7 +446,7 @@ const Table: React.FC = observer(() => {
   };
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <header className="bg-background sticky top-0 z-50 flex h-14 w-full items-center gap-1.5 border-b px-4 backdrop-blur-sm group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
         <SidebarToggler />
         <DropdownMenu>
@@ -484,7 +484,7 @@ const Table: React.FC = observer(() => {
         </Button>
       </header>
 
-      <div className="flex-1 overflow-hidden">
+      <div className="h-full overflow-y-scroll">
         {currentRows.length > 0 ? (
           <div className={`flex h-full flex-col justify-between gap-5 item-list--${layout}`}>
             {layouts[layout]}
@@ -495,7 +495,7 @@ const Table: React.FC = observer(() => {
         )}
         <BulkActionControls table={table} />
       </div>
-    </>
+    </div>
   );
 });
 

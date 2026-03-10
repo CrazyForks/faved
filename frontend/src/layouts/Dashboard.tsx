@@ -50,8 +50,8 @@ export const Dashboard = observer(({ children }: { children: React.ReactNode }) 
                 <AppSidebar />
               </ResizablePanel>
             )}
-            <ResizablePanel className="">
-              <main className="bg-background @container/main relative flex w-full flex-1 flex-col">{children}</main>
+            <ResizablePanel>
+              <main className="@container/main h-full">{children}</main>
             </ResizablePanel>
           </ResizablePanelGroup>
         </SidebarProvider>

@@ -40,7 +40,7 @@ export const AppSidebar = observer(({ ...props }: AppSidebarProps) => {
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem className="flex w-full justify-between">
+          <SidebarMenuItem className="flex w-full justify-between pl-2">
             <Logo />
             <div className="ml-auto flex items-center gap-0.5">
               <ThemeToggler />
