@@ -152,10 +152,6 @@ class mainStore {
     return tagID;
   };
   onDeleteTag = async (tagID: number) => {
-    if (!confirm('Are you sure you want to delete this tag?')) {
-      return;
-    }
-
     return this.runRequest(API_ENDPOINTS.tags.deleteTag(tagID), 'DELETE', {}, 'Error deleting tag').finally(() => {
       this.fetchTags();
       this.fetchItems();

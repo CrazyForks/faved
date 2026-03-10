@@ -296,19 +296,31 @@ class Repository
 		]);
 	}
 
-	public function deleteItemTag($tag_id)
+	public function deleteTagsItemAttachment(array $tag_ids)
 	{
-		$stmt = $this->pdo->prepare("DELETE FROM items_tags WHERE tag_id = :tag_id");
+		if (empty($tag_ids)) {
+			return false;
+		}
 
-		return $stmt->execute([':tag_id' => $tag_id]);
+		$sql_in = implode(',', array_fill(0, count($tag_ids), '?'));
+		$stmt = $this->pdo->prepare("DELETE FROM items_tags 
+		WHERE tag_id IN ($sql_in)");
+
+		return $stmt->execute($tag_ids);
 
 	}
 
-	public function deleteTag($tag_id)
+	public function deleteTags(array $tag_ids)
 	{
-		$stmt = $this->pdo->prepare("DELETE FROM tags WHERE id = :tag_id");
+		if (empty($tag_ids)) {
+			return false;
+		}
+		$sql_in = implode(',', array_fill(0, count($tag_ids), '?'));
 
-		return $stmt->execute([':tag_id' => $tag_id]);
+		$stmt = $this->pdo->prepare("DELETE FROM tags 
+		WHERE id IN ($sql_in)");
+
+		return $stmt->execute($tag_ids);
 
 	}
 

@@ -12,6 +12,7 @@ import { IconChevronRight, IconDotsVertical, IconPinned } from '@tabler/icons-re
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuSeparator,
@@ -25,6 +26,7 @@ import { cn, colorMap } from '@/lib/utils.ts';
 import { getColorClass } from '@/components/Table/Fields/TagBadge.tsx';
 import { useItemListState } from '@/hooks/useItemListState.ts';
 import { TagType } from '@/lib/types.ts';
+import { DeleteTagDialog } from '@/components/Sidebar/DeleteTagDialog.tsx';
 
 const TagOutput = ({ tag, prependedNode = null, childTags = null, itemCount, isTagSelected, className }) => {
   const store = React.useContext(StoreContext);
@@ -111,14 +113,14 @@ const TagOutput = ({ tag, prependedNode = null, childTags = null, itemCount, isT
 
       {childTags}
 
-      <TagActions tag={tag} setIsRenaming={setIsRenaming} />
+      <TagActions tag={tag} setIsRenaming={setIsRenaming} hasChildTags={childTags !== null} />
 
       <SidebarMenuBadge className="pointer-coarse:right-6">{itemCount}</SidebarMenuBadge>
     </SidebarMenuItem>
   );
 };
 
-const TagActions = ({ tag, setIsRenaming }) => {
+const TagActions = ({ tag, setIsRenaming, hasChildTags }) => {
   const { isMobile } = useSidebar();
   const store = React.useContext(StoreContext);
 
@@ -166,9 +168,13 @@ const TagActions = ({ tag, setIsRenaming }) => {
           </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={deleteTag}>
-          <span>Delete</span>
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem variant="destructive" onClick={(e) => e.preventDefault()} className="p-0">
+            <DeleteTagDialog onConfirm={deleteTag} hasChildTags={hasChildTags}>
+              <span className="w-full px-2 py-1">Delete</span>
+            </DeleteTagDialog>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -194,6 +200,7 @@ export function SidebarTag({
       return;
     }
     setIsCollapsibleOpen(isChildTagSelected);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isChildTagSelected]);
 
   const hasChildTags = renderedChildTags.length > 0;
