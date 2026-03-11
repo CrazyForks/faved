@@ -21,7 +21,19 @@ export const useItemListState = () => {
     });
   };
 
+  const setIncludeNestedTagItems = (includeNestedTagItems: boolean) => {
+    store.setIncludeNestedTagItems(includeNestedTagItems);
+
+    setUrlState(
+      {
+        'include-nested': Number(includeNestedTagItems),
+      },
+      { replace: true }
+    );
+  };
+
   return {
     setTagFilter,
+    setIncludeNestedTagItems,
   };
 };

@@ -129,7 +129,7 @@ const columns: ColumnDef<ItemType>[] = [
     enableHiding: true,
     meta: { class: 'min-w-xs' },
 
-    filterFn: (row, columnId, filterValue: TagFilterType) => {
+    filterFn: (row, columnId, filterValue: number[] | 'none' | null) => {
       if (filterValue === null) {
         return true;
       }
@@ -137,8 +137,7 @@ const columns: ColumnDef<ItemType>[] = [
       if (filterValue === 'none' && tagIDs.length === 0) {
         return true;
       }
-
-      return tagIDs.includes(filterValue as number);
+      return tagIDs.some((val) => filterValue.includes(val));
     },
     cell: ({ row }) => {
       const tagIDs = row.getValue('tags') as number[];
@@ -200,6 +199,7 @@ const Table: React.FC = observer(() => {
   const sortByParam = useMemo(() => searchParams.get('sort') ?? 'created_at', [searchParams]);
   const isSortOrderDescParam = useMemo(() => searchParams.get('order') !== 'asc', [searchParams]);
   const searchKeywordParam = useMemo(() => searchParams.get('search') ?? '', [searchParams]);
+  const includeNestedParam = useMemo(() => !!Number(searchParams.get('include-nested') ?? 1), [searchParams]);
   const tagFilterParam = useMemo<TagFilterType>(() => {
     const value = searchParams.get('tag');
     if (value === 'none') {
@@ -214,10 +214,27 @@ const Table: React.FC = observer(() => {
 
   const [globalFilter, setGlobalFilter] = React.useState<string>(searchKeywordParam);
   const isInitialMount = React.useRef(true);
+  const tagColumnFilter = useMemo(() => {
+    const tagFilter = isInitialMount ? (store.tagFilter ?? tagFilterParam) : store.tagFilter;
+    if (tagFilter === null || tagFilter === 'none') {
+      return tagFilter;
+    }
+    if (store.includeNestedTagItems) {
+      const selectedTag = store.tags[tagFilter] ?? null;
+      const childTagIDs = Object.values(store.tags)
+        .filter((tag) => tag.fullPathIDs.startsWith(selectedTag.fullPathIDs) && tag.id !== selectedTag.id)
+        .map((tag) => tag.id);
+      return [tagFilter, ...childTagIDs];
+    }
+    return [tagFilter];
+  }, [store.tagFilter, store.includeNestedTagItems, tagFilterParam, isInitialMount]);
+
+  // console.log(tagColumnFilter);
+
   const columnFilters: ColumnFiltersState = [
     {
       id: 'tags',
-      value: isInitialMount ? (store.tagFilter ?? tagFilterParam) : store.tagFilter,
+      value: tagColumnFilter,
     },
   ];
   const [rowSelection, setRowSelection] = React.useState({});
@@ -329,7 +346,7 @@ const Table: React.FC = observer(() => {
   // ^ Sorting
 
   // Tag >
-  const { setTagFilter } = useItemListState();
+  const { setTagFilter, setIncludeNestedTagItems } = useItemListState();
   // Update state from navigation changes
   useEffect(() => {
     isInitialMount.current = false;
@@ -340,6 +357,15 @@ const Table: React.FC = observer(() => {
     setTagFilter(tagFilterParam, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagFilterParam]);
+
+  useEffect(() => {
+    if (store.includeNestedTagItems === includeNestedParam) {
+      return;
+    }
+
+    setIncludeNestedTagItems(includeNestedParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [includeNestedParam]);
   // ^ Tag
   /**
    * End of state and URL syncing

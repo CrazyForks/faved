@@ -31,6 +31,7 @@ class mainStore {
     update_available: boolean | null;
   } | null = null;
   keepBulkActionsToolbar = false;
+  includeNestedTagItems = true;
 
   constructor() {
     makeAutoObservable(this); // Makes state observable and actions transactional
@@ -107,21 +108,28 @@ class mainStore {
     this.user = null;
   };
   setTags = (tags: TagsObjectType) => {
+    const tagArray = Object.values(tags);
     const renderTagSegment = (tag: TagType) => {
-      let output = '';
+      let fullPath = '';
+      let fullPathIDs = '';
       if (tag.parent !== 0) {
-        const parentTag = Object.values(tags).find((t) => t.id === tag.parent);
+        const parentTag = tagArray.find((t) => t.id === tag.parent);
         if (parentTag) {
-          output += renderTagSegment(parentTag) + '/';
+          const paths = renderTagSegment(parentTag);
+          fullPath += paths.fullPath + '/';
+          fullPathIDs += paths.fullPathIDs + '/';
         }
       }
-      output += tag.title.replaceAll('/', '\\/');
-      return output;
+      fullPath += tag.title.replaceAll('/', '\\/');
+      fullPathIDs += String(tag.id);
+      return { fullPath, fullPathIDs };
     };
 
     for (const tagID in tags) {
       const tag = tags[tagID];
-      tag.fullPath = renderTagSegment(tag);
+      const { fullPath, fullPathIDs } = renderTagSegment(tag);
+      tag.fullPath = fullPath;
+      tag.fullPathIDs = fullPathIDs;
       tag.pinned = !!tag.pinned;
     }
 
@@ -439,6 +447,10 @@ class mainStore {
 
   setKeepBulkActionsToolbar = (val: boolean) => {
     this.keepBulkActionsToolbar = val;
+  };
+
+  setIncludeNestedTagItems = (val: boolean) => {
+    this.includeNestedTagItems = val;
   };
 }
 

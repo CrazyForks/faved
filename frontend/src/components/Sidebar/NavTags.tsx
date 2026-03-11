@@ -4,6 +4,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
+  useSidebar,
 } from '@/components/ui/sidebar.tsx';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
@@ -14,11 +15,22 @@ import { observer } from 'mobx-react-lite';
 import { Search, SearchIcon, X } from 'lucide-react';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group.tsx';
 import { Kbd } from '@/components/ui/kbd.tsx';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu.tsx';
+import { IconDotsVertical } from '@tabler/icons-react';
+import { useItemListState } from '@/hooks/useItemListState.ts';
 
 export const NavTags = observer(({ itemIDsByTagID }) => {
   const store = React.useContext(StoreContext);
   const selectedTag = store.tags[store.tagFilter] ?? null;
   const [tagSearchValue, setTagSearchValue] = useState('');
+  const { isMobile } = useSidebar();
+  const { setIncludeNestedTagItems } = useItemListState();
 
   const allTags = useMemo(() => Object.values(store.tags) as TagType[], [store.tags]);
 
@@ -70,7 +82,10 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
           threadMatchesSearch || currentTagMatchesSearch
         );
         // Ensure we don't double count items that are assigned multiple child tags and/or current tag and child tags
-        const accountedItemIDs = new Set([...currentTagItemIDs, ...childTagsItemIDs]);
+        const accountedItemIDs = new Set([
+          ...currentTagItemIDs,
+          ...(store.includeNestedTagItems ? childTagsItemIDs : []),
+        ]);
         levelItemIDs = [...levelItemIDs, ...accountedItemIDs];
 
         if (!isTagSearchActive || currentTagMatchesSearch || childTagsMatchSearch || threadMatchesSearch) {
@@ -127,12 +142,34 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
           </InputGroupAddon>
         </InputGroup>
       ) : (
-        <>
-          <SidebarGroupLabel>Tags</SidebarGroupLabel>
-          <SidebarGroupAction className="right-3" onClick={showTagSearch}>
+        <div className="flex items-center justify-end gap-2">
+          <SidebarGroupLabel className="me-auto">Tags</SidebarGroupLabel>
+          <SidebarGroupAction className="relative top-0 right-0 after:hidden" onClick={showTagSearch}>
             <Search /> <span className="sr-only">Filter tags</span>
           </SidebarGroupAction>
-        </>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarGroupAction className="relative top-0 right-0 after:hidden">
+                <IconDotsVertical />
+                <span className="sr-only">More</span>
+              </SidebarGroupAction>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="rounded-lg"
+              side={isMobile ? 'bottom' : 'right'}
+              align={isMobile ? 'end' : 'start'}
+            >
+              <DropdownMenuGroup>
+                <DropdownMenuCheckboxItem
+                  checked={store.includeNestedTagItems}
+                  onCheckedChange={(value) => setIncludeNestedTagItems(value)}
+                >
+                  <span>Include items from nested tags</span>
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       )}
 
       <SidebarGroupContent className="flex flex-col gap-2">
