@@ -28,7 +28,15 @@ import { useItemListState } from '@/hooks/useItemListState.ts';
 import { TagType } from '@/lib/types.ts';
 import { DeleteTagDialog } from '@/components/Sidebar/DeleteTagDialog.tsx';
 
-const TagOutput = ({ tag, prependedNode = null, childTags = null, itemCount, isTagSelected, className }) => {
+const TagOutput = ({
+  tag,
+  hightlightText,
+  prependedNode = null,
+  childTags = null,
+  itemCount,
+  isTagSelected,
+  className,
+}) => {
   const store = React.useContext(StoreContext);
   const { setTagFilter } = useItemListState();
   const { isMobile, toggleSidebar } = useSidebar();
@@ -103,8 +111,19 @@ const TagOutput = ({ tag, prependedNode = null, childTags = null, itemCount, isT
           ) : (
             <>
               <span title={tag.title} className="line-clamp-1 break-all">
-                {tag.title}
+                {hightlightText !== null
+                  ? tag.title.split(new RegExp(`(${hightlightText})`, 'gi')).map((part, i) =>
+                      part.toLowerCase() === hightlightText.toLowerCase() ? (
+                        <mark key={i} className="rounded-sm bg-yellow-200 px-0.5 dark:bg-yellow-800">
+                          {part}
+                        </mark>
+                      ) : (
+                        part
+                      )
+                    )
+                  : tag.title}
               </span>
+
               {tag.pinned && <IconPinned className="ms-auto h-4 w-4 flex-none" />}
             </>
           )}
@@ -186,14 +205,18 @@ export function SidebarTag({
   itemCount,
   isTagSelected,
   isChildTagSelected,
+  childTagsMatchSearch,
+  hightlightText,
 }: {
   tag: TagType;
   renderedChildTags: React.ReactNode[];
   itemCount: number;
   isTagSelected: boolean;
-  isChildTagSelected?: boolean;
+  isChildTagSelected: boolean;
+  childTagsMatchSearch: boolean;
+  hightlightText: string | null;
 }) {
-  const [isCollapsibleOpen, setIsCollapsibleOpen] = React.useState(isChildTagSelected);
+  const [isCollapsibleOpen, setIsCollapsibleOpen] = React.useState(isChildTagSelected || childTagsMatchSearch);
 
   React.useEffect(() => {
     if (isChildTagSelected !== true || isChildTagSelected === isCollapsibleOpen) {
@@ -203,6 +226,14 @@ export function SidebarTag({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isChildTagSelected]);
 
+  React.useEffect(() => {
+    if (childTagsMatchSearch === isCollapsibleOpen) {
+      return;
+    }
+    setIsCollapsibleOpen(childTagsMatchSearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [childTagsMatchSearch]);
+
   const hasChildTags = renderedChildTags.length > 0;
 
   return hasChildTags ? (
@@ -211,6 +242,7 @@ export function SidebarTag({
         tag={tag}
         itemCount={itemCount}
         isTagSelected={isTagSelected}
+        hightlightText={hightlightText}
         className={cn(isChildTagSelected && !isCollapsibleOpen ? 'bg-primary/10' : '', 'gap-0')}
         prependedNode={
           <div
@@ -232,6 +264,6 @@ export function SidebarTag({
       />
     </Collapsible>
   ) : (
-    <TagOutput tag={tag} itemCount={itemCount} isTagSelected={isTagSelected} />
+    <TagOutput tag={tag} itemCount={itemCount} hightlightText={hightlightText} isTagSelected={isTagSelected} />
   );
 }
