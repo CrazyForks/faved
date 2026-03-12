@@ -7,7 +7,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar.tsx';
-import { StoreContext } from '@/store/storeContext.ts';
+import { PreferencesStoreContext, StoreContext } from '@/store/storeContext.ts';
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useItemListState } from '@/hooks/useItemListState.ts';
@@ -15,6 +15,7 @@ import { useItemListState } from '@/hooks/useItemListState.ts';
 export const NavMain = observer(
   ({ allItemCount, untaggedItemCount }: { allItemCount: number; untaggedItemCount: number }) => {
     const store = React.useContext(StoreContext);
+    const prefStore = React.useContext(PreferencesStoreContext);
     const { isMobile, toggleSidebar } = useSidebar();
     const { setTagFilter } = useItemListState();
 
@@ -64,7 +65,7 @@ export const NavMain = observer(
                   {link.icon && <link.icon />}
                   <span>{link.title}</span>
                 </SidebarMenuButton>
-                <SidebarMenuBadge>{link.badge}</SidebarMenuBadge>
+                {prefStore.displaySidebarTagItemCounts && <SidebarMenuBadge>{link.badge}</SidebarMenuBadge>}
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

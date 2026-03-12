@@ -18,12 +18,7 @@ export const colorMap = {
 };
 
 export const getSavedLayoutPreference = (): LayoutType => {
-  try {
-    const stored: LayoutType = localStorage.getItem('layout') as LayoutType;
-    return stored || 'list';
-  } catch {
-    return 'list';
-  }
+  return (localStorage.getItem('layout') as LayoutType) || 'list';
 };
 
 export const saveLayoutPreference = (value: LayoutType): void => {

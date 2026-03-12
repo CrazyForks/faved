@@ -13,7 +13,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { StoreContext } from '@/store/storeContext.ts';
+import { PreferencesStoreContext, StoreContext } from '@/store/storeContext.ts';
 import { Search } from '../components/Table/Controls/Search.tsx';
 import { observer } from 'mobx-react-lite';
 import { Sorter } from '../components/Table/Controls/Sorter.tsx';
@@ -192,6 +192,7 @@ const columns: ColumnDef<ItemType>[] = [
 
 const Table: React.FC = observer(() => {
   const store = React.useContext(StoreContext);
+  const prefStore = React.useContext(PreferencesStoreContext);
 
   const { searchParams, setUrlState } = useUrlState();
   const pageIndexParam = useMemo(() => Number(searchParams.get('page') ?? 1) - 1, [searchParams]);
@@ -199,7 +200,6 @@ const Table: React.FC = observer(() => {
   const sortByParam = useMemo(() => searchParams.get('sort') ?? 'created_at', [searchParams]);
   const isSortOrderDescParam = useMemo(() => searchParams.get('order') !== 'asc', [searchParams]);
   const searchKeywordParam = useMemo(() => searchParams.get('search') ?? '', [searchParams]);
-  const includeNestedParam = useMemo(() => !!Number(searchParams.get('include-nested') ?? 1), [searchParams]);
   const tagFilterParam = useMemo<TagFilterType>(() => {
     const value = searchParams.get('tag');
     if (value === 'none') {
@@ -219,7 +219,7 @@ const Table: React.FC = observer(() => {
     if (tagFilter === null || tagFilter === 'none') {
       return tagFilter;
     }
-    if (store.includeNestedTagItems) {
+    if (prefStore.includeNestedTagItems) {
       const selectedTag = store.tags[tagFilter] ?? null;
       const childTagIDs = Object.values(store.tags)
         .filter((tag) => tag.fullPathIDs.startsWith(selectedTag.fullPathIDs) && tag.id !== selectedTag.id)
@@ -227,7 +227,7 @@ const Table: React.FC = observer(() => {
       return [tagFilter, ...childTagIDs];
     }
     return [tagFilter];
-  }, [store.tagFilter, store.includeNestedTagItems, tagFilterParam, isInitialMount]);
+  }, [store.tagFilter, store.tags, prefStore.includeNestedTagItems, tagFilterParam, isInitialMount]);
 
   // console.log(tagColumnFilter);
 
@@ -346,7 +346,7 @@ const Table: React.FC = observer(() => {
   // ^ Sorting
 
   // Tag >
-  const { setTagFilter, setIncludeNestedTagItems } = useItemListState();
+  const { setTagFilter } = useItemListState();
   // Update state from navigation changes
   useEffect(() => {
     isInitialMount.current = false;
@@ -357,15 +357,6 @@ const Table: React.FC = observer(() => {
     setTagFilter(tagFilterParam, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagFilterParam]);
-
-  useEffect(() => {
-    if (store.includeNestedTagItems === includeNestedParam) {
-      return;
-    }
-
-    setIncludeNestedTagItems(includeNestedParam);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [includeNestedParam]);
   // ^ Tag
   /**
    * End of state and URL syncing

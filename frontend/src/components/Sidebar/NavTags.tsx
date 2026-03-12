@@ -10,7 +10,7 @@ import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { TagType } from '@/lib/types.ts';
 import { SidebarTag } from '@/components/Sidebar/SidebarTag.tsx';
-import { StoreContext } from '@/store/storeContext.ts';
+import { PreferencesStoreContext, StoreContext } from '@/store/storeContext.ts';
 import { observer } from 'mobx-react-lite';
 import { Search, SearchIcon, X } from 'lucide-react';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group.tsx';
@@ -23,14 +23,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import { IconDotsVertical } from '@tabler/icons-react';
-import { useItemListState } from '@/hooks/useItemListState.ts';
 
 export const NavTags = observer(({ itemIDsByTagID }) => {
   const store = React.useContext(StoreContext);
+  const prefStore = React.useContext(PreferencesStoreContext);
   const selectedTag = store.tags[store.tagFilter] ?? null;
   const [tagSearchValue, setTagSearchValue] = useState('');
   const { isMobile } = useSidebar();
-  const { setIncludeNestedTagItems } = useItemListState();
 
   const allTags = useMemo(() => Object.values(store.tags) as TagType[], [store.tags]);
 
@@ -84,7 +83,7 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
         // Ensure we don't double count items that are assigned multiple child tags and/or current tag and child tags
         const accountedItemIDs = new Set([
           ...currentTagItemIDs,
-          ...(store.includeNestedTagItems ? childTagsItemIDs : []),
+          ...(prefStore.includeNestedTagItems ? childTagsItemIDs : []),
         ]);
         levelItemIDs = [...levelItemIDs, ...accountedItemIDs];
 
@@ -111,7 +110,7 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
 
       return [renderedTags, levelItemIDs, levelTagsMatchSearch];
     },
-    [allTags, selectedTag, store.tagFilter, itemIDsByTagID, tagSearchValue]
+    [allTags, selectedTag, store.tagFilter, prefStore.includeNestedTagItems, itemIDsByTagID, tagSearchValue]
   );
   const [renderedTagTree] = renderTag(0);
 
@@ -142,7 +141,7 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
           </InputGroupAddon>
         </InputGroup>
       ) : (
-        <div className="flex items-center justify-end gap-2">
+        <div className="me-1 flex items-center justify-end gap-2">
           <SidebarGroupLabel className="me-auto">Tags</SidebarGroupLabel>
           <SidebarGroupAction className="relative top-0 right-0 after:hidden" onClick={showTagSearch}>
             <Search /> <span className="sr-only">Filter tags</span>
@@ -161,10 +160,16 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
             >
               <DropdownMenuGroup>
                 <DropdownMenuCheckboxItem
-                  checked={store.includeNestedTagItems}
-                  onCheckedChange={(value) => setIncludeNestedTagItems(value)}
+                  checked={prefStore.includeNestedTagItems}
+                  onCheckedChange={(value) => prefStore.setIncludeNestedTagItems(value)}
                 >
                   <span>Include items from nested tags</span>
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={prefStore.displaySidebarTagItemCounts}
+                  onCheckedChange={(value) => prefStore.setDisplaySidebarTagItemCounts(value)}
+                >
+                  <span>Display item count</span>
                 </DropdownMenuCheckboxItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>

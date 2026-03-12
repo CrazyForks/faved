@@ -14,7 +14,7 @@ import {
 } from '@/lib/types.ts';
 import { getCookie } from '@/lib/utils.ts';
 
-class mainStore {
+class MainStore {
   items: ItemType[] = [];
   tags: TagsObjectType = [];
   user: UserType | null = null;
@@ -31,7 +31,6 @@ class mainStore {
     update_available: boolean | null;
   } | null = null;
   keepBulkActionsToolbar = false;
-  includeNestedTagItems = true;
 
   constructor() {
     makeAutoObservable(this); // Makes state observable and actions transactional
@@ -448,10 +447,6 @@ class mainStore {
   setKeepBulkActionsToolbar = (val: boolean) => {
     this.keepBulkActionsToolbar = val;
   };
-
-  setIncludeNestedTagItems = (val: boolean) => {
-    this.includeNestedTagItems = val;
-  };
 }
 
-export default new mainStore();
+export const mainStore = new MainStore();

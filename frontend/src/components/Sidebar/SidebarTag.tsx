@@ -21,7 +21,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
-import { StoreContext } from '@/store/storeContext.ts';
+import { PreferencesStoreContext, StoreContext } from '@/store/storeContext.ts';
 import { cn, colorMap } from '@/lib/utils.ts';
 import { getColorClass } from '@/components/Table/Fields/TagBadge.tsx';
 import { useItemListState } from '@/hooks/useItemListState.ts';
@@ -38,6 +38,7 @@ const TagOutput = ({
   className,
 }) => {
   const store = React.useContext(StoreContext);
+  const prefStore = React.useContext(PreferencesStoreContext);
   const { setTagFilter } = useItemListState();
   const { isMobile, toggleSidebar } = useSidebar();
   const [isRenaming, setIsRenaming] = React.useState(false);
@@ -84,7 +85,13 @@ const TagOutput = ({
       <SidebarMenuButton
         onClick={setTag}
         isActive={isTagSelected}
-        className={cn(prependedNode ? `ps-0` : 'ps-8', className)}
+        className={cn(
+          prependedNode ? `ps-0` : 'ps-8',
+          prefStore.displaySidebarTagItemCounts
+            ? 'group-has-data-[sidebar=menu-action]/menu-item:pr-12 pointer-coarse:group-has-data-[sidebar=menu-action]/menu-item:pr-17'
+            : 'group-has-data-[sidebar=menu-action]/menu-item:pr-8 pointer-coarse:group-has-data-[sidebar=menu-action]/menu-item:pr-8',
+          className
+        )}
       >
         {prependedNode}
 
@@ -133,8 +140,9 @@ const TagOutput = ({
       {childTags}
 
       <TagActions tag={tag} setIsRenaming={setIsRenaming} hasChildTags={childTags !== null} />
-
-      <SidebarMenuBadge className="pointer-coarse:right-6">{itemCount}</SidebarMenuBadge>
+      {prefStore.displaySidebarTagItemCounts && (
+        <SidebarMenuBadge className="pointer-coarse:right-6">{itemCount}</SidebarMenuBadge>
+      )}
     </SidebarMenuItem>
   );
 };
