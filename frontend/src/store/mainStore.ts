@@ -164,12 +164,20 @@ class MainStore {
       this.fetchItems();
     });
   };
-  onChangeTagTitle = async (tagID: number, title: string) => {
-    this.runRequest(API_ENDPOINTS.tags.updateTitle(tagID), 'PATCH', { title }, 'Error updating tag title').finally(
-      () => {
-        this.fetchTags();
-      }
+  updateTag = async (tagID: number, title: string, description: string) => {
+    const response = await this.runRequest(
+      API_ENDPOINTS.tags.update(tagID),
+      'PATCH',
+      { title, description },
+      'Error updating tag'
     );
+
+    if (response === null) {
+      return false;
+    }
+
+    this.fetchTags();
+    return true;
   };
   onChangeTagColor = async (tagID: number, color: string) => {
     return this.runRequest(

@@ -248,17 +248,19 @@ class Repository
 		]);
 	}
 
-	public function updateTagTitle($tag_id, $title)
+	public function updateTag($tag_id, string $title, string $description)
 	{
 		$stmt = $this->pdo->prepare(
 			'UPDATE tags 
 			SET title = :title, 
+			description = :description, 
 			updated_at = :updated_at
 			WHERE id = :id'
 		);
 
 		return $stmt->execute([
 			':title' => $title,
+			':description' => $description,
 			':updated_at' => date('Y-m-d H:i:s'),
 			':id' => $tag_id
 		]);

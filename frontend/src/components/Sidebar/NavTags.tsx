@@ -97,7 +97,7 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
               isTagSelected={isTagSelected}
               isChildTagSelected={isChildTagSelected}
               childTagsMatchSearch={childTagsMatchSearch}
-              hightlightText={currentTagMatchesSearch ? tagSearchValue : null}
+              highlightText={currentTagMatchesSearch ? tagSearchValue : null}
             />
           );
           renderedTags.push(renderedTag);

@@ -45,7 +45,8 @@ function extractTagSegments(string $title): array
 	$segments = explode('/', $title);
 	$segments = array_map(fn($segment) => str_replace('__SLASH__', '/', $segment), $segments);
 	// Remove empty segments
-	$segments = array_filter($segments, fn($segment) => '' !== trim($segment));
+	$segments = array_map('trim', $segments);
+	$segments = array_filter($segments, fn($segment) => '' !== $segment);
 	return $segments;
 }
 

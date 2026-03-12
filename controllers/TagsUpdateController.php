@@ -3,31 +3,37 @@
 namespace Controllers;
 
 use Framework\ControllerInterface;
-use Framework\Exceptions\ValidationException;
 use Framework\Responses\ResponseInterface;
 use Framework\ServiceContainer;
 use Models\Repository;
-use function Framework\data;
+use Respect\Validation\Validator;
+use function Framework\success;
 use function Utils\createTagsFromSegments;
 use function Utils\extractTagSegments;
 
-class TagsUpdateTitleController implements ControllerInterface
+class TagsUpdateController implements ControllerInterface
 {
+	public function validateInput()
+	{
+		return Validator::key('tag-id', Validator::stringType()->notEmpty())
+			->key('title', Validator::stringType()->notEmpty()->length(1, 255))
+			->key('description', Validator::stringType()->length(null, 1000));
+	}
+
 	public function __invoke(array $input): ResponseInterface
 	{
-		if (!isset($input['tag-id'], $input['title'])) {
-			throw new ValidationException('Invalid input data for tag title update.');
-		}
-
 		$tag_id = (int)$input['tag-id'];
 
 		$tag_segments = extractTagSegments($input['title']);
 		$tag_title = array_pop($tag_segments);
 
+		$tag_description = trim($input['description']);
+
 		$repository = ServiceContainer::get(Repository::class);
-		$repository->updateTagTitle(
+		$repository->updateTag(
 			$tag_id,
 			$tag_title,
+			$tag_description,
 		);
 
 		$parent_id = createTagsFromSegments($tag_segments);
@@ -35,14 +41,14 @@ class TagsUpdateTitleController implements ControllerInterface
 		// Update the tag parent after updating the title to prevent a circular reference
 		$repository->updateTagParent($tag_id, $parent_id);
 
-		return data([
-			'success' => true,
-			'message' => 'Tag title updated successfully',
-			'data' => [
+		return success(
+			'Tag updated successfully',
+			[
 				'tag_id' => $tag_id,
 				'title' => $input['title'],
+				'description' => $input['description'],
 			]
-		]);
+		);
 	}
 
 }
