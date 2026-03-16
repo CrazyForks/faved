@@ -22,8 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import { PreferencesStoreContext, StoreContext } from '@/store/storeContext.ts';
-import { cn, colorMap } from '@/lib/utils.ts';
-import { getColorClass } from '@/lib/utils.ts';
+import { cn, colorMap, getColorClass } from '@/lib/utils.ts';
 import { useItemListState } from '@/hooks/useItemListState.ts';
 import { TagType } from '@/lib/types.ts';
 import { DeleteTagDialog } from '@/components/Sidebar/DeleteTagDialog.tsx';
@@ -37,7 +36,7 @@ import { Info } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner.tsx';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer.tsx';
 
-const TagOutput = ({
+const TagItem = ({
   tag,
   highlightText,
   prependedNode = null,
@@ -46,36 +45,11 @@ const TagOutput = ({
   isTagSelected,
   className,
 }) => {
-  const store = React.useContext(StoreContext);
   const prefStore = React.useContext(PreferencesStoreContext);
   const { setTagFilter } = useItemListState();
   const { isMobile, toggleSidebar } = useSidebar();
 
   const [isEditOpen, setIsEditOpen] = React.useState(false);
-  const [isUpdateInProgress, setIsUpdateInProgress] = React.useState(false);
-
-  const [newTagTitle, setNewTagTitle] = React.useState<string>(tag.fullPath);
-  const [newTagDescription, setNewTagDescription] = React.useState<string>(tag.description);
-
-  const showEditControls = () => {
-    setIsEditOpen(true);
-  };
-
-  const submit = async () => {
-    setIsUpdateInProgress(true);
-    const success = await store.updateTag(tag.id, newTagTitle, newTagDescription);
-    setIsUpdateInProgress(false);
-    if (!success) {
-      return;
-    }
-    setIsEditOpen(false);
-  };
-
-  const revert = () => {
-    setNewTagTitle(tag.fullPath);
-    setNewTagDescription(tag.description);
-    setIsEditOpen(false);
-  };
 
   const selectTag = () => {
     if (isEditOpen) {
@@ -87,71 +61,8 @@ const TagOutput = ({
     }
   };
 
-  const tagEditForm = (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        submit();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Escape') {
-          revert();
-        }
-      }}
-    >
-      <FieldGroup className="gap-3" autoFocus={false}>
-        <Field orientation="vertical" className="gap-1.5">
-          <FieldLabel htmlFor="tag-name">Tag name</FieldLabel>
-          <Input
-            id="tag-name"
-            autoComplete="off"
-            value={newTagTitle as string}
-            onChange={(e) => setNewTagTitle(e.target.value)}
-          />
-        </Field>
-        <Field orientation="vertical" className="gap-1.5">
-          <FieldLabel htmlFor="tag-description">Description</FieldLabel>
-          <Textarea
-            id="tag-description"
-            value={newTagDescription as string}
-            onChange={(e) => setNewTagDescription(e.target.value)}
-          />
-        </Field>
-      </FieldGroup>
-      <div className="flex flex-col-reverse gap-2 pt-4 md:flex-row md:justify-end">
-        <Button type="reset" size="sm" onClick={revert} variant="secondary">
-          Cancel
-        </Button>
-        <Button type="submit" size="sm" variant="default" disabled={isUpdateInProgress}>
-          {isUpdateInProgress && <Spinner />}
-          Save
-        </Button>
-      </div>
-    </form>
-  );
-
   return (
     <SidebarMenuItem className="relative">
-      {isMobile ? (
-        <Drawer open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Edit tag</DrawerTitle>
-            </DrawerHeader>
-
-            <div className="mx-4 mb-4">{tagEditForm}</div>
-          </DrawerContent>
-        </Drawer>
-      ) : (
-        <Popover open={isEditOpen} modal={true}>
-          <PopoverAnchor className="absolute right-0 bottom-0" />
-          <PopoverContent align="end" sideOffset={2}>
-            <PopoverHeader className="mb-2 text-center">Edit tag</PopoverHeader>
-            {tagEditForm}
-          </PopoverContent>
-        </Popover>
-      )}
-
       <SidebarMenuButton
         onClick={selectTag}
         isActive={isTagSelected}
@@ -199,7 +110,8 @@ const TagOutput = ({
 
       {childTags}
 
-      <TagActions tag={tag} showEditControls={showEditControls} hasChildTags={childTags !== null} />
+      <TagActions tag={tag} isEditOpen={isEditOpen} setIsEditOpen={setIsEditOpen} hasChildTags={childTags !== null} />
+
       {prefStore.displaySidebarTagItemCounts && (
         <SidebarMenuBadge className="pointer-coarse:right-6">{itemCount}</SidebarMenuBadge>
       )}
@@ -207,7 +119,7 @@ const TagOutput = ({
   );
 };
 
-const TagActions = ({ tag, showEditControls, hasChildTags }) => {
+const TagActions = ({ tag, isEditOpen, setIsEditOpen, hasChildTags }) => {
   const { isMobile } = useSidebar();
   const store = React.useContext(StoreContext);
 
@@ -215,53 +127,151 @@ const TagActions = ({ tag, showEditControls, hasChildTags }) => {
     store.onDeleteTag(tag.id);
   };
 
+  const showEditControls = () => {
+    setIsEditOpen(true);
+  };
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <SidebarMenuAction showOnHover={true} className="cursor-pointer rounded-sm">
-          <IconDotsVertical />
-          <span className="sr-only">More</span>
-        </SidebarMenuAction>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-24 rounded-lg"
-        side={isMobile ? 'bottom' : 'right'}
-        align={isMobile ? 'end' : 'start'}
-      >
-        <DropdownMenuItem onClick={showEditControls}>
-          <span>Edit tag</span>
-        </DropdownMenuItem>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger> Color</DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              {Object.keys(colorMap).map((color) => (
-                <DropdownMenuItem
-                  key={color}
-                  className={`text-${colorMap[color]}-foreground hover:bg-${colorMap[color]}-foreground/10`}
-                  onClick={() => store.onChangeTagColor(tag.id, color)}
-                >
-                  <span className={`mr-1 inline-block h-3 w-3 rounded-full ${colorMap[color]}`}></span>{' '}
-                  {color.charAt(0).toUpperCase() + color.slice(1)}
-                  <span className="ml-auto">{tag.color === color ? '✓' : ''}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
-        <DropdownMenuItem onClick={() => store.onChangeTagPinned(tag.id, !tag.pinned)} disabled={tag.parent !== 0}>
-          <span>{tag.pinned ? 'Unpin' : 'Pin'} tag</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem variant="destructive" onClick={(e) => e.preventDefault()} className="p-0">
-            <DeleteTagDialog onConfirm={deleteTag} hasChildTags={hasChildTags}>
-              <span className="w-full px-2 py-1">Delete</span>
-            </DeleteTagDialog>
+    <>
+      {isMobile ? (
+        <Drawer open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Edit tag</DrawerTitle>
+            </DrawerHeader>
+
+            <div className="mx-4 mb-4">
+              <TagEditForm tag={tag} setIsEditOpen={setIsEditOpen} />
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Popover open={isEditOpen} modal={true}>
+          <PopoverAnchor className="absolute right-0 bottom-0" />
+          <PopoverContent align="end" sideOffset={2}>
+            <PopoverHeader className="mb-2 text-center">Edit tag</PopoverHeader>
+            <TagEditForm tag={tag} setIsEditOpen={setIsEditOpen} />
+          </PopoverContent>
+        </Popover>
+      )}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuAction showOnHover={true} className="cursor-pointer rounded-sm">
+            <IconDotsVertical />
+            <span className="sr-only">More</span>
+          </SidebarMenuAction>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-24 rounded-lg"
+          side={isMobile ? 'bottom' : 'right'}
+          align={isMobile ? 'end' : 'start'}
+        >
+          <DropdownMenuItem onClick={showEditControls}>
+            <span>Edit tag</span>
           </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger> Color</DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                {Object.keys(colorMap).map((color) => (
+                  <DropdownMenuItem
+                    key={color}
+                    className={`text-${colorMap[color]}-foreground hover:bg-${colorMap[color]}-foreground/10`}
+                    onClick={() => store.onChangeTagColor(tag.id, color)}
+                  >
+                    <span className={`mr-1 inline-block h-3 w-3 rounded-full ${colorMap[color]}`}></span>{' '}
+                    {color.charAt(0).toUpperCase() + color.slice(1)}
+                    <span className="ml-auto">{tag.color === color ? '✓' : ''}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+          <DropdownMenuItem onClick={() => store.onChangeTagPinned(tag.id, !tag.pinned)} disabled={tag.parent !== 0}>
+            <span>{tag.pinned ? 'Unpin' : 'Pin'} tag</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem variant="destructive" onClick={(e) => e.preventDefault()} className="p-0">
+              <DeleteTagDialog onConfirm={deleteTag} hasChildTags={hasChildTags}>
+                <span className="w-full px-2 py-1">Delete</span>
+              </DeleteTagDialog>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+};
+
+const TagEditForm = ({ tag, setIsEditOpen }) => {
+  const store = React.useContext(StoreContext);
+  const [isUpdateInProgress, setIsUpdateInProgress] = React.useState(false);
+
+  const [newTagTitle, setNewTagTitle] = React.useState<string>(tag.fullPath);
+  const [newTagDescription, setNewTagDescription] = React.useState<string>(tag.description);
+
+  const hideEditControls = () => {
+    setIsEditOpen(false);
+  };
+
+  const submit = async () => {
+    setIsUpdateInProgress(true);
+    const success = await store.updateTag(tag.id, newTagTitle, newTagDescription);
+    setIsUpdateInProgress(false);
+    if (!success) {
+      return;
+    }
+    hideEditControls();
+  };
+
+  const revert = () => {
+    setNewTagTitle(tag.fullPath);
+    setNewTagDescription(tag.description);
+    hideEditControls();
+  };
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        submit();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          revert();
+        }
+      }}
+    >
+      <FieldGroup className="gap-3" autoFocus={false}>
+        <Field orientation="vertical" className="gap-1.5">
+          <FieldLabel htmlFor="tag-name">Tag name</FieldLabel>
+          <Input
+            id="tag-name"
+            autoComplete="off"
+            value={newTagTitle as string}
+            onChange={(e) => setNewTagTitle(e.target.value)}
+          />
+        </Field>
+        <Field orientation="vertical" className="gap-1.5">
+          <FieldLabel htmlFor="tag-description">Description</FieldLabel>
+          <Textarea
+            id="tag-description"
+            value={newTagDescription as string}
+            onChange={(e) => setNewTagDescription(e.target.value)}
+          />
+        </Field>
+      </FieldGroup>
+      <div className="flex flex-col-reverse gap-2 pt-4 md:flex-row md:justify-end">
+        <Button type="reset" size="sm" onClick={revert} variant="secondary">
+          Cancel
+        </Button>
+        <Button type="submit" size="sm" variant="default" disabled={isUpdateInProgress}>
+          {isUpdateInProgress && <Spinner />}
+          Save
+        </Button>
+      </div>
+    </form>
   );
 };
 
@@ -304,7 +314,7 @@ export function SidebarTag({
 
   return hasChildTags ? (
     <Collapsible className="group/collapsible" open={isCollapsibleOpen}>
-      <TagOutput
+      <TagItem
         tag={tag}
         itemCount={itemCount}
         isTagSelected={isTagSelected}
@@ -330,6 +340,6 @@ export function SidebarTag({
       />
     </Collapsible>
   ) : (
-    <TagOutput tag={tag} itemCount={itemCount} highlightText={highlightText} isTagSelected={isTagSelected} />
+    <TagItem tag={tag} itemCount={itemCount} highlightText={highlightText} isTagSelected={isTagSelected} />
   );
 }
