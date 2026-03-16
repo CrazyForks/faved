@@ -2,21 +2,16 @@
 
 import * as React from 'react';
 import { ReactNode, useContext, useMemo } from 'react';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command.tsx';
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@/store/storeContext.ts';
-import { cn, getColorClass } from '@/lib/utils.ts';
+import { cn, normalizeQuery } from '@/lib/utils.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Spinner } from '@/components/ui/spinner.tsx';
+import { TagPath } from '@/components/EditItem/TagPath.tsx';
+import { IconPlus } from '@tabler/icons-react';
 
 export const TagSelect = observer(
   ({
@@ -38,6 +33,7 @@ export const TagSelect = observer(
     const [query, setQuery] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const [isSubmitInProgress, setIsSubmitInProgress] = React.useState(false);
+    const [createTagInProgress, setTagCreateInProgress] = React.useState(false);
 
     const isChanged: boolean = useMemo(
       () =>
@@ -50,12 +46,17 @@ export const TagSelect = observer(
 
     const sortedTags = useMemo(() => {
       const tags = [...store.tagsArray];
-      const selectedTags = [...selectedTagsAll, ...selectedTagsSome];
+      const selectedTags = [...newSelectedTagsAll, ...newSelectedTagsSome];
       tags.sort((a, b) => {
         return Number(selectedTags.includes(b.id)) - Number(selectedTags.includes(a.id));
       });
       return tags;
-    }, [store.tagsArray, selectedTagsSome, selectedTagsAll]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [store.tagsArray, query]);
+
+    const normalizedQuery = normalizeQuery(query);
+    const lowerCaseQuery = normalizedQuery.toLowerCase();
+    const exactQueryMatchExists = sortedTags.some((t) => t.fullPath.toLowerCase() === lowerCaseQuery);
 
     const resetTags = () => {
       setQuery('');
@@ -87,10 +88,33 @@ export const TagSelect = observer(
             <CommandInput value={query} onValueChange={setQuery} placeholder="Search tags..." className="h-9" />
 
             <CommandList className="max-h-[25dvh] overflow-y-scroll">
-              <CommandEmpty>No tags found.</CommandEmpty>
               <CommandGroup>
+                {normalizedQuery.length > 0 && !exactQueryMatchExists && (
+                  <CommandItem
+                    forceMount={true}
+                    key="new_item"
+                    disabled={createTagInProgress}
+                    value={query}
+                    onSelect={() => {
+                      const createTag = async () => {
+                        setTagCreateInProgress(true);
+                        const newTagID = await store.createTag(normalizedQuery);
+                        if (newTagID === null) {
+                          return;
+                        }
+                        setNewSelectedTagsAll((prev) => [...prev, Number(newTagID)]);
+                        setQuery('');
+                        setTagCreateInProgress(false);
+                      };
+                      createTag();
+                    }}
+                  >
+                    {createTagInProgress ? <Spinner /> : <IconPlus />} Create new tag: "{normalizedQuery}"
+                  </CommandItem>
+                )}
+
                 {sortedTags
-                  .filter((tag) => tag.fullPath.toLowerCase().includes(query.toLowerCase().trim()))
+                  .filter((tag) => tag.fullPath.toLowerCase().includes(normalizedQuery))
                   .map((tag) => (
                     <CommandItem
                       className="flex items-center gap-3"
@@ -115,29 +139,9 @@ export const TagSelect = observer(
                         }
                         aria-label="Select all"
                       />
-                      <span className={`h-3 w-3 flex-none rounded-full invert ${getColorClass(tag.color)}`}></span>
-                      <span>{tag.fullPath}</span>
+                      <TagPath tag={{ label: tag.fullPath, color: tag.color }} className="invert" />
                     </CommandItem>
                   ))}
-
-                {query.length > 1 &&
-                  !sortedTags.some((t) => t.fullPath.toLowerCase() === query.trim().toLowerCase()) && (
-                    <CommandItem
-                      forceMount={true}
-                      key="new_item"
-                      value={query}
-                      onSelect={async () => {
-                        const newTagID = await store.createTag(query);
-                        if (newTagID === null) {
-                          return;
-                        }
-                        setNewSelectedTagsAll((prev) => [...prev, Number(newTagID)]);
-                        setQuery('');
-                      }}
-                    >
-                      + Create new tag: "{query.trim()}"
-                    </CommandItem>
-                  )}
               </CommandGroup>
             </CommandList>
             <div className="bg-background w-full p-1">

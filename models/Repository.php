@@ -190,6 +190,23 @@ class Repository
 		return $stmt->execute($sql_data);
 	}
 
+	public function refreshItemsUpdatedAt($item_ids)
+	{
+		if (empty($item_ids)) {
+			return false;
+		}
+		$sql_in = implode(',', array_fill(0, count($item_ids), '?'));
+		$stmt = $this->pdo->prepare(
+			"UPDATE items 
+			SET updated_at = ?
+    		WHERE id IN ($sql_in)"
+		);
+		return $stmt->execute([
+			date('Y-m-d H:i:s'),
+			...$item_ids,
+		]);
+	}
+
 	public function updateItem($title, $description, $url, $comments, $image, $item_id): bool
 	{
 		$stmt = $this->pdo->prepare(

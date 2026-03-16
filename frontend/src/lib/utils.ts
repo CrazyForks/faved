@@ -21,6 +21,14 @@ export const getColorClass = (color: string | undefined) => {
   return colorMap[color as keyof typeof colorMap] || colorMap.gray;
 };
 
+export const normalizeQuery = (val) => {
+  return val
+    .trim()
+    .replace(/\/+/g, '/')
+    .replace(/^\/|\/$/g, '')
+    .trim();
+};
+
 export const getSavedLayoutPreference = (): LayoutType => {
   return (localStorage.getItem('layout') as LayoutType) || 'list';
 };

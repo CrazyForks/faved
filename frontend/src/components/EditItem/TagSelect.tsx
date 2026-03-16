@@ -21,14 +21,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { Kbd } from '@/components/ui/kbd.tsx';
 import { TagPath } from '@/components/EditItem/TagPath.tsx';
 import { ArrowDownLeft } from 'lucide-react';
-
-const normalizeQuery = (val) => {
-  return val
-    .trim()
-    .replace(/\/+/g, '/')
-    .replace(/^\/|\/$/g, '')
-    .trim();
-};
+import { normalizeQuery } from '@/lib/utils.ts';
 
 export const TagSelect = observer(({ tagIDs, onChange }: { tagIDs: number[]; onChange: (values: any[]) => void }) => {
   const anchor = useComboboxAnchor();

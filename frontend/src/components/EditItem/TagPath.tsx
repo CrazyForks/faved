@@ -1,7 +1,15 @@
 import React from 'react';
 import { cn, getColorClass } from '@/lib/utils.ts';
 
-export const TagPath = ({ tag, showLast }: { tag: { label: string; color: string }; showLast?: boolean }) => {
+export const TagPath = ({
+  tag,
+  showLast,
+  className,
+}: {
+  tag: { label: string; color: string };
+  showLast?: boolean;
+  className?: string;
+}) => {
   const slashPlaceholder = '__SLASH__';
   const segments = tag.label
     .replaceAll('\\/', slashPlaceholder)
@@ -12,7 +20,7 @@ export const TagPath = ({ tag, showLast }: { tag: { label: string; color: string
 
   return (
     <span className="flex flex-nowrap items-center justify-start gap-2">
-      <span className={cn('h-2.5 w-2.5 flex-none rounded-full', colorClass)}></span>
+      <span className={cn('h-2.5 w-2.5 flex-none rounded-full', colorClass, className || '')}></span>
       <span className={showLast ? 'space-x-[2px]' : 'space-x-1'}>
         {segments.map((segment, index) => (
           <React.Fragment key={index}>
