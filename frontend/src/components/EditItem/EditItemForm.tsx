@@ -237,7 +237,12 @@ const EditItemForm = observer(
           <FormItem>
             <FormLabel>Tags</FormLabel>
             <FormControl className="text-left">
-              <TagSelect onChange={field.onChange} tagIDs={field.value ?? []} />
+              <TagSelect
+                isMultiple={true}
+                onChange={field.onChange}
+                selectedTagIDs={field.value ?? []}
+                excludedTagIDs={[]}
+              />
             </FormControl>
           </FormItem>
         )}

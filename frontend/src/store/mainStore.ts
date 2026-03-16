@@ -170,11 +170,11 @@ class MainStore {
       this.fetchItems();
     });
   };
-  updateTag = async (tagID: number, title: string, description: string) => {
+  updateTag = async (tagID: number, parent: number, title: string, description: string) => {
     const response = await this.runRequest(
       API_ENDPOINTS.tags.update(tagID),
       'PATCH',
-      { title, description },
+      { parent, title, description },
       'Error updating tag'
     );
 

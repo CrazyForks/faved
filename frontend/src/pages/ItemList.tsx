@@ -233,8 +233,6 @@ const Table: React.FC = observer(() => {
     return [tagFilter];
   }, [store.tagFilter, store.tagsArray, store.tags, prefStore.includeNestedTagItems, tagFilterParam, isInitialMount]);
 
-  // console.log(tagColumnFilter);
-
   const columnFilters: ColumnFiltersState = [
     {
       id: 'tags',

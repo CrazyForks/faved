@@ -249,28 +249,14 @@ class Repository
 		]);
 	}
 
-	public function updateTagParent($tag_id, $parent_tag_id)
-	{
-		$stmt = $this->pdo->prepare(
-			'UPDATE tags 
-			SET parent = :parent, 
-			updated_at = :updated_at
-			WHERE id = :id'
-		);
 
-		return $stmt->execute([
-			':parent' => $parent_tag_id,
-			':updated_at' => date('Y-m-d H:i:s'),
-			':id' => $tag_id
-		]);
-	}
-
-	public function updateTag($tag_id, string $title, string $description)
+	public function updateTag($tag_id, string $title, string $description, int $parent_id)
 	{
 		$stmt = $this->pdo->prepare(
 			'UPDATE tags 
 			SET title = :title, 
 			description = :description, 
+			parent = :parent, 
 			updated_at = :updated_at
 			WHERE id = :id'
 		);
@@ -278,6 +264,7 @@ class Repository
 		return $stmt->execute([
 			':title' => $title,
 			':description' => $description,
+			':parent' => $parent_id,
 			':updated_at' => date('Y-m-d H:i:s'),
 			':id' => $tag_id
 		]);

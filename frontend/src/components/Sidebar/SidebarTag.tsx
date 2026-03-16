@@ -35,6 +35,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Info } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner.tsx';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer.tsx';
+import { TagSelect } from '@/components/EditItem/TagSelect.tsx';
 
 const TagItem = ({
   tag,
@@ -147,8 +148,8 @@ const TagActions = ({ tag, isEditOpen, setIsEditOpen, hasChildTags }) => {
         </Drawer>
       ) : (
         <Popover open={isEditOpen} modal={true}>
-          <PopoverAnchor className="absolute right-0 bottom-0" />
-          <PopoverContent align="end" sideOffset={2}>
+          <PopoverAnchor className="absolute bottom-0 left-[--spacing]" />
+          <PopoverContent align="start" sideOffset={2} className="w-md max-w-[100dvw]">
             <PopoverHeader className="mb-2 text-center">Edit tag</PopoverHeader>
             <TagEditForm tag={tag} setIsEditOpen={setIsEditOpen} />
           </PopoverContent>
@@ -204,11 +205,12 @@ const TagActions = ({ tag, isEditOpen, setIsEditOpen, hasChildTags }) => {
   );
 };
 
-const TagEditForm = ({ tag, setIsEditOpen }) => {
+const TagEditForm = ({ tag, setIsEditOpen }: { tag: TagType; setIsEditOpen: () => void }) => {
   const store = React.useContext(StoreContext);
   const [isUpdateInProgress, setIsUpdateInProgress] = React.useState(false);
 
-  const [newTagTitle, setNewTagTitle] = React.useState<string>(tag.fullPath);
+  const [newTagParent, setNewTagParent] = React.useState<number>(tag.parent);
+  const [newTagTitle, setNewTagTitle] = React.useState<string>(tag.title);
   const [newTagDescription, setNewTagDescription] = React.useState<string>(tag.description);
 
   const hideEditControls = () => {
@@ -217,7 +219,7 @@ const TagEditForm = ({ tag, setIsEditOpen }) => {
 
   const submit = async () => {
     setIsUpdateInProgress(true);
-    const success = await store.updateTag(tag.id, newTagTitle, newTagDescription);
+    const success = await store.updateTag(tag.id, newTagParent, newTagTitle, newTagDescription);
     setIsUpdateInProgress(false);
     if (!success) {
       return;
@@ -245,7 +247,18 @@ const TagEditForm = ({ tag, setIsEditOpen }) => {
     >
       <FieldGroup className="gap-3" autoFocus={false}>
         <Field orientation="vertical" className="gap-1.5">
-          <FieldLabel htmlFor="tag-name">Tag name</FieldLabel>
+          <FieldLabel htmlFor="tag-name">Parent tag</FieldLabel>
+          <TagSelect
+            isMultiple={false}
+            onChange={(tagID) => {
+              setNewTagParent(tagID);
+            }}
+            selectedTagIDs={[newTagParent]}
+            excludedTagIDs={[tag.id]}
+          />
+        </Field>
+        <Field orientation="vertical" className="gap-1.5">
+          <FieldLabel htmlFor="tag-name">Title</FieldLabel>
           <Input
             id="tag-name"
             autoComplete="off"
