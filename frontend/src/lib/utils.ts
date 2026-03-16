@@ -17,6 +17,10 @@ export const colorMap = {
   black: 'bg-neutral-950',
 };
 
+export const getColorClass = (color: string | undefined) => {
+  return colorMap[color as keyof typeof colorMap] || colorMap.gray;
+};
+
 export const getSavedLayoutPreference = (): LayoutType => {
   return (localStorage.getItem('layout') as LayoutType) || 'list';
 };

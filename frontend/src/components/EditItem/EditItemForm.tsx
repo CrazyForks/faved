@@ -2,7 +2,7 @@ import React, { useContext, useDeferredValue, useEffect, useMemo, useRef } from 
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { TagEdit } from '@/components/EditItem/TagSelect.tsx';
+import { TagSelect } from '@/components/EditItem/TagSelect.tsx';
 import { Textarea } from '../ui/textarea';
 import { StoreContext } from '@/store/storeContext';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -120,7 +120,6 @@ const EditItemForm = observer(
       if (isCloseWindowOnSubmit) {
         setIsSubmitSuccess(true);
       } else {
-        store.fetchItems();
         store.closeModal();
         form.reset();
       }
@@ -238,16 +237,7 @@ const EditItemForm = observer(
           <FormItem>
             <FormLabel>Tags</FormLabel>
             <FormControl className="text-left">
-              <TagEdit
-                className={
-                  'w-[calc(100dvw-var(--spacing)*6*2)]' +
-                  (!isCloseWindowOnSubmit
-                    ? ' max-w-[calc(72rem-var(--spacing)*6*2)] md:w-[calc(95dvw-var(--spacing)*6*2)]'
-                    : '')
-                }
-                onChange={field.onChange}
-                tagIDs={field.value ?? []}
-              />
+              <TagSelect onChange={field.onChange} tagIDs={field.value ?? []} />
             </FormControl>
           </FormItem>
         )}
@@ -369,7 +359,7 @@ const EditItemForm = observer(
                 </div>
               )}
 
-              <Button onClick={cancel} type="button" variant="outline" className="order-3 sm:order-none">
+              <Button onClick={cancel} type="button" variant="secondary" className="order-3 sm:order-none">
                 Cancel
               </Button>
 

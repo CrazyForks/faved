@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/dropdown-menu.tsx';
 import { PreferencesStoreContext, StoreContext } from '@/store/storeContext.ts';
 import { cn, colorMap } from '@/lib/utils.ts';
-import { getColorClass } from '@/components/Table/Fields/TagBadge.tsx';
+import { getColorClass } from '@/lib/utils.ts';
 import { useItemListState } from '@/hooks/useItemListState.ts';
 import { TagType } from '@/lib/types.ts';
 import { DeleteTagDialog } from '@/components/Sidebar/DeleteTagDialog.tsx';
@@ -293,7 +293,7 @@ export function SidebarTag({
   }, [isChildTagSelected]);
 
   React.useEffect(() => {
-    if (childTagsMatchSearch === isCollapsibleOpen) {
+    if (childTagsMatchSearch !== true || childTagsMatchSearch === isCollapsibleOpen) {
       return;
     }
     setIsCollapsibleOpen(childTagsMatchSearch);

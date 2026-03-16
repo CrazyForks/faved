@@ -75,6 +75,31 @@ function createTagsFromSegments(array $tag_segments, $tag_description = ''): int
 	return (int)$parent_tag_id;
 }
 
+function processInputTags($input_tags): array
+{
+	$repository = ServiceContainer::get(Repository::class);// Handle tags
+
+	$new_tag_paths = array_filter($input_tags, fn($tag) => is_string($tag) && str_starts_with($tag, 'create:'));
+	$input_existing_tag_ids = array_map('intval', array_diff($input_tags, $new_tag_paths));
+
+	$tags = $repository->getTags();
+	$exising_tag_ids = array_keys($tags);
+	if (array_diff($input_existing_tag_ids, $exising_tag_ids)) {
+		throw new ValidationException('Non-existing tags provided');
+	}
+
+	$input_created_tag_ids = array_map(function ($tag) {
+		$tag_path = substr($tag, strlen('create:'));
+		$tag_segments = extractTagSegments($tag_path);
+		$tag_id = createTagsFromSegments($tag_segments);
+		return $tag_id;
+	}, $new_tag_paths);
+	return [
+		...$input_existing_tag_ids,
+		...$input_created_tag_ids,
+	];
+}
+
 /*
  * Resolve relative URL to absolute URL
  */

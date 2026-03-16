@@ -221,13 +221,17 @@ const Table: React.FC = observer(() => {
     }
     if (prefStore.includeNestedTagItems) {
       const selectedTag = store.tags[tagFilter] ?? null;
-      const childTagIDs = Object.values(store.tags)
+      // Tag doesn't exist. This can happen when user manually changes URL to a non existing tag ID or when the selected tag has been deleted since the last load.
+      if (!selectedTag) {
+        return [tagFilter];
+      }
+      const childTagIDs = store.tagsArray
         .filter((tag) => tag.fullPathIDs.startsWith(selectedTag.fullPathIDs) && tag.id !== selectedTag.id)
         .map((tag) => tag.id);
       return [tagFilter, ...childTagIDs];
     }
     return [tagFilter];
-  }, [store.tagFilter, store.tags, prefStore.includeNestedTagItems, tagFilterParam, isInitialMount]);
+  }, [store.tagFilter, store.tagsArray, store.tags, prefStore.includeNestedTagItems, tagFilterParam, isInitialMount]);
 
   // console.log(tagColumnFilter);
 

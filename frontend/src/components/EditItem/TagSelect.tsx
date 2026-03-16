@@ -1,135 +1,175 @@
 'use client';
 
 import * as React from 'react';
-import { useContext, useEffect, useMemo } from 'react';
-import { ChevronsUpDown } from 'lucide-react';
+import { useContext, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button.tsx';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command.tsx';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@/store/storeContext.ts';
-import { getColorClass, TagBadgeMini } from '@/components/Table/Fields/TagBadge.tsx';
-import { Checkbox } from '@/components/ui/checkbox.tsx';
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxSeparator,
+  ComboboxValue,
+  useComboboxAnchor,
+} from '@/components/ui/combobox';
+import { IconPlus } from '@tabler/icons-react';
+import { Kbd } from '@/components/ui/kbd.tsx';
+import { TagPath } from '@/components/EditItem/TagPath.tsx';
+import { ArrowDownLeft } from 'lucide-react';
 
-export const TagEdit = observer(
-  ({ className, tagIDs, onChange }: { className?: string; tagIDs: number[]; onChange: (values: number[]) => void }) => {
-    const store = useContext(StoreContext);
-    const [open, setOpen] = React.useState(false);
-    const [selectedTags, setSelectedTags] = React.useState(tagIDs);
-    const [query, setQuery] = React.useState('');
-    const sortedTags = useMemo(() => {
-      const t = Object.values(store.tags);
-      t.sort((a, b) => {
-        return Number(selectedTags.includes(b.id)) - Number(selectedTags.includes(a.id));
-      });
-      return t;
-      // Don't need dependency on selectedTags because we want to resort only when popover opens or tags change, not on every selection change inside the popover
-    }, [open, store.tags]); // eslint-disable-line react-hooks/exhaustive-deps
+const normalizeQuery = (val) => {
+  return val
+    .trim()
+    .replace(/\/+/g, '/')
+    .replace(/^\/|\/$/g, '')
+    .trim();
+};
 
-    useEffect(() => {
-      if (Object.keys(store.tags).length > 0) {
-        return;
-      }
-      store.fetchTags();
-    }, [store]);
+export const TagSelect = observer(({ tagIDs, onChange }: { tagIDs: number[]; onChange: (values: any[]) => void }) => {
+  const anchor = useComboboxAnchor();
+  const store = useContext(StoreContext);
+  const tags = store.tagsArray.map((t) => {
+    return {
+      value: t.id,
+      color: t.color,
+      // Append "/" to continue display parent item when child item is created
+      label: t.fullPath + '/',
+      lowercase: t.fullPath.toLowerCase(),
+    };
+  });
+  const preselectedTags = useRef(tags.filter((t) => tagIDs.includes(t.value)));
+  const firstItemRef = React.useRef(null);
 
-    React.useEffect(() => {
-      onChange(selectedTags);
-    }, [selectedTags, onChange]);
+  const [query, setQuery] = React.useState('');
 
-    return (
-      <Popover
-        open={open}
-        onOpenChange={(v) => {
-          setOpen(v);
-          if (v) {
-            return;
-          }
-          setQuery('');
-        }}
-      >
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className={['flex h-auto w-full justify-start text-left whitespace-normal'].join(' ')}
-          >
-            <div className="flex flex-wrap gap-1">
-              {selectedTags.length > 0
-                ? selectedTags.map((tagId) => <TagBadgeMini key={tagId} tagID={tagId} />)
-                : 'Select tags...'}
-            </div>
-            <ChevronsUpDown className="ml-auto opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          className={[className, 'overflow-y-hidden p-0'].join(' ')}
-          align="start"
-          // Required to make the popover scrollable with mouse wheel and touch move inside modal
-          onWheel={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
-        >
-          <Command shouldFilter={false} disablePointerSelection={false} loop={false}>
-            <CommandInput value={query} onValueChange={setQuery} placeholder="Search tags..." className="h-9" />
+  const normalizedQuery = normalizeQuery(query);
+  const lowerCaseQuery = normalizedQuery.toLowerCase();
+  const exactQueryMatchExists = tags.some((t) => t.lowercase === lowerCaseQuery);
 
-            <CommandList className="max-h-[25dvh] overflow-y-scroll">
-              <CommandEmpty>No tags found.</CommandEmpty>
-              <CommandGroup>
-                {sortedTags
-                  .filter((tag) => tag.fullPath.toLowerCase().includes(query.toLowerCase().trim()))
-                  .map((tag) => (
-                    <>
-                      <CommandItem
-                        className="flex items-center gap-3"
-                        key={tag.id}
-                        // Need to convert to string because CommandItem expects value to be string, otherwise it will fallback to inner text (presumably)
-                        value={tag.id.toString()}
-                        keywords={[tag.fullPath]}
-                        onSelect={(currentValue) => {
-                          const val = Number(currentValue);
-                          setSelectedTags((prev) =>
-                            prev.includes(val) ? prev.filter((tagID) => val !== tagID) : [...prev, val]
-                          );
-                        }}
-                      >
-                        <Checkbox checked={selectedTags.includes(tag.id)} aria-label="Select all" />
-                        <span className={`h-3 w-3 flex-none rounded-full ${getColorClass(tag.color)}`}></span>
-                        <span>{tag.fullPath}</span>
-                      </CommandItem>
-                    </>
-                  ))}
+  const comboboxItems =
+    normalizedQuery.length > 0 && !exactQueryMatchExists
+      ? [
+          {
+            creatable: true,
+            value: `create:${normalizedQuery}`,
+            label: query,
+          },
+          ...tags,
+        ]
+      : tags;
 
-                {query.length > 1 &&
-                  !sortedTags.some((t) => t.fullPath.toLowerCase() === query.trim().toLowerCase()) && (
-                    <CommandItem
-                      forceMount={true}
-                      key="new_item"
-                      value={query}
-                      onSelect={async () => {
-                        const newTagID = await store.createTag(query);
-                        if (newTagID === null) {
-                          return;
-                        }
-                        setSelectedTags((prev) => [...prev, Number(newTagID)]);
-                        setQuery('');
+  const highlightedItemRef = React.useRef(undefined);
+
+  const autocomplete = (label) => {
+    setQuery(label.replace(/\/$/, ''));
+
+    firstItemRef.current?.dispatchEvent(
+      new MouseEvent('mousemove', {
+        bubbles: true,
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (store.tagsArray.length > 0) {
+      return;
+    }
+    store.fetchTags();
+  }, [store]);
+
+  return (
+    <Combobox
+      modal={true}
+      // value={selectedTags}
+      multiple
+      highlightItemOnHover={true}
+      autoHighlight={true}
+      items={comboboxItems}
+      defaultValue={preselectedTags.current}
+      // itemToStringLabel={(tag) => tag.label}
+      // itemToStringValue={(tag) => tag.value}
+      inputValue={query}
+      onInputValueChange={(v) => {
+        setQuery(v);
+      }}
+      onItemHighlighted={(item) => {
+        highlightedItemRef.current = item;
+      }}
+      onValueChange={(newValues) => {
+        onChange(newValues.map((v) => v.value));
+      }}
+      // filter={(value, query, itemToString) => {
+      //   return value.fullPath.includes(query.trim().toLowerCase()) ?? false;
+      // }}
+      isItemEqualToValue={(item, value: number) => item.value === value.value}
+    >
+      <ComboboxChips ref={anchor} className="">
+        <ComboboxValue>
+          {(values) => (
+            <React.Fragment>
+              {values.map((tag) => (
+                <ComboboxChip key={String(tag.value)}>
+                  <TagPath tag={tag} />
+                </ComboboxChip>
+              ))}
+              <ComboboxChipsInput
+                placeholder={values.length > 0 ? '...' : 'Type to search or create tags...'}
+                onKeyDownCapture={(e) => {
+                  if (e.key === 'Tab' && highlightedItemRef.current) {
+                    autocomplete(highlightedItemRef.current.label);
+                    // e.stopPropagation();
+                    e.preventDefault();
+                  }
+                  // For case when Enter is pressed when there is some text in input and no item is highlighted in list, we want to prevent form submission and/or text clearance in input, so user can continue typing or choose to create new tag with that text
+                  if (e.key === 'Enter' && query.length > 0 && !highlightedItemRef.current) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
+              ></ComboboxChipsInput>
+            </React.Fragment>
+          )}
+        </ComboboxValue>
+      </ComboboxChips>
+      <ComboboxContent anchor={anchor} className="--overflow-y-hidden">
+        <ComboboxList onWheel={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()}>
+          {(tag, index, allTags) => (
+            <React.Fragment key={tag.value}>
+              <ComboboxItem key={tag.value} value={tag} className="group" ref={index === 0 ? firstItemRef : null}>
+                {tag.creatable ? (
+                  <>
+                    <IconPlus />
+                    Create new tag: "{normalizeQuery(tag.label)}"
+                  </>
+                ) : (
+                  <>
+                    <TagPath tag={tag} />
+                    <Button
+                      variant="ghost"
+                      title="Autocomplete"
+                      size="xs"
+                      className="bg-primary-foreground hover:bg-primary-foreground/50 invisible ms-auto flex items-center transition-none group-data-highlighted:visible pointer-coarse:visible"
+                      onClick={(e) => {
+                        autocomplete(tag.label);
+                        e.preventDefault();
+                        e.stopPropagation();
                       }}
                     >
-                      + Create new tag: "{query.trim()}"
-                    </CommandItem>
-                  )}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    );
-  }
-);
+                      <ArrowDownLeft /> <Kbd className="pointer-coarse:hidden">Tab</Kbd>
+                    </Button>
+                  </>
+                )}
+              </ComboboxItem>
+              {tag.creatable && allTags.length > 1 && <ComboboxSeparator className="shrink-0" />}
+            </React.Fragment>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  );
+});

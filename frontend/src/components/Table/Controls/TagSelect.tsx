@@ -13,11 +13,10 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from '@/store/storeContext.ts';
-import { getColorClass } from '@/components/Table/Fields/TagBadge.tsx';
+import { cn, getColorClass } from '@/lib/utils.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Spinner } from '@/components/ui/spinner.tsx';
-import { cn } from '@/lib/utils.ts';
 
 export const TagSelect = observer(
   ({
@@ -34,7 +33,6 @@ export const TagSelect = observer(
     children: ReactNode;
   }) => {
     const store = useContext(StoreContext);
-    const [sortedTags, setSortedTags] = React.useState([]);
     const [newSelectedTagsAll, setNewSelectedTagsAll] = React.useState(selectedTagsAll);
     const [newSelectedTagsSome, setNewSelectedTagsSome] = React.useState(selectedTagsSome);
     const [query, setQuery] = React.useState('');
@@ -50,24 +48,19 @@ export const TagSelect = observer(
       [newSelectedTagsAll, newSelectedTagsSome, selectedTagsAll, selectedTagsSome]
     );
 
-    const getSortedTags = (tags, selectedTags) => {
-      const t = Object.values(store.tags);
-      t.sort((a, b) => {
+    const sortedTags = useMemo(() => {
+      const tags = [...store.tagsArray];
+      const selectedTags = [...selectedTagsAll, ...selectedTagsSome];
+      tags.sort((a, b) => {
         return Number(selectedTags.includes(b.id)) - Number(selectedTags.includes(a.id));
       });
-      return t;
-    };
-
-    React.useEffect(() => {
-      setSortedTags(getSortedTags(store.tags, [...newSelectedTagsAll, ...newSelectedTagsSome]));
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [store.tags]);
+      return tags;
+    }, [store.tagsArray, selectedTagsSome, selectedTagsAll]);
 
     const resetTags = () => {
       setQuery('');
       setNewSelectedTagsAll(selectedTagsAll);
       setNewSelectedTagsSome(selectedTagsSome);
-      setSortedTags(getSortedTags(store.tags, [...selectedTagsAll, ...selectedTagsSome]));
     };
 
     return (

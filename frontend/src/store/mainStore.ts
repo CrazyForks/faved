@@ -107,12 +107,11 @@ class MainStore {
     this.user = null;
   };
   setTags = (tags: TagsObjectType) => {
-    const tagArray = Object.values(tags);
     const renderTagSegment = (tag: TagType) => {
       let fullPath = '';
       let fullPathIDs = '';
       if (tag.parent !== 0) {
-        const parentTag = tagArray.find((t) => t.id === tag.parent);
+        const parentTag = tags[tag.parent];
         if (parentTag) {
           const paths = renderTagSegment(parentTag);
           fullPath += paths.fullPath + '/';
@@ -134,6 +133,15 @@ class MainStore {
 
     this.tags = tags as TagsObjectType;
   };
+  get tagsArray() {
+    const tagsArray = Object.values(this.tags) as TagType[];
+
+    tagsArray.sort((a, b) => {
+      return a.fullPath.localeCompare(b.fullPath);
+    });
+
+    return tagsArray;
+  }
   setIsAuthRequired = (val: boolean) => {
     this.isAuthRequired = val;
   };
@@ -146,17 +154,15 @@ class MainStore {
     });
   };
   createTag = async (title: string): Promise<number | null> => {
-    let tagID = null;
+    const response = await this.runRequest(API_ENDPOINTS.tags.create, 'POST', { title }, 'Error creating tag');
 
-    await this.runRequest(API_ENDPOINTS.tags.create, 'POST', { title }, 'Error creating tag')
-      .then((data) => {
-        tagID = (data?.data?.tag_id as number) || null;
-      })
-      .finally(() => {
-        this.fetchTags();
-      });
+    if (response === null || !response?.data?.tag_id) {
+      return null;
+    }
 
-    return tagID;
+    await this.fetchTags();
+
+    return response.data.tag_id;
   };
   onDeleteTag = async (tagID: number) => {
     return this.runRequest(API_ENDPOINTS.tags.deleteTag(tagID), 'DELETE', {}, 'Error deleting tag').finally(() => {
@@ -278,13 +284,27 @@ class MainStore {
     data.url = encodeURI(decodeURI(data.url));
     data.image = encodeURI(decodeURI(data.image));
 
-    return this.runRequest(API_ENDPOINTS.items.createItem, 'POST', data, 'Failed to create item', skipSuccessMessage);
+    const response = await this.runRequest(
+      API_ENDPOINTS.items.createItem,
+      'POST',
+      data,
+      'Failed to create item',
+      skipSuccessMessage
+    );
+
+    if (!response) {
+      return false;
+    }
+
+    this.fetchTags();
+    this.fetchItems();
+    return true;
   };
   updateItem = async (data: ItemType, itemId, forceImageRefetch: boolean) => {
     data.url = encodeURI(decodeURI(data.url));
     data.image = encodeURI(decodeURI(data.image));
 
-    return this.runRequest(
+    const response = await this.runRequest(
       API_ENDPOINTS.items.updateItem(itemId),
       'PATCH',
       {
@@ -293,6 +313,13 @@ class MainStore {
       } as ItemType & { 'force-image-refetch': boolean },
       'Failed to update item'
     );
+    if (!response) {
+      return false;
+    }
+
+    this.fetchTags();
+    this.fetchItems();
+    return true;
   };
   getUser = async (noErrorEmit: boolean = false) => {
     const response = await this.runRequest(

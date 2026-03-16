@@ -31,7 +31,19 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
   const [tagSearchValue, setTagSearchValue] = useState('');
   const { isMobile } = useSidebar();
 
-  const allTags = useMemo(() => Object.values(store.tags) as TagType[], [store.tags]);
+  const allTags = useMemo(() => {
+    const tags = [...store.tagsArray];
+    tags.sort((a, b) => {
+      if (a.pinned && !b.pinned) {
+        return -1;
+      }
+      if (!a.pinned && b.pinned) {
+        return 1;
+      }
+      return 0;
+    });
+    return tags;
+  }, [store.tagsArray]);
 
   const [isTagSearchVisible, setIsTagSearchVisible] = useState(false);
   const tagSearchRef = React.useRef(null);
@@ -52,16 +64,6 @@ export const NavTags = observer(({ itemIDsByTagID }) => {
     (parentID: number, threadItemIDs = [], threadMatchesSearch = false): [React.JSX.Element[], number[], boolean] => {
       const renderedTags: React.JSX.Element[] = [];
       const tags: TagType[] = allTags.filter((tag: TagType) => tag.parent === parentID) as TagType[];
-
-      tags.sort((a, b) => {
-        if (a.pinned && !b.pinned) {
-          return -1;
-        }
-        if (!a.pinned && b.pinned) {
-          return 1;
-        }
-        return a.title.localeCompare(b.title);
-      });
 
       let levelItemIDs = [];
       let levelTagsMatchSearch = false;
