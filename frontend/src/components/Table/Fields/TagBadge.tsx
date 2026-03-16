@@ -30,6 +30,7 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({ tagID }) => {
       </TooltipTrigger>
       <TooltipContent>
         <TagPath tag={{ label: tag.fullPath, color: tag.color }} />
+        {tag.description !== '' && <p className="mt-2 max-w-md whitespace-pre-wrap">{tag.description}</p>}
       </TooltipContent>
     </Tooltip>
   );
