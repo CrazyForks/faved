@@ -43,6 +43,7 @@ export const Dashboard = observer(({ children }: { children: React.ReactNode }) 
               <ResizablePanel
                 minSize="280px"
                 maxSize="40%"
+                defaultSize="340px"
                 collapsible={true}
                 groupResizeBehavior="preserve-pixel-size"
                 panelRef={setPanelRef}
