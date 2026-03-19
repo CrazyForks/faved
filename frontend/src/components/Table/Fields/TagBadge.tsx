@@ -16,6 +16,8 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({ tagID }) => {
   }
 
   const isTagSelected = store.tagFilter === tagID;
+  const isParentTagSelected =
+    !isTagSelected && Array.isArray(store.itemListFilters.tags) && store.itemListFilters.tags.includes(tagID);
 
   const setTag = () => {
     setTagFilter(tagID);
@@ -24,7 +26,11 @@ export const TagBadge: React.FC<{ tagID: number }> = observer(({ tagID }) => {
   return (
     <Tooltip delayDuration={500}>
       <TooltipTrigger asChild>
-        <Badge variant={isTagSelected ? 'outline' : 'secondary'} className="cursor-pointer" onClick={setTag}>
+        <Badge
+          variant={isTagSelected || isParentTagSelected ? 'outline' : 'secondary'}
+          className="cursor-pointer"
+          onClick={setTag}
+        >
           <TagPath tag={{ label: tag.fullPath, color: tag.color }} showLast={true} />
         </Badge>
       </TooltipTrigger>

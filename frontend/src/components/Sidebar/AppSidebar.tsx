@@ -23,7 +23,7 @@ type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
 export const AppSidebar = observer(({ ...props }: AppSidebarProps) => {
   const store = React.useContext(StoreContext);
 
-  const itemIDsByTagID = store.items.reduce((acc: Record<number, number>, item) => {
+  const itemIDsByTagID = store.items.reduce((acc: Record<number, number[]>, item) => {
     if (item.tags && item.tags.length > 0) {
       for (const tagID of item.tags) {
         acc[tagID] = acc[tagID] || [];

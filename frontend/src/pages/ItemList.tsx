@@ -13,7 +13,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { PreferencesStoreContext, StoreContext } from '@/store/storeContext.ts';
+import { StoreContext } from '@/store/storeContext.ts';
 import { Search } from '../components/Table/Controls/Search.tsx';
 import { observer } from 'mobx-react-lite';
 import { Sorter } from '../components/Table/Controls/Sorter.tsx';
@@ -134,8 +134,8 @@ const columns: ColumnDef<ItemType>[] = [
         return true;
       }
       const tagIDs = row.getValue('tags') as number[];
-      if (filterValue === 'none' && tagIDs.length === 0) {
-        return true;
+      if (filterValue === 'none') {
+        return tagIDs.length === 0;
       }
       return tagIDs.some((val) => filterValue.includes(val));
     },
@@ -192,7 +192,6 @@ const columns: ColumnDef<ItemType>[] = [
 
 const Table: React.FC = observer(() => {
   const store = React.useContext(StoreContext);
-  const prefStore = React.useContext(PreferencesStoreContext);
 
   const { searchParams, setUrlState } = useUrlState();
   const pageIndexParam = useMemo(() => Number(searchParams.get('page') ?? 1) - 1, [searchParams]);
@@ -213,25 +212,8 @@ const Table: React.FC = observer(() => {
   }, [searchParams]);
 
   const [globalFilter, setGlobalFilter] = React.useState<string>(searchKeywordParam);
-  const isInitialMount = React.useRef(true);
-  const tagColumnFilter = useMemo(() => {
-    const tagFilter = isInitialMount ? (store.tagFilter ?? tagFilterParam) : store.tagFilter;
-    if (tagFilter === null || tagFilter === 'none') {
-      return tagFilter;
-    }
-    if (prefStore.includeNestedTagItems) {
-      const selectedTag = store.tags[tagFilter] ?? null;
-      // Tag doesn't exist. This can happen when user manually changes URL to a non existing tag ID or when the selected tag has been deleted since the last load.
-      if (!selectedTag) {
-        return [tagFilter];
-      }
-      const childTagIDs = store.tagsArray
-        .filter((tag) => tag.fullPathIDs.startsWith(selectedTag.fullPathIDs) && tag.id !== selectedTag.id)
-        .map((tag) => tag.id);
-      return [tagFilter, ...childTagIDs];
-    }
-    return [tagFilter];
-  }, [store.tagFilter, store.tagsArray, store.tags, prefStore.includeNestedTagItems, tagFilterParam, isInitialMount]);
+
+  const tagColumnFilter = store.itemListFilters.tags;
 
   const columnFilters: ColumnFiltersState = [
     {
@@ -351,7 +333,6 @@ const Table: React.FC = observer(() => {
   const { setTagFilter } = useItemListState();
   // Update state from navigation changes
   useEffect(() => {
-    isInitialMount.current = false;
     if (store.tagFilter === tagFilterParam) {
       return;
     }

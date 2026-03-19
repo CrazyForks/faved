@@ -13,8 +13,10 @@ import {
   UserType,
 } from '@/lib/types.ts';
 import { getCookie } from '@/lib/utils.ts';
+import { preferencesStore } from './preferencesStore.ts';
 
 class MainStore {
+  prefStore: typeof preferencesStore;
   items: ItemType[] = [];
   tags: TagsObjectType = [];
   user: UserType | null = null;
@@ -32,7 +34,8 @@ class MainStore {
   } | null = null;
   keepBulkActionsToolbar = false;
 
-  constructor() {
+  constructor(prefStore) {
+    this.prefStore = prefStore;
     makeAutoObservable(this); // Makes state observable and actions transactional
   }
 
@@ -99,6 +102,34 @@ class MainStore {
   setTagFilter = (val: TagFilterType) => {
     this.tagFilter = val;
   };
+
+  get itemListFilters() {
+    const tagFilter = this.tagFilter;
+    const responseOutput = (val: any) => ({
+      tags: val,
+    });
+
+    if (tagFilter === null || tagFilter === 'none') {
+      return responseOutput(tagFilter);
+    }
+
+    if (!this.prefStore.includeNestedTagItems) {
+      return responseOutput([tagFilter]);
+    }
+
+    const selectedTag = this.tags[tagFilter] ?? null;
+    // Tag doesn't exist. This can happen when user manually changes URL to a non existing tag ID or when the selected tag has been deleted since the last load.
+    if (!selectedTag) {
+      return responseOutput([tagFilter]);
+    }
+
+    const childTagIDs = this.tagsArray
+      .filter((tag) => tag.fullPathIDs.startsWith(`${selectedTag.fullPathIDs}/`) && tag.id !== selectedTag.id)
+      .map((tag) => tag.id);
+
+    return responseOutput([selectedTag.id, ...childTagIDs]);
+  }
+
   setUser = (user: UserType) => {
     this.user = user;
   };
@@ -484,4 +515,4 @@ class MainStore {
   };
 }
 
-export const mainStore = new MainStore();
+export const mainStore = new MainStore(preferencesStore);

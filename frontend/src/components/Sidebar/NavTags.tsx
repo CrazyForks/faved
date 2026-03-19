@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu.tsx';
 import { IconDotsVertical } from '@tabler/icons-react';
 
-export const NavTags = observer(({ itemIDsByTagID }) => {
+export const NavTags = observer(({ itemIDsByTagID }: { itemIDsByTagID: Record<string, number[]> }) => {
   const store = React.useContext(StoreContext);
   const prefStore = React.useContext(PreferencesStoreContext);
   const selectedTag = store.tags[store.tagFilter] ?? null;

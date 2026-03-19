@@ -45,6 +45,14 @@ const TagItem = ({
   itemCount,
   isTagSelected,
   className,
+}: {
+  tag: TagType;
+  highlightText: string | null;
+  prependedNode?: React.ReactNode;
+  childTags?: React.ReactNode;
+  itemCount: number;
+  isTagSelected: boolean;
+  className?: string;
 }) => {
   const prefStore = React.useContext(PreferencesStoreContext);
   const { setTagFilter } = useItemListState();
@@ -205,7 +213,7 @@ const TagActions = ({ tag, isEditOpen, setIsEditOpen, hasChildTags }) => {
   );
 };
 
-const TagEditForm = ({ tag, setIsEditOpen }: { tag: TagType; setIsEditOpen: () => void }) => {
+const TagEditForm = ({ tag, setIsEditOpen }: { tag: TagType; setIsEditOpen: (bool) => void }) => {
   const store = React.useContext(StoreContext);
   const [isUpdateInProgress, setIsUpdateInProgress] = React.useState(false);
 
@@ -250,8 +258,8 @@ const TagEditForm = ({ tag, setIsEditOpen }: { tag: TagType; setIsEditOpen: () =
           <FieldLabel htmlFor="tag-name">Parent tag</FieldLabel>
           <TagSelect
             isMultiple={false}
-            onChange={(tagID) => {
-              setNewTagParent(tagID);
+            onChange={(tagID: number) => {
+              setNewTagParent(tagID as number);
             }}
             selectedTagIDs={[newTagParent]}
             excludedTagIDs={[tag.id]}

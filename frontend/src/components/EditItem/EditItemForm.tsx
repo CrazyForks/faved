@@ -229,6 +229,8 @@ const EditItemForm = observer(
       />
     );
 
+    const excludedTagIDs = useMemo(() => [], []);
+
     const renderTagsField = () => (
       <FormField
         control={form.control}
@@ -241,7 +243,7 @@ const EditItemForm = observer(
                 isMultiple={true}
                 onChange={field.onChange}
                 selectedTagIDs={field.value ?? []}
-                excludedTagIDs={[]}
+                excludedTagIDs={excludedTagIDs}
               />
             </FormControl>
           </FormItem>

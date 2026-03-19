@@ -21,11 +21,11 @@ export const TagPath = ({
   return (
     <span className="flex flex-nowrap items-center justify-start gap-2">
       <span className={cn('h-2.5 w-2.5 flex-none rounded-full', colorClass, className || '')}></span>
-      <span className={showLast ? 'space-x-[2px]' : 'space-x-1'}>
+      <span className={cn('break-words', showLast ? '-space-x-0.5' : 'space-x-0')}>
         {segments.map((segment, index) => (
           <React.Fragment key={index}>
-            {(!showLast || index === segments.length - 1) && <span className="break-words">{segment}</span>}
-            {index !== segments.length - 1 && <span className="bold text-gray-400">/</span>}
+            <span>{!showLast || index === segments.length - 1 ? segment : '.'}</span>
+            {index !== segments.length - 1 && <span className="bold text-gray-400"> / </span>}
           </React.Fragment>
         ))}
       </span>

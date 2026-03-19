@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { useMediaQuery } from '@/hooks/use-media-query';
 
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
