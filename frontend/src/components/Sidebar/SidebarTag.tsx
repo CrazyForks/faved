@@ -196,7 +196,7 @@ const TagActions = ({ tag, isEditOpen, setIsEditOpen, hasChildTags }) => {
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem onClick={() => store.onChangeTagPinned(tag.id, !tag.pinned)} disabled={tag.parent !== 0}>
+          <DropdownMenuItem onClick={() => store.updateTagPinned(tag.id, !tag.pinned)}>
             <span>{tag.pinned ? 'Unpin' : 'Pin'} tag</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

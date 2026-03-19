@@ -227,16 +227,20 @@ class MainStore {
       this.tags = { ...this.tags, [tagID]: tag };
     });
   };
-  onChangeTagPinned = async (tagID: number, pinned: boolean) => {
-    return this.runRequest(
+  updateTagPinned = async (tagID: number, pinned: boolean) => {
+    const response = await this.runRequest(
       API_ENDPOINTS.tags.updatePinned(tagID),
       'PATCH',
       { pinned },
       'Error updating tag pinned'
-    ).finally(() => {
-      const tag = { ...this.tags[tagID], pinned };
-      this.tags = { ...this.tags, [tagID]: tag };
-    });
+    );
+    if (response === null) {
+      return false;
+    }
+
+    const tag = { ...this.tags[tagID], pinned };
+    this.tags = { ...this.tags, [tagID]: tag };
+    return true;
   };
 
   setItems = (val: ItemType[]) => {
