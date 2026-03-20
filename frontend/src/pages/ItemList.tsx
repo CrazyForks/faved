@@ -98,14 +98,8 @@ const columns: ColumnDef<ItemType>[] = [
     enableHiding: true,
     meta: { class: 'min-w-xs' },
     cell: ({ row }) => {
-      return (
-        <span
-          // className="line-clamp-3 scroll-m-20 text-xl font-semibold tracking-tight"
-          title={row.getValue('title')}
-        >
-          {row.getValue('title')}
-        </span>
-      );
+      const value = row.getValue('title') as string;
+      return <span title={value}>{value}</span>;
     },
   },
   {
@@ -115,9 +109,10 @@ const columns: ColumnDef<ItemType>[] = [
     enableHiding: true,
     meta: { class: 'min-w-xs break-all\n' },
     cell: ({ row }) => {
+      const value = row.getValue('url') as string;
       return (
-        <a className="underline" href={row.getValue('url')} target="_blank" rel="noopener noreferrer">
-          {row.getValue('url')}
+        <a className="underline" href={value} target="_blank" rel="noopener noreferrer">
+          {value}
         </a>
       );
     },
@@ -484,7 +479,7 @@ const Table: React.FC = observer(() => {
         </Button>
       </header>
 
-      <div className="h-full overflow-y-scroll">
+      <div className="h-full overflow-x-clip overflow-y-scroll">
         {currentRows.length > 0 ? (
           <div className={`flex h-full flex-col justify-between gap-5 item-list--${layout}`}>
             {layouts[layout]}
@@ -493,7 +488,7 @@ const Table: React.FC = observer(() => {
         ) : (
           <div className="text-muted-foreground flex h-full items-center justify-center text-lg">No items.</div>
         )}
-        <BulkActionControls table={table} />
+        <BulkActionControls table={table} rowSelection={rowSelection} />
       </div>
     </div>
   );
