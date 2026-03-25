@@ -454,3 +454,14 @@ function clearDirectory($directory_path)
 		}
 	}
 }
+
+function removeItemImageDirectory($item_id)
+{
+	$directory_path = getItemImageLocalDir($item_id);
+
+	clearDirectory($directory_path);
+
+	if (is_dir($directory_path)) {
+		rmdir($directory_path);
+	}
+}
