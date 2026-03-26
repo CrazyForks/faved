@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Bookmark, ChevronLeft, ChevronRight, Import, InfoIcon, Keyboard } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Import, InfoIcon, Keyboard, Share2 } from 'lucide-react';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 import { StoreContext } from '@/store/storeContext';
 import { observer } from 'mobx-react-lite';
 import { SettingsAuth } from './SettingsAuth';
-import { SettingsBookmarklet } from './SettingsBookmarklet';
+import { SettingsIntegrations } from './SettingsIntegrations.tsx';
 import { SettingsImport } from './SettingsImport';
 
 import { Button } from '@/components/ui/button';
@@ -20,10 +20,10 @@ export const SettingsDialog = observer(() => {
   const navLinks = [
     { id: 'auth', title: 'Authentication', icon: Keyboard, component: <SettingsAuth />, warningMessage: null },
     {
-      id: 'bookmarklet',
-      title: 'Bookmarklet',
-      icon: Bookmark,
-      component: <SettingsBookmarklet />,
+      id: 'integrations',
+      title: 'Integrations',
+      icon: Share2,
+      component: <SettingsIntegrations />,
       warningMessage: null,
     },
     { id: 'import', title: 'Import', icon: Import, component: <SettingsImport />, warningMessage: null },
