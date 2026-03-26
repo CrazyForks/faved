@@ -12,6 +12,7 @@ import { SettingsImport } from './SettingsImport';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SettingsAbout } from '@/components/Settings/SettingsAbout.tsx';
+import { cn } from '@/lib/utils.ts';
 
 export const SettingsDialog = observer(() => {
   const store = React.useContext(StoreContext);
@@ -44,7 +45,7 @@ export const SettingsDialog = observer(() => {
   const selectedNavTitle = navLinks.find((item) => item.id === selectedNav)?.title;
 
   return (
-    <Dialog open={true} onOpenChange={store.setIsSettingsModalOpen}>
+    <Dialog open={true} onOpenChange={store.setIsSettingsModalOpen} modal={true}>
       <DialogContent className="w-[100dvw] max-w-6xl overflow-hidden rounded-none p-0 md:w-[95dvw] md:rounded-lg">
         <div className="relative h-[100dvh] p-3 pt-15 md:h-[95dvh] md:max-h-[1000px] md:pt-3">
           <DialogHeader className="fixed top-6 w-full md:sr-only">
@@ -80,10 +81,10 @@ export const SettingsDialog = observer(() => {
               ))}
             </TabsList>
             <div
-              className={
-                'h-full w-full overflow-x-hidden overflow-y-scroll px-1 py-3 md:px-8 ' +
-                (showTopNav ? ' hidden md:inline-flex' : '')
-              }
+              className={cn(
+                'no-scrollbar h-full w-full overflow-x-hidden overflow-y-scroll px-1 py-3 md:px-8',
+                showTopNav ? 'hidden md:inline-flex' : ''
+              )}
             >
               <Button
                 onClick={() => setShowTopNav(true)}
