@@ -37,6 +37,7 @@ class MainStore {
   constructor(prefStore) {
     this.prefStore = prefStore;
     makeAutoObservable(this); // Makes state observable and actions transactional
+    this.getAppInfo();
   }
 
   runRequest = (
