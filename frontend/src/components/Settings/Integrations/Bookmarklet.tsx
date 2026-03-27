@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Bookmark, ChevronDownIcon, Copy, Eye, EyeOff, Feather, GitCompare, Shield } from 'lucide-react';
+import { Bookmark, ChevronRightIcon, Copy, Eye, EyeOff, Feather, GitCompare, Shield } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx';
 import { Button, buttonVariants } from '@/components/ui/button.tsx';
-import { Badge } from '@/components/ui/badge.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
 import { useIsMobile } from '@/hooks/use-mobile.ts';
 import { cn } from '@/lib/utils.ts';
@@ -10,18 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { IconDeviceDesktop, IconDeviceMobile } from '@tabler/icons-react';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { toast } from 'sonner';
-
-const InstallStep = ({ index, text }: { index: number; text: React.ReactNode }) => (
-  <div className="flex items-start gap-3">
-    <Badge
-      variant="outline"
-      className="bg-background text-primary mt-0 flex h-6 w-6 shrink-0 items-center justify-center font-semibold"
-    >
-      {index + 1}
-    </Badge>
-    <p className="text-muted-foreground text-sm leading-relaxed">{text}</p>
-  </div>
-);
+import { InstallStep } from './InstallStep.tsx';
 
 export const Bookmarklet = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [copied, setCopied] = useState(false);
@@ -29,6 +17,7 @@ export const Bookmarklet = ({ onSuccess }: { onSuccess?: () => void }) => {
   const bookmarkletRef = React.useRef<HTMLAnchorElement>(null);
   const codeTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const isMobile = useIsMobile();
+  const defaultOpenTab = isMobile ? 'manual' : 'drag';
 
   const bookmarkletFunction = () => {
     const urlParams = new URLSearchParams();
@@ -122,14 +111,9 @@ export const Bookmarklet = ({ onSuccess }: { onSuccess?: () => void }) => {
 
   React.useEffect(() => {
     if (isCodeShown) {
-      const timeout = setTimeout(() => {
-        codeTextAreaRef.current?.focus();
-      }, 10);
-
       if (onSuccess) {
         onSuccess();
       }
-      return () => clearTimeout(timeout);
     }
   }, [isCodeShown, onSuccess]);
 
@@ -144,8 +128,6 @@ export const Bookmarklet = ({ onSuccess }: { onSuccess?: () => void }) => {
       });
     }
   };
-
-  const defaultOpenTab = isMobile ? 'manual' : 'drag';
 
   React.useEffect(() => {
     const bookmarkletElement = bookmarkletRef.current;
@@ -211,123 +193,129 @@ export const Bookmarklet = ({ onSuccess }: { onSuccess?: () => void }) => {
             ref={codeTextAreaRef}
             value={code}
             readOnly
-            className={cn('h-40 w-full break-all', isCodeShown ? '' : 'hidden')}
-            onFocus={(e) => e.currentTarget.select()}
-            onClick={(e) => isMobile && e.currentTarget.select()}
-            onDoubleClick={(e) => !isMobile && e.currentTarget.select()}
+            className={cn('h-60 break-all', isCodeShown ? '' : 'hidden')}
+            onClick={(e) => e.currentTarget.select()}
           />
         </div>
 
-        <div className="bg-muted/30 space-y-4 rounded-xl border p-4">
-          <h4 className="text-foreground text-sm font-medium">How to install:</h4>
-          <Tabs defaultValue={defaultOpenTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="drag" className="gap-2">
-                <IconDeviceDesktop className="h-4 w-4" />
-                <span className="font-medium">Desktop</span>
-              </TabsTrigger>
-              <TabsTrigger value="manual" className="gap-2">
-                <IconDeviceMobile className="h-4 w-4" />
-                <span className="font-medium">Mobile</span>
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="drag" className="space-y-2 pt-4">
-              <InstallStep
-                index={0}
-                text={
-                  <>
-                    Drag the <span className="text-foreground font-medium">Add to Faved</span> button above to your
-                    browser's bookmarks bar to install.
-                  </>
-                }
-              />
-            </TabsContent>
-            <TabsContent value="manual" className="space-y-2 pt-4">
-              {[
-                <>
-                  Click the <span className="text-foreground font-medium">Copy Code</span> button above. If the code
-                  isn't copied, click <span className="text-foreground font-medium">Show Code</span> and copy it
-                  manually.
-                </>,
-                'Add a new bookmark in your browser.',
-                'Paste the copied code in the URL field.',
-                'Specify a name for the bookmark, for example "Add to Faved".',
-                'Save the bookmark.',
-              ].map((text, index) => (
-                <InstallStep key={index} index={index} text={text} />
-              ))}
-            </TabsContent>
-          </Tabs>
-        </div>
-        <div className="flex flex-col gap-1">
-          <Collapsible className="data-[state=open]:bg-muted/30 rounded-md">
+        <div className="flex flex-col gap-1.5">
+          <Collapsible className="data-[state=open]:border-border data-[state=open]:bg-muted/40 rounded-md border border-transparent">
             <CollapsibleTrigger asChild>
               <Button variant="ghost" className="group w-full justify-start">
-                What is a bookmarklet?
-                <ChevronDownIcon className="ml-auto group-data-[state=open]:block group-data-[state=open]:rotate-180" />
+                <ChevronRightIcon className="mr-2 h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                How to install?
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-6 p-4">
-              <div className="space-y-3 text-sm leading-relaxed">
-                <p className="text-muted-foreground">
+              <Tabs defaultValue={defaultOpenTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="drag" className="gap-2">
+                    <IconDeviceDesktop className="h-4 w-4" />
+                    <span className="font-medium">Desktop</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="manual" className="gap-2">
+                    <IconDeviceMobile className="h-4 w-4" />
+                    <span className="font-medium">Mobile</span>
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="drag" className="space-y-2 pt-4">
+                  {[
+                    <>
+                      Drag the <b>Add to Faved</b> button above to your browser's Bookmarks Bar to install.
+                    </>,
+                    <>
+                      Alternatively, if drag-and-drop doesn't work or you prefer not to use the Bookmarks Bar in your
+                      browser, follow the <b>Mobile</b> tab instructions to install manually.
+                    </>,
+                  ].map((text, index) => (
+                    <InstallStep key={index} text={text} index={index} />
+                  ))}
+                  <p className="text-muted-foreground mt-4 space-y-2 border-t pt-4 text-xs leading-relaxed">
+                    If your bookmarks bar is not visible, enable it in your browser settings (usually found under View →
+                    Bookmarks Bar or Favourites Bar).
+                  </p>
+                </TabsContent>
+                <TabsContent value="manual" className="space-y-2 pt-4">
+                  {[
+                    <>
+                      Click the <b>Copy Code</b> button above. If the code isn't copied, click <b>Show Code</b> and copy
+                      it manually.
+                    </>,
+                    'Add a new bookmark in your browser.',
+                    'Paste the copied code in the URL field.',
+                    'Specify a name for the bookmark, for example "Add to Faved".',
+                    'Save the bookmark.',
+                  ].map((text, index) => (
+                    <InstallStep key={index} text={text} index={index} />
+                  ))}
+                </TabsContent>
+              </Tabs>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible className="data-[state=open]:border-border data-[state=open]:bg-muted/40 rounded-md border border-transparent">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="group w-full justify-start">
+                <ChevronRightIcon className="mr-2 h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                How to use?
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-3 p-4">
+              {[
+                <>
+                  Click the <b>Add to Faved</b> bookmarklet on any page you'd like to save.
+                </>,
+                'A window will appear, allowing you to add the page to your bookmarks.',
+                <>
+                  Optionally, add notes and tags, then click <b>Save</b>.
+                </>,
+                'The page will be stored and available in Faved.',
+              ].map((text, index) => (
+                <InstallStep key={index} text={text} index={index} />
+              ))}
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible className="data-[state=open]:border-border data-[state=open]:bg-muted/40 rounded-md border border-transparent">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="group w-full justify-start">
+                <ChevronRightIcon className="mr-2 h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                What is a bookmarklet?
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-6 p-4">
+              <div className="text-foreground space-y-3 text-sm leading-relaxed">
+                <p>
                   A bookmarklet is a bookmark stored in a web browser that contains JavaScript commands. Unlike browser
                   extensions, they are lightweight and only access the page when you click them.
                 </p>
-                <p className="text-muted-foreground">
+                <p>
                   Faved bookmarklet allows you to quickly save any webpage to your Faved collection with a single click.
                 </p>
               </div>
               <div className="flex flex-wrap justify-around gap-6 text-sm">
-                <div className="text-center">
-                  <GitCompare className="text-primary mx-auto mb-3 h-8 w-8" />
+                <div className="flex flex-col items-center text-center">
+                  <GitCompare className="text-primary mb-3 h-8 w-8" />
                   <h4 className="text-foreground mb-2 font-semibold">Compatible</h4>
-                  <p className="text-muted-foreground mx-auto max-w-[200px] leading-relaxed">
+                  <p className="text-muted-foreground max-w-[200px] leading-relaxed">
                     Works in all modern desktop and mobile browsers
                   </p>
                 </div>
 
-                <div className="text-center">
-                  <Shield className="text-primary mx-auto mb-3 h-8 w-8" />
+                <div className="flex flex-col items-center text-center">
+                  <Shield className="text-primary mb-3 h-8 w-8" />
                   <h4 className="text-foreground mb-2 font-semibold">Secure</h4>
-                  <p className="text-muted-foreground mx-auto max-w-[200px] leading-relaxed">
+                  <p className="text-muted-foreground max-w-[200px] leading-relaxed">
                     No access to your page data until activated
                   </p>
                 </div>
 
-                <div className="text-center">
-                  <Feather className="text-primary mx-auto mb-3 h-8 w-8" />
+                <div className="flex flex-col items-center text-center">
+                  <Feather className="text-primary mb-3 h-8 w-8" />
                   <h4 className="text-foreground mb-2 font-semibold">Lightweight</h4>
-                  <p className="text-muted-foreground mx-auto max-w-[200px] leading-relaxed">
-                    No browser extension is needed
-                  </p>
+                  <p className="text-muted-foreground max-w-[200px] leading-relaxed">No browser extension is needed</p>
                 </div>
               </div>
-            </CollapsibleContent>
-          </Collapsible>
-
-          <Collapsible className="data-[state=open]:bg-muted/30 rounded-md">
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" className="group hover:bg-muted/30 w-full justify-start">
-                How to use?
-                <ChevronDownIcon className="ml-auto group-data-[state=open]:block group-data-[state=open]:rotate-180" />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="space-y-3 p-4">
-              <ol className="list-inside list-decimal space-y-3">
-                <li className="text-muted-foreground text-sm leading-relaxed">
-                  Click the <span className="text-foreground font-medium">Add to Faved</span> bookmarklet on any page
-                  you'd like to save.
-                </li>
-                <li className="text-muted-foreground text-sm leading-relaxed">
-                  A window will appear, allowing you to add the page to your bookmarks.
-                </li>
-                <li className="text-muted-foreground text-sm leading-relaxed">
-                  Optionally, add notes and tags, then click <span className="text-foreground font-medium">Save</span>.
-                </li>
-                <li className="text-muted-foreground text-sm leading-relaxed">
-                  The page will be stored and available in Faved.
-                </li>
-              </ol>
             </CollapsibleContent>
           </Collapsible>
         </div>

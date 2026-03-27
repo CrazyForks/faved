@@ -23,7 +23,7 @@ export const SettingsDialog = observer(() => {
       id: 'integrations',
       title: 'Integrations',
       icon: Share2,
-      component: <SettingsIntegrations />,
+      component: <SettingsIntegrations source="settings" />,
       warningMessage: null,
     },
     { id: 'import', title: 'Import', icon: Import, component: <SettingsImport />, warningMessage: null },
