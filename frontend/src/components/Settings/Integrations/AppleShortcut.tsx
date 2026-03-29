@@ -8,7 +8,7 @@ import { InstallStep } from './InstallStep.tsx';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
 import { IconDeviceDesktop, IconDeviceMobile, IconDeviceTablet } from '@tabler/icons-react';
-import { ChevronRightIcon } from 'lucide-react';
+import { ChevronRightIcon, Layers2, ArrowDownToLine } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile.ts';
 
 export const AppleShortcut = observer(({ onSuccess, source }: { onSuccess?: () => void; source: string }) => {
@@ -25,11 +25,16 @@ export const AppleShortcut = observer(({ onSuccess, source }: { onSuccess?: () =
 
   return (
     <Card className="gap-5">
-      <CardHeader>
-        <CardTitle className="text-lg">Apple Shortcut (Mac/iPhone/iPad)</CardTitle>
-        <CardDescription>
-          Save links directly from the iPhone, iPad and Mac share sheet and Mac services menu.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+        <div className="bg-muted mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+          <Layers2 className="text-muted-foreground h-6 w-6" />
+        </div>
+        <div className="flex flex-1 flex-col gap-1">
+          <CardTitle className="text-lg">Apple Shortcut (Mac / iPhone / iPad)</CardTitle>
+          <CardDescription>
+            Save links directly from the iPhone, iPad and Mac share sheet and Mac services menu.
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-col items-start gap-4">
@@ -37,9 +42,10 @@ export const AppleShortcut = observer(({ onSuccess, source }: { onSuccess?: () =
             href={buildLink('shortcut-apple-os')}
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ variant: 'default', size: 'default', className: 'w-full sm:w-auto' })}
+            className={buttonVariants({ variant: 'outline', size: 'default', className: 'w-full sm:w-auto' })}
             onClick={onSuccess}
           >
+            <ArrowDownToLine className="h-4 w-4" />
             Install Shortcut
           </a>
         </div>

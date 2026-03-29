@@ -13,7 +13,7 @@ import {
   IconBrandOpera,
   IconBrandSafari,
 } from '@tabler/icons-react';
-import { CheckIcon, ChevronRightIcon } from 'lucide-react';
+import { CheckIcon, ChevronRightIcon, ArrowDownToLine } from 'lucide-react';
 import { useInstallExperience } from '@/hooks/use-install-experience';
 import { type InstallEnvironment } from '@/lib/install-env';
 
@@ -222,13 +222,18 @@ export function InstallApp() {
 
   return (
     <Card className="gap-5">
-      <CardHeader>
-        <CardTitle className="text-lg">Install App</CardTitle>
-        <CardDescription>
-          Besides being accessible via browser, Faved can also be installed as a Progressive Web App (PWA). Choose your
-          device in <span className="font-semibold">How to install?</span> section below to see installation
-          instructions.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+        <div className="bg-muted mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+          <ArrowDownToLine className="text-muted-foreground h-6 w-6" />
+        </div>
+        <div className="flex flex-1 flex-col gap-1">
+          <CardTitle className="text-lg">Install App</CardTitle>
+          <CardDescription>
+            Besides being accessible via browser, Faved can also be installed as a Progressive Web App (PWA). Choose
+            your device in <span className="font-semibold">How to install?</span> section below to see installation
+            instructions.
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="bg-muted/30 flex flex-col gap-3 rounded-lg border p-4">

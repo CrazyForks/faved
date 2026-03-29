@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Bookmark, ChevronRightIcon, Copy, Eye, EyeOff, Feather, GitCompare, Shield } from 'lucide-react';
+import { ChevronRightIcon, Copy, Eye, EyeOff, Feather, GitCompare, Bookmark, Shield, Move } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx';
 import { Button, buttonVariants } from '@/components/ui/button.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
@@ -138,9 +138,14 @@ export const Bookmarklet = ({ onSuccess }: { onSuccess?: () => void }) => {
 
   return (
     <Card className="gap-5">
-      <CardHeader>
-        <CardTitle className="text-lg">Browser Bookmarklet</CardTitle>
-        <CardDescription> Quickly save links from any browser.</CardDescription>
+      <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+        <div className="bg-muted mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+          <Bookmark className="text-muted-foreground h-6 w-6" />
+        </div>
+        <div className="flex flex-1 flex-col gap-1">
+          <CardTitle className="text-lg">Browser Bookmarklet</CardTitle>
+          <CardDescription> Quickly save links from any browser.</CardDescription>
+        </div>
       </CardHeader>
 
       <CardContent className="min-w-0 space-y-4">
@@ -160,7 +165,7 @@ export const Bookmarklet = ({ onSuccess }: { onSuccess?: () => void }) => {
               }
             }}
           >
-            <Bookmark className="h-4 w-4" />
+            <Move className="h-4 w-4" />
             Add to Faved
           </a>
 
